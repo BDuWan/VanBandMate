@@ -1,0 +1,771 @@
+<div class="dialog-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <div class="dialog-inner mh-490">
+                    <div class="contact-hd dialog-hd">
+                        <h5 class="tag-a">Class Information</h5>
+                        <div class="contact-win">
+                            <div class="contact-img">
+                                <img src="/assets/images/study_programs/{{.Class.StudyProgram.Image}}" alt="">
+                            </div>
+                        </div>
+                        <div class="contact-ctn">
+                            <div class="contact-ad-hd">
+                                <h5>Study Program Name: {{.Class.StudyProgram.Title}}</h5>
+                            </div>
+                        </div>
+                        <div class="contact-ctn">
+                            <div class="contact-ad-hd">
+                                <h5>Instructor: {{.Class.User.FirstName}} {{.Class.User.LastName}}</h5>
+                            </div>
+                        </div>
+                        <div class="contact-ctn">
+                            <div class="contact-ad-hd">
+                                <h5>Class Name: {{.Class.Name}}</h5>
+                            </div>
+                            <p>{{.Class.Description}}</p>
+                        </div>
+                        <div class="contact-ctn">
+                            <div class="contact-ad-hd">
+                                <h5>Price: {{.Class.Price}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                <div class="dialog-inner sm-res-mg-t-30 mh-490">
+                    <div class="data-table-list" style="padding: 0;">
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-9 col-sm-12">
+                                <h5 class="tag-a">Documents</h5>
+                            </div>
+                            {{if IsInstructor .TypeUserID}}
+                            <div class="col-lg-3 col-sm-12 t-right">
+                                <button class="btn btn-green btn-reco-mg btn-button-mg waves-effect">
+                                    <a href="/classes/create/document/{{.Class.ClassID}}" class="btn-green">
+                                  <span><i class="fas fa-plus"></i>
+                                </span> Add Documents
+                                    </a>
+
+                                </button>
+                            </div>
+                            {{end}}
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-documents" class="table table-striped dataTable c-f-dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id">STT</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Download</th>
+                                        {{if IsInstructor .TypeUserID}}
+                                        <th>Action</th>
+                                        {{end}}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="dialog-inner mg-t-30 mh-250">
+                    <div class="data-table-list" style="padding: 0;">
+
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-10 col-sm-12">
+                                <h5 class="tag-a">Students</h5>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-students" class="table table-striped dataTable c-f-dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id">STT</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Phone Number</th>
+                                        <th>Address</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="dialog-inner mg-t-30 mh-250">
+                    <div class="data-table-list" style="padding: 0;">
+
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-10 col-sm-12">
+                                <h5 class="tag-a">Lesson</h5>
+                            </div>
+                            {{if IsInstructor .TypeUserID}}
+                            <div class="col-lg-2 col-sm-12 t-right">
+                                <button class="btn btn-green btn-reco-mg btn-button-mg waves-effect">
+                                    <a href="/classes/create/lesson/{{.Class.ClassID}}" class="btn-green">
+                                  <span><i class="fas fa-plus"></i>
+                                </span> Add Lesson
+                                    </a>
+                                </button>
+                            </div>
+                            {{end}}
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-lessons" class="table table-striped dataTable c-f-dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id">STT</th>
+                                        <th>Name</th>
+                                        <th style="width: 12%;">Start Time</th>
+                                        <th style="width: 12%;">End Time</th>
+                                        <th>Description</th>
+                                        <th>Link Study</th>
+                                        <th>Link Record</th>
+                                        {{if IsInstructor .TypeUserID}}
+                                        <th>Action</th>
+                                        {{end}}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="dialog-inner mg-t-30 mh-250">
+                    <div class="data-table-list" style="padding: 0;">
+
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-10 col-sm-12">
+                                <h5 class="tag-a">Assignments</h5>
+                            </div>
+                            {{if IsInstructor .TypeUserID}}
+                            <div class="col-lg-2 col-sm-12 t-right">
+                                <button class="btn btn-green btn-reco-mg btn-button-mg waves-effect">
+                                    <a href="/classes/create/assignment/{{.Class.ClassID}}" class="btn-green">
+                                  <span><i class="fas fa-plus"></i>
+                                </span> Add Assignment
+                                    </a>
+                                </button>
+                            </div>
+                            {{end}}
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-assignments" class="table table-striped dataTable c-f-dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id">STT</th>
+                                        <th>Name</th>
+                                        <th style="width: 12%;">Start Time</th>
+                                        <th style="width: 12%;">End Time</th>
+                                        <th>View Assigment</th>
+                                        {{if IsInstructor .TypeUserID}}
+                                        <th>Action</th>
+                                        {{end}}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var ClassID = {{.Class.ClassID}};
+        $.fn.dataTable.ext.errMode = 'none';
+        var table_students = $('#table-students').DataTable({
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url: '/classes/api/students/'+ClassID,
+                type: 'POST',
+                "contentType": "application/json",
+                "data": function (d) {
+                    return JSON.stringify(d);
+                }
+
+            },
+            columns: [
+                {
+                    "data": null,
+                    "searchable": false,
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return table_students.rows().count() > 0 ?
+                            meta.row + meta.settings._iDisplayStart + 1 : 0;
+                    }
+                },
+                {data: 'User.first_name'},
+                {data: 'User.last_name'},
+                {data: 'User.email'},
+                {data: 'User.phone_number'},
+                {data: 'User.address'},
+            ],
+
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart;
+                api.column(0, {page: 'current'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            },
+            "ordering": true,
+            lengthMenu: [[5, 10], ['5', '10']],
+            // language: {
+            //     lengthMenu: "{{.Lag.Show}}" + '_MENU_' + "{{.Lag.Index}}",
+            //     infoFiltered: "({{.Lag.InTotal}} _MAX_ {{.Lag.Index}})",
+            //     info: "{{.Lag.Show}} _START_ {{.Lag.Arrive}} _END_ {{.Lag.BelongTo}} _TOTAL_ {{.Lag.Index}}",
+            //     infoEmpty: "{{.Lag.Show}} 0 {{.Lag.Arrive}} 0 {{.Lag.BelongTo}} 0 {{.Lag.Index}}",
+            //     search: "{{.Lag.Search}}",
+            //     paginate: {
+            //         next: '{{.Lag.Next}}',
+            //         previous: '{{.Lag.Previous}}'
+            //     },
+            // }
+        });
+
+        var table_documents = $('#table-documents').DataTable({
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url: '/classes/api/documents/'+ClassID,
+                type: 'POST',
+                "contentType": "application/json",
+                "data": function (d) {
+                    return JSON.stringify(d);
+                }
+
+            },
+            columns: [
+                {
+                    "data": null,
+                    "searchable": false,
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return table_documents.rows().count() > 0 ?
+                            meta.row + meta.settings._iDisplayStart + 1 : 0;
+                    }
+                },
+                {
+                    data: 'name',
+                    render:function (data){
+                        return lenString(data,100);
+                    },
+                    createdCell: function(td, cellData) {
+                        td.title = cellData;
+
+                    },
+                },
+                {data: 'description'},
+                {
+                    data: 'document_id',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+
+                            return `<div class="row" style="margin:0;">
+                                          <div class="col-sm-12 t-center">
+                                            <a href="/classes/download/document/${data}">
+                                              <i class="fas fa-file-download cl-ed" aria-hidden="true" title="Download"></i>
+                                            </a>
+                                          </div>
+                                        </div>`;
+
+
+                        }
+                        return data;
+                    }
+                },
+                {{if IsInstructor .TypeUserID}}
+                {
+                    data: 'document_id',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+
+                            return `<div class="row" style="margin:0;">
+                                          <div class="col-sm-6 t-center">
+                                            <a href="/classes/document/edit/${data}">
+                                              <i class="fas fa-edit cl-ed" aria-hidden="true" title="Edit"></i>
+                                            </a>
+                                          </div>
+                                          <div class="col-sm-6 t-center">
+                                            <a>
+                                              <i class="fas fa-trash cl-del item-delete" data-delete="${data}" aria-hidden="true" title="Delete"></i>
+                                            </a>
+                                          </div>
+                                        </div>`;
+
+
+                        }
+                        return data;
+                    }
+                }
+        {{end}}
+            ],
+
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart;
+                api.column(0, {page: 'current'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            },
+            "ordering": true,
+            lengthMenu: [[5, 10], ['5', '10']],
+        });
+
+        var table_lessons = $('#table-lessons').DataTable({
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url: '/classes/api/lessons/'+ClassID,
+                type: 'POST',
+                "contentType": "application/json",
+                "data": function (d) {
+                    return JSON.stringify(d);
+                }
+
+            },
+            columns: [
+                {
+                    "data": null,
+                    "searchable": false,
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return table_lessons.rows().count() > 0 ?
+                            meta.row + meta.settings._iDisplayStart + 1 : 0;
+                    }
+                },
+                {
+                    data: 'name',
+                    render:function (data){
+                        return lenString(data,50);
+                    },
+                    createdCell: function(td, cellData) {
+                        td.title = cellData;
+
+                    },
+                },
+                {
+                    data: 'start_time',
+                    render:function (data){
+                        return formatTime(data);
+                    },
+                },
+                {
+                    data: 'end_time',
+                    render:function (data){
+                        return formatTime(data);
+                    },
+                },
+                {data: 'description'},
+                {
+                    data: 'link_study',
+                    render:function (data){
+                        return lenString(data,30);
+                    },
+                    createdCell: function(td, cellData) {
+                        td.title = cellData;
+
+                    },
+                },
+                {
+                    data: 'link_record',
+                    render:function (data){
+                        return lenString(data,30);
+                    },
+                    createdCell: function(td, cellData) {
+                        td.title = cellData;
+
+                    },
+                },
+                {{if IsInstructor .TypeUserID}}
+                {
+                    data: 'lesson_id',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+
+                            return `<div class="row" style="margin:0;">
+                                          <div class="col-sm-6 t-center">
+                                            <a href="/classes/lesson/edit/${data}">
+                                              <i class="fas fa-edit cl-ed" aria-hidden="true" title="Edit"></i>
+                                            </a>
+                                          </div>
+                                          <div class="col-sm-6 t-center">
+                                            <a>
+                                              <i class="fas fa-trash cl-del item-delete-lesson" data-delete-lesson="${data}" aria-hidden="true" title="Delete"></i>
+                                            </a>
+                                          </div>
+                                        </div>`;
+
+
+                        }
+                        return data;
+                    }
+                }
+        {{end}}
+            ],
+
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart;
+                api.column(0, {page: 'current'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            },
+            "ordering": true,
+            lengthMenu: [[5, 10], ['5', '10']],
+        });
+
+        var table_assignments = $('#table-assignments').DataTable({
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url: '/classes/api/assignments/'+ClassID,
+                type: 'POST',
+                "contentType": "application/json",
+                "data": function (d) {
+                    return JSON.stringify(d);
+                }
+
+            },
+            columns: [
+                {
+                    "data": null,
+                    "searchable": false,
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return table_assignments.rows().count() > 0 ?
+                            meta.row + meta.settings._iDisplayStart + 1 : 0;
+                    }
+                },
+                {
+                    data: 'name',
+                    render:function (data){
+                        return lenString(data,50);
+                    },
+                    createdCell: function(td, cellData) {
+                        td.title = cellData;
+
+                    },
+                },
+                {
+                    data: 'start_time',
+                    render:function (data){
+                        return formatTime(data);
+                    },
+                },
+                {
+                    data: 'end_time',
+                    render:function (data){
+                        return formatTime(data);
+                    },
+                },
+                {
+                    data: 'assignment_id',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+                            return `<div class="row" style="margin:0;">
+                                          <div class="col-sm-12 t-center">
+                                            <a href="/classes/assignment/${data}" class="btn btn-success">
+                                              <i class="fas fa-info-circle" aria-hidden="true" title="Info"></i>
+                                            </a>
+                                          </div>
+                                        </div>`;
+
+
+                        }
+                        return data;
+                    }
+                },
+                {{if IsInstructor .TypeUserID}}
+        {
+            data: 'assignment_id',
+                render: function (data, type, full, row) {
+            if (type === 'display') {
+
+                return `<div class="row" style="margin:0;">
+                                          <div class="col-sm-6 t-center">
+                                            <a href="/classes/assignment/edit/${data}">
+                                              <i class="fas fa-edit cl-ed" aria-hidden="true" title="Edit"></i>
+                                            </a>
+                                          </div>
+                                          <div class="col-sm-6 t-center">
+                                            <a>
+                                              <i class="fas fa-trash cl-del item-delete-assignment" data-delete-assignment="${data}" aria-hidden="true" title="Delete"></i>
+                                            </a>
+                                          </div>
+                                        </div>`;
+
+
+            }
+            return data;
+        }
+        }
+        {{end}}
+    ],
+
+        "drawCallback": function (settings) {
+            var api = this.api();
+            var startIndex = api.context[0]._iDisplayStart;
+            api.column(0, {page: 'current'}).nodes().each(function (cell, i) {
+                cell.innerHTML = startIndex + i + 1;
+            });
+        },
+        "ordering": true,
+            lengthMenu: [[5, 10], ['5', '10']],
+    });
+
+
+        $('#table-documents tbody').on('click', '.item-delete', function() {
+            var DocumentID = $(this).data('delete');
+            swal({
+                title: 'Confirm Delete ?',
+                icon: 'warning',
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        className: "btn btn-danger",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary",
+                        closeModal: true
+                    }
+                }
+            }).then((result=>{
+                if(result){
+                    $.ajax({
+                        url: '/classes/document/' + DocumentID,
+                        type: 'DELETE',
+                        success: function (response) {
+                            if(response === "Success"){
+                                swal({
+                                    title: 'Successfully !',
+                                    icon: 'success',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary"
+                                    }
+                                })
+                                table_documents.ajax.reload();
+                            }else {
+                                swal({
+                                    title: 'Error !',
+                                    text: response,
+                                    icon: 'warning',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-danger"
+                                    }
+                                })
+                            }
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error deleting row:", status, error);
+                        }
+                    });
+                }
+
+            }))
+
+        });
+
+        $('#table-lessons tbody').on('click', '.item-delete-lesson', function() {
+            var LessonID = $(this).data('delete-lesson');
+            swal({
+                title: 'Confirm Delete ?',
+                icon: 'warning',
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        className: "btn btn-danger",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary",
+                        closeModal: true
+                    }
+                }
+            }).then((result=>{
+                if(result){
+                    $.ajax({
+                        url: '/classes/lesson/' + LessonID,
+                        type: 'DELETE',
+                        success: function (response) {
+                            if(response === "Success"){
+                                swal({
+                                    title: 'Successfully !',
+                                    icon: 'success',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary"
+                                    }
+                                })
+                                table_lessons.ajax.reload();
+                            }else {
+                                swal({
+                                    title: 'Error !',
+                                    text: response,
+                                    icon: 'warning',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-danger"
+                                    }
+                                })
+                            }
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error deleting row:", status, error);
+                        }
+                    });
+                }
+
+            }))
+
+        });
+
+        $('#table-assignments tbody').on('click', '.item-delete-assignment', function() {
+            var AssignmentID = $(this).data('delete-assignment');
+            swal({
+                title: 'Confirm Delete ?',
+                icon: 'warning',
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        className: "btn btn-danger",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary",
+                        closeModal: true
+                    }
+                }
+            }).then((result=>{
+                if(result){
+                    $.ajax({
+                        url: '/classes/assignment/' + AssignmentID,
+                        type: 'DELETE',
+                        success: function (response) {
+                            if(response === "Success"){
+                                swal({
+                                    title: 'Successfully !',
+                                    icon: 'success',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary"
+                                    }
+                                })
+                                table_assignments.ajax.reload();
+                            }else {
+                                swal({
+                                    title: 'Error !',
+                                    text: response,
+                                    icon: 'warning',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-danger"
+                                    }
+                                })
+                            }
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error deleting row:", status, error);
+                        }
+                    });
+                }
+
+            }))
+
+        });
+
+
+        function lenString(text, length) {
+            let count = text.length;
+            let stringText = text;
+            if (count > length) {
+                stringText = "..." + text.substring(count - length + 4, count);
+            }
+            return stringText
+        }
+
+
+        function formatTime(dateString) {
+            const date = new Date(dateString); // Assuming the dateString is in a format recognized by Date.parse()
+
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const year = String(date.getFullYear()); // Get last 2 digits of year
+
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+    });
+</script>

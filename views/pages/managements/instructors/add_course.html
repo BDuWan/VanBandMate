@@ -1,0 +1,181 @@
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+                    <div class="basic-tb-hd">
+                        <h2>Add Course</h2>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-example-wrap">
+                            
+                                <div class="form-example-int form-horizental">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
+                                                <label class="hrzn-fm">Select Study Program</label>
+                                            </div>
+                                            <div class="col-lg-7 col-md-6 col-sm-5 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <div class="bootstrap-select">
+                                                        <select class="selectpicker" name="study_program_id" id="ip-study_program" onchange="sendData()">
+                                                            <option value="0">--</option>
+                                                            {{ range $row := .StudyPrograms }}
+                                                            <option value="{{$row.StudyProgramID}}">{{$row.StudyProgram.Title}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-example-int form-horizental">
+                                    <div class="form-group" id="select_course" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
+                                                <label class="hrzn-fm">Select Course</label>
+                                            </div>
+                                            <div class="col-lg-7 col-md-6 col-sm-5 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <div class="bootstrap-select">
+                                                        <select class="selectpicker" multiple name="course_id[]" id="ip-course_id">
+                                                            <!-- {{ range $row := .Users }}
+                                                            <option value="{{$row.UserID}}">{{$row.LastName}}</option>
+                                                            {{end}} -->
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                                           
+                                <div class="form-example-int mg-t-15">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                        </div>
+                                        <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                            <button class="btn btn-success notika-btn-success waves-effect" id="btn-submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function sendData(){  
+        var study_program_id = parseInt($("#ip-study_program").val(), 10);     
+        if (study_program_id == "0") {
+            select_course.style.display = "none";
+        } else{
+            fetchDataAndUpdateSelect(study_program_id)
+            //select_course.style.display = "block";           
+        }
+    }
+
+    function IsCheckCourseIns(currentID, checkedID) {
+        for (var i = 0; i < checkedID.length; i++) {
+            if (checkedID[i].course_id == currentID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function fetchDataAndUpdateSelect(study_program_id) {
+        var userID = {{.UserID}}; 
+        $.ajax({
+            url: '/managements/instructors/api/add/courses/' + userID + "/" + study_program_id,
+            type: 'POST',
+            dataType: 'json',
+            success: function(response) {
+                $('#ip-course_id').empty();
+                var courIns = response.CourIns;
+                $.each(response.Courses, function(index, course) {
+                    $('#ip-course_id').append($('<option>', {
+                        value: course.course_id,
+                        text: course.name,
+                        selected: IsCheckCourseIns (course.course_id, courIns),
+                    }));
+                });
+                $('#ip-course_id').selectpicker('refresh');
+                $('#select_course').show();
+            },
+            error: function () {
+                console.log( error);
+            }
+        });
+    }                        
+
+    $(document).ready(function () {       
+        $('#btn-submit').click(function() {    
+            var study_program_id = parseInt($("#ip-study_program").val(), 10);
+            if (study_program_id == "0") {
+                swal({
+                    title: 'Error !',
+                    text: "You have not chosen a study program yet",
+                    icon: 'warning',
+                    button: {
+                        text: "Close",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-danger"
+                    }
+                })
+            } else{
+                var userID = {{.UserID}};               
+                var formData = {
+                    study_program_id: study_program_id,
+                    course_id: $("select[id='ip-course_id']").val(),
+                };
+
+                $.ajax({
+                    url: '/managements/instructors/add/courses/' + userID,
+                    method: 'POST',
+                    data: formData,
+
+                    success: function (response) {
+                        if(response === "Success"){
+                            swal({
+                                title: 'Successfully !',
+                                text: 'Update course successfully',
+                                icon: 'success',
+                                button: {
+                                    text: "Close",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary"
+                                }
+                            })
+
+                        }else{
+                            swal({
+                                title: 'Error !',
+                                text: response,
+                                icon: 'warning',
+                                button: {
+                                    text: "Close",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-danger"
+                                }
+                            })
+                        }
+
+                    },
+                    error: function () {
+                        console.log('Error occurred while retrieving options');
+                    }
+                });
+            }                
+        });
+    });
+</script>

@@ -1,0 +1,99 @@
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+                    <div class="basic-tb-hd">
+                        <h2>Create Class</h2>
+                        <!--                        <p>Text Inputs with different sizes by height and column.</p>-->
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-example-wrap">
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm" >Class Name</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter class name" id="ip-name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Study Program</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <div class="bootstrap-select">
+                                                        <select class="selectpicker" name="study_program_id" id="ip-study_program">
+                                                            {{ range $row := .StudyPrograms }}
+                                                            <option value="{{$row.StudyProgramID}}">{{$row.Title}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Instructor</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <div class="bootstrap-select">
+                                                        <select class="selectpicker" name="user_id" id="ip-user">
+                                                            {{ range $row := .Users }}
+                                                            <option value="{{$row.UserID}}">{{$row.LastName}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm" >Description</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter description" id="ip-description">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-example-int mg-t-15">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                        </div>
+                                        <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                            <button class="btn btn-success notika-btn-success waves-effect" id="btn-submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/web/cr-mng-classes.js"></script>

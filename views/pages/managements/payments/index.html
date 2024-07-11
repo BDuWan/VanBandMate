@@ -1,0 +1,246 @@
+{{if IsSaleBusiness .TypeUserID}}
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-4 col-sm-4 col-xs-12">
+                <div class="dialog-inner mh-410">
+                    <div class="contact-hd dialog-hd">
+                        <h5 class="tag-a" id="lb-commission">Commission</h5>
+                        <br>
+                        <table class="table table-striped">
+                            <tbody>
+                            <tr id="commission-total">
+                                <th class="sorting_1">Commission Total</th>
+                                <td class="pdf-30">{{.CommissionUser.CommissionTotal}}</td>
+                            </tr>
+                            <tr id="commission-paid">
+                                <th class="sorting_1">Commission Paid</th>
+                                <td class="pdf-30">{{.CommissionUser.CommissionPaid}}</td>
+                            </tr>
+                            <tr id="commission-debt">
+                                <th class="sorting_1">Commission Debt</th>
+                                <td class="pdf-30">{{.CommissionUser.CommissionDebt}}</td>
+                            </tr>                    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-4 col-sm-4 col-xs-12">
+                <div class="dialog-inner mh-410">
+                    <div class="contact-hd dialog-hd">
+                        <h5 class="tag-a" id="lb-commission">Current Period</h5>
+                        <br>
+                        {{if IsTimeAfterNow .CommissionUser.Period.PeriodEnd}}
+                        <table class="table table-striped">
+                            <tbody>
+                            <tr>
+                                <th class="sorting_1">Number Student</th>
+                                <td class="pdf-30">{{.CommissionUser.Period.NumberStudent}}</td>
+                            </tr>
+                            <tr>
+                                <th class="sorting_1">Student Paid</th>
+                                <td class="pdf-30">{{.CommissionUser.Period.StudentPaid}}</td>
+                            </tr>
+                            <tr>
+                                <th class="sorting_1">Commission</th>
+                                <td class="pdf-30">{{.CommissionUser.Period.Commission}}</td>
+                            </tr>     
+                            <tr>
+                                <th class="sorting_1">Period Start Date</th>
+                                <td class="pdf-30">{{.CommissionUser.Period.PeriodStart | FormatDate}}</td>
+                            </tr>
+                            <tr>
+                                <th class="sorting_1">Period End Date</th>
+                                <td class="pdf-30">{{.CommissionUser.Period.PeriodEnd | FormatDate}}</td>
+                            </tr>    
+                                    
+                            </tbody>
+                        </table>
+                        {{else}}
+                        <p>There is no new period yet</p>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="dialog-inner mg-t-30 mh-250">
+                    <div class="data-table-list" style="padding: 0;">
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-10 col-sm-12">
+                                <h5 class="tag-a">Students</h5>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-students" class="table table-striped dataTable c-f-dataTable w-tb">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id">STT</th>
+                                        <th>Email</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Phone Number</th>
+                                        <th>Address</th>
+                                        <th>Verify</th>
+                                        <th>Paid</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="dialog-inner mg-t-30 mh-250">
+                    <div class="data-table-list" style="padding: 0;">
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-10 col-sm-12">
+                                <h5 class="tag-a">Periods History</h5>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-periods" class="table table-striped dataTable c-f-dataTable w-tb">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id">No.</th>
+                                        <th>Number Students</th>
+                                        <th>Students Paid</th>
+                                        <th>Commission</th>
+                                        <th>Period Start Date</th>
+                                        <th>Period End Date</th>                            
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="dialog-inner mg-t-30 mh-250">
+                    <div class="data-table-list" style="padding: 0;">
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-10 col-sm-12">
+                                <h5 class="tag-a">Pay History</h5>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-history-pay" class="table table-striped dataTable c-f-dataTable w-tb">
+                                    <thead>                                       
+                                    <tr>
+                                        <th class="t-id">STT</th>
+                                        <th>Commission Total</th>
+                                        <th>Commission Paid</th>
+                                        <th>Commission Debt</th>
+                                        <th>Description</th>
+                                        <th>Time</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/web/id-mng-sale-payments.js"></script>
+{{else}}
+<div class="data-table-area">
+    <div class="container">
+        <!-- <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd row">
+                        <div class="col-lg-10 col-sm-12">
+                            <h5 class="tag-a">Price Programs</h5>
+                        </div>
+                        <div class="col-lg-2 col-sm-12 t-right">
+                            <button class="btn btn-green btn-reco-mg btn-button-mg waves-effect">
+                                <a href="/managements/mng-payments/prices/create" class="btn-green">
+                                  <span><i class="fas fa-plus"></i>
+                                </span> Add Price Program
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <div class="dataTables_wrapper">
+                            <table id="table-price" class="table table-striped dataTable c-f-dataTable">
+                                <thead>
+                                <tr>
+                                    <th class="t-id">STT</th>
+                                    <th>Price</th>
+                                    <th>Commission</th>
+                                    <th>Description</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th class="t-ac">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div> -->
+        <a href="/managements/mng-payments/config" class="btn btn-primary" id="btn-config">Edit config payment</a>
+        <br><br>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd row">
+                        <div class="col-lg-10 col-sm-12">
+                            <h5 class="tag-a">Commissions of Sale Director</h5>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <div class="dataTables_wrapper">
+                            <table id="table-pro-sale" class="table table-striped dataTable c-f-dataTable">
+                                <thead>
+                                <tr>
+                                    <th class="t-id">STT</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <!-- <th>Name Business</th>
+                                    <th>Full Name Representative</th> -->
+                                    <th>Commission Total</th>
+                                    <th>Commission Paid</th>
+                                    <th>Commission Debt</th>
+                                    <th class="t-ac">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/web/id-mng-payments.js"></script>
+{{end}}

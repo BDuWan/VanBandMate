@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Useful Knowledge</title>
+    <link rel="shortcut icon" href="/assets/images/Useful_Knowledge.png">
+    <link rel="stylesheet" href="/assets/css/style-login.css">
+
+    <!-- Fontawesome CDN Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="container">
+        <div class="forms">
+            <div class="form-content">
+                <div class="login-form" style="padding: 20px;text-align: center;">
+                    <img src="/assets/images/Useful_Knowledge.png" alt="" style="width: 60%;">
+                    <br>
+                    <br>
+                    <div><a style="font-size: 20px;font-weight: bold;" class="icon-sale">Welcome To Sales Department</a></div>
+                    <br>
+                    <div class="title" style="text-align: left;">Login</div>
+
+
+                    <div class="input-boxes">
+                        <div class="input-box">
+                            <i class="fas fa-user icon-sale"></i>
+                            <input type="text" name="email" id="ip-email" placeholder="Enter your email"
+                                required>
+                        </div>
+                        <div class="input-box">
+                            <i class="fas fa-lock icon-sale"></i>
+                            <input type="password" name="password" id="ip-password" placeholder="Enter your password"
+                                required>
+                        </div>
+                        <div class="button input-box" id="login_btn">
+                            <input href="" type="submit" class="btn-sale" value="Submit">
+                        </div>
+                        <div class="text sign-up-text">Don't have an account? <a href="/signup_sale"><label class="icon-sale">Register now</label></a>
+                        </div>
+                        <div class="text sign-up-text"><a id="forgotPassword"><label style="font-weight: bold;" class="icon-sale">Forgot Password</label></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="/assets/js/sweetalert.min.js"></script>
+    <script>
+        function HandleLogin(){
+            var jsonData = {
+                email: $("#ip-email").val(),
+                password: $("#ip-password").val(),
+            };
+
+            $.ajax({
+                url: '/login_sale',
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify(jsonData),
+
+                success: function (response) {
+                    if (response === "Login success") {
+                        window.location.href = "/home";
+                    }
+                    else {
+                        swal({
+                            title: 'Error !',
+                            text: response,
+                            icon: 'warning',
+                            button: {
+                                text: "Close",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-danger"
+                            }
+                        })
+                    }
+
+                },
+                error: function () {
+                    console.log('Error occurred while retrieving options');
+                }
+            });
+        }
+        $('#login_btn').click(function () {
+            HandleLogin();
+        });
+        const emailInput = document.getElementById('ip-email');
+        const passwordInput = document.getElementById('ip-password');
+        emailInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                HandleLogin();
+            }
+        });
+        passwordInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                HandleLogin();
+            }
+        });
+        $(document).ready(function () {
+            $("#forgotPassword").click(function () {
+
+                var email = $("#ip-email").val();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/forgot-password",
+                    data: { email: email },
+                    success: function (response) {
+                        swal({
+                            text: response,
+                            icon: 'success',
+                            button: {
+                                text: "Close",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary"
+                            }
+                        })
+                    },
+                    error: function (error) {
+
+                        alert("Error: " + JSON.stringify(error));
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script src="/assets/js/bootstrap.min.js"></script>
+</body>
+
+</html>

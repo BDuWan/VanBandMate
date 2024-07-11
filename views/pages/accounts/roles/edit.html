@@ -1,0 +1,42 @@
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list mg-t-30">
+                    <div class="cmp-tb-hd">
+                        <h5 class="tag-a">Edit Role</h5>
+                        <p>Edit role with permissions to set for the user account.</p>
+                    </div>
+                    <form class="form-sample" method="post" action="/accounts/roles/{{.Role.RoleID}}">
+                        <input type="hidden" name="_method" value="PUT">
+                    <div class="form-example-int">
+                        <div class="form-group">
+                            <label>Name Role</label>
+                            <div class="nk-int-st">
+                                <input type="text" name="name" class="form-control input-sm pd-l-12" required value="{{.Role.Name}}" placeholder="Enter name role">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-example-int">
+                        <div class="form-group">
+                            <label>Permissions</label>
+                            <div class="nk-int-st">
+                                <div class="bootstrap-select">
+                                    <select class="selectpicker" multiple name="permission_id[]">
+                                        {{ range $row := .Permissions }}
+                                        <option value="{{$row.PermissionID}}" {{if IsChecked
+                                                $row.PermissionID $.PerMe}} selected {{end}} >{{$row.Name}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn  title-page-upcase  btn-primary me-2">Update
+                    </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

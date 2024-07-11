@@ -1,0 +1,148 @@
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+                    <div class="basic-tb-hd">
+                        <h2>Create Documents</h2>
+                        <!--                        <p>Text Inputs with different sizes by height and column.</p>-->
+                    </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-example-wrap">
+                                    <form id="uploadForm" enctype="multipart/form-data">
+                                    <div class="form-example-int form-horizental mg-t-15">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                    <label class="hrzn-fm">Select File</label>
+                                                </div>
+                                                <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                    <div class="nk-int-st">
+                                                        <input type="file" id="name" name="name">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-example-int form-horizental mg-t-15">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                    <label class="hrzn-fm">Description</label>
+                                                </div>
+                                                <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                    <div class="nk-int-st">
+                                                        <textarea class="form-control" rows="5" id="description" name="description" placeholder="Enter description...."></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </form>
+                                    <div class="form-example-int mg-t-15">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <button class="btn btn-success notika-btn-success waves-effect" id="btn-submit">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script src="/assets/js/web/cr-document-mng-courses.js"></script>-->
+<script>
+    $(document).ready(function () {
+        $("#btn-submit").on("click", function () {
+            var formData = new FormData();
+            var fileInput = $("#name")[0].files[0];
+            var classID = {{.Class.ClassID}};
+            var description = $("#description").val();
+            if (!fileInput) {
+                swal({
+                    title: 'Error !',
+                    text: "Please select file.",
+                    icon: 'warning',
+                    button: {
+                        text: "Close",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-danger"
+                    }
+                })
+
+            }else{
+
+                if(fileInput.size > 1024*1024*100){
+                    swal({
+                        title: 'Error !',
+                        text: "File needs to be less than 100MB.",
+                        icon: 'warning',
+                        button: {
+                            text: "Close",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-danger"
+                        }
+                    })
+                }else{
+                    formData.append("name", fileInput);
+                    formData.append("description",description);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/managements/mng-classes/document/"+ classID,  // replace with your server-side upload endpoint
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if(response === "Success"){
+                                swal({
+                                    title: 'Successfully !',
+                                    text: 'Create document successfully',
+                                    icon: 'success',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary"
+                                    }
+                                })
+                                $('.ip-u').val("");
+                            }else{
+                                swal({
+                                    title: 'Error !',
+                                    text: response,
+                                    icon: 'warning',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-danger"
+                                    }
+                                })
+                            }
+
+                        },
+                        error: function () {
+                            console.log('Error occurred while retrieving options');
+                        }
+                    });
+                }
+            }
+
+
+
+
+        });
+    });
+</script>

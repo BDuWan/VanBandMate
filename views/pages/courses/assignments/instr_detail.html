@@ -1,0 +1,212 @@
+<div class="breadcomb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcomb-list">
+                    <div class="row">
+                        <div class="col-lg-9 col-md-6 col-sm-6 col-xs-12">
+                            <div class="breadcomb-ctn">
+                                <h2>{{.Assignment.Name}}</h2>
+                                <p>Due {{FormatTime .Assignment.EndTime}}</p>
+                                <p>{{.Assignment.Description}}</p>
+                                <br>
+                                <h5>Result</h5>
+                                <input id="result" class="form-control" value="{{.Result}}" />
+                                <br>
+                                <button class="btn btn-success" id="btn-result">Update</button>
+                                <br>
+                                <br>
+                                <h5>My work</h5>
+                                <div class="data-table-list" style="padding:0;">
+                                    <div class="table-responsive">
+                                        <div class="dataTables_wrapper">
+                                            <table id="table-documents" class="table table-striped dataTable c-f-dataTable">
+                                                <thead>
+                                                <tr>
+                                                    <th class="t-id">STT</th>
+                                                    <th>Name</th>
+                                                    <th>Download</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-3">
+                            <div class="breadcomb-report">
+                                <button class="btn btn-primary" id="rollback" >Rollback</button>
+                                <span id="stt-assignment">{{StatusAssignment .Status}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function lenString(text, length) {
+        let count = text.length;
+        let stringText = text;
+        if (count > length) {
+            stringText = "..." + text.substring(count - length + 4, count);
+        }
+        return stringText
+    }
+    $(document).ready(function() {
+        var assignmentID = {{.Assignment.AssignmentID}};
+        var userID = {{.UserID}};
+        var status ={{.Status}};
+        if(status === 1){
+            $("#rollback").hide();
+        }else{
+            $("#rollback").show();
+        }
+        $.fn.dataTable.ext.errMode = 'none';
+        var table_documents = $('#table-documents').DataTable({
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url: '/courses/api/files/'+assignmentID+"/"+userID,
+                type: 'POST',
+                "contentType": "application/json",
+                "data": function (d) {
+                    return JSON.stringify(d);
+                }
+
+            },
+            columns: [
+                {
+                    "data": null,
+                    "searchable": false,
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return table_documents.rows().count() > 0 ?
+                            meta.row + meta.settings._iDisplayStart + 1 : 0;
+                    }
+                },
+                {
+                    data: 'file',
+                    render:function (data){
+                        return lenString(data,150);
+                    },
+                    createdCell: function(td, cellData) {
+                        td.title = cellData;
+
+                    },
+                },
+                {
+                    data: 'file_user_id',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+
+                            return `<div class="row" style="margin:0;">
+                                                  <div class="col-sm-12 t-center">
+                                                    <a href="/courses/download/fileUser/${data}">
+                                                      <i class="fas fa-file-download cl-ed" aria-hidden="true" title="Download"></i>
+                                                    </a>
+                                                  </div>
+                                                </div>`;
+                        }
+                        return data;
+                    }
+                }
+            ],
+
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart;
+                api.column(0, {page: 'current'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            },
+            "ordering": true,
+            lengthMenu: [[5, 10], ['5', '10']],
+        });
+
+        $("#btn-result").on("click", function() {
+            var formData = new FormData();
+            formData.append("assignment_id",assignmentID);
+            formData.append("user_id",userID);
+            formData.append("result",$('#result').val());
+            $.ajax({
+                type: "PUT",
+                url: "/courses/result/assignment",  // replace with your server-side upload endpoint
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if(response === "Success"){
+                        swal({
+                            title: 'Successfully !',
+                            text: 'Update result successfully',
+                            icon: 'success',
+                            button: {
+                                text: "Close",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary"
+                            }
+                        })
+                    }else{
+                        swal({
+                            title: 'Error !',
+                            text: response,
+                            icon: 'warning',
+                            button: {
+                                text: "Close",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-danger"
+                            }
+                        })
+                    }
+
+                },
+                error: function () {
+                    console.log('Error occurred while retrieving options');
+                }
+            });
+        });
+
+        $("#rollback").on("click", function() {
+            var formData = new FormData();
+            formData.append("assignment_id",assignmentID);
+            $.ajax({
+                type: "PUT",
+                url: "/courses/rollback/assignment/"+userID,  // replace with your server-side upload endpoint
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if(response === "Success"){
+                        $('#stt-assignment').text('Has not been submitted');
+                        $("#rollback").hide();
+                    }else{
+                        swal({
+                            title: 'Error !',
+                            text: response,
+                            icon: 'warning',
+                            button: {
+                                text: "Close",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-danger"
+                            }
+                        })
+                    }
+
+                },
+                error: function () {
+                    console.log('Error occurred while retrieving options');
+                }
+            });
+        });
+    });
+</script>

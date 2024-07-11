@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<!-- Created by CodingLab |www.youtube.com/c/CodingLabYT-->
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <!--<title> Login and Registration Form in HTML & CSS | CodingLab </title>-->
+    <title>Useful Knowledge</title>
+    <link rel="shortcut icon" href="/assets/images/Useful_Knowledge.png">
+    <link rel="stylesheet" href="/assets/css/style-login.css">
+
+    <!-- Fontawesome CDN Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="container">
+        <div class="forms">
+            <div class="form-content">
+                <div class="signup-form">
+                    <div><a style="font-size: 22px;font-weight: bold;" class="icon-sale">Welcome To Sales Department</a></div>
+                    <br>
+                    <div class="title">Register</div>
+                    <div class="widget-tabs-int tab-ctm-wp">
+                        <div class="widget-tabs-list">
+                            <ul class="nav nav-tabs tab-nav-right">
+                                <li class="active"><a data-toggle="tab" href="#sale-su">Sale Director</a></li>
+                                <!-- <li><a data-toggle="tab" href="#business-su">Business</a></li> -->
+                            </ul>
+                            <div class="tab-content tab-custom-st tab-ctn-right">
+                                <div id="sale-su" class="tab-pane fade in active">
+                                    <div class="tab-ctn">
+                                        <div class="input-boxes">
+                                            <div class="input-box">
+                                                <i class="fas fa-id-badge icon-sale"></i>
+                                                <input type="text" id="first-name-sale" class="input-sale"
+                                                    placeholder="Enter your first name" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-id-badge icon-sale"></i>
+                                                <input type="text" id="last-name-sale" class="input-sale"
+                                                    placeholder="Enter your last name" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-envelope icon-sale"></i>
+                                                <input type="email" id="email-sale" class="input-sale"
+                                                    placeholder="Enter your email" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-phone-alt icon-sale"></i>
+                                                <input type="text" id="phone-number-sale" class="input-sale"
+                                                    placeholder="Enter your phone number" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-map-marker-alt icon-sale"></i>
+                                                <input type="text" id="address-sale" class="input-sale"
+                                                    placeholder="Enter your address" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-lock icon-sale"></i>
+                                                <input type="password" id="password-sale" class="input-sale"
+                                                    placeholder="Enter your password" required>
+                                            </div>
+                                            <div class="g-recaptcha" data-sitekey="6Le0zQoqAAAAAEuMBHci1hCfcPxV5ZUTdkmTHivY"></div>
+                                            <div class="button input-box" id="sb-sale">
+                                                <input type="submit" class="btn-sale" value="Submit">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div id="business-su" class="tab-pane fade">
+                                    <div class="tab-ctn">
+                                        <div class="input-boxes">
+                                            <div class="input-box">
+                                                <i class="fas fa-id-badge icon-sale"></i>
+                                                <input type="text" id="name-business" class="input-business"
+                                                    placeholder="Enter name of business" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-id-badge icon-sale"></i>
+                                                <input type="text" id="full-name-representative" class="input-business"
+                                                    placeholder="Enter full name of the representative" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-envelope icon-sale"></i>
+                                                <input type="email" id="email-business" class="input-business"
+                                                    placeholder="Enter business email" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-phone-alt icon-sale"></i>
+                                                <input type="text" id="phone-number-business" class="input-business"
+                                                    placeholder="Enter business phone number" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-map-marker-alt icon-sale"></i>
+                                                <input type="text" id="address-business" class="input-business"
+                                                    placeholder="Enter business address" required>
+                                            </div>
+                                            <div class="input-box">
+                                                <i class="fas fa-lock icon-sale"></i>
+                                                <input type="password" id="password-business" class="input-business"
+                                                    placeholder="Enter business password" required>
+                                            </div>
+                                            <div class="button input-box" id="sb-business">
+                                                <input type="submit" class="btn-sale" value="Submit">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text sign-up-text">Already have an account? <a href="/login_sale"><label class="icon-sale">Login now</label></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="/assets/js/sweetalert.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+
+        $('#sb-sale').click(function () {
+
+            var jsonData = {
+                first_name: $("#first-name-sale").val(),
+                last_name: $("#last-name-sale").val(),
+                email: $("#email-sale").val(),
+                phone_number: $("#phone-number-sale").val(),
+                address: $("#address-sale").val(),
+                password: $("#password-sale").val(),
+                recaptcha_response: grecaptcha.getResponse()
+            };
+
+            $.ajax({
+                url: '/signup/sale',
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify(jsonData),
+
+                success: function (response) {
+                    if (response === "Success") {
+                        swal({
+                            title: 'Successfully !',
+                            text: 'Create account successfully',
+                            icon: 'success',
+                            button: {
+                                text: "Close",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary"
+                            }
+                        }).then((value) => {
+                            if (value) {
+                                window.location.href = "/login_sale";
+                            }
+                        });
+                        //$('.input-sale').val("");
+                    } else {
+                        swal({
+                            title: 'Error !',
+                            text: response,
+                            icon: 'warning',
+                            button: {
+                                text: "Close",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-danger"
+                            }
+                        })
+                        grecaptcha.reset();
+                    }
+
+                },
+                error: function () {
+                    console.log('Error occurred while retrieving options');
+                }
+            });
+        });
+
+        // $('#sb-business').click(function () {
+
+        //     var jsonData = {
+        //         name_business: $("#name-business").val(),
+        //         full_name_representative: $("#full-name-representative").val(),
+        //         email: $("#email-business").val(),
+        //         phone_number: $("#phone-number-business").val(),
+        //         address: $("#address-business").val(),
+        //         password: $("#password-business").val(),
+
+        //     };
+
+        //     $.ajax({
+        //         url: '/signup/business',
+        //         method: 'POST',
+        //         contentType: "application/json",
+        //         data: JSON.stringify(jsonData),
+
+        //         success: function (response) {
+        //             if (response === "Success") {
+        //                 swal({
+        //                     title: 'Successfully !',
+        //                     text: 'Create account successfully',
+        //                     icon: 'success',
+        //                     button: {
+        //                         text: "Close",
+        //                         value: true,
+        //                         visible: true,
+        //                         className: "btn btn-primary"
+        //                     }
+        //                 })
+        //                 $('.input-business').val("");
+        //             } else {
+        //                 swal({
+        //                     title: 'Error !',
+        //                     text: response,
+        //                     icon: 'warning',
+        //                     button: {
+        //                         text: "Close",
+        //                         value: true,
+        //                         visible: true,
+        //                         className: "btn btn-danger"
+        //                     }
+        //                 })
+        //             }
+
+        //         },
+        //         error: function () {
+        //             console.log('Error occurred while retrieving options');
+        //         }
+        //     });
+        // });
+    </script>
+
+    <script src="/assets/js/bootstrap.min.js"></script>
+</body>
+
+</html>

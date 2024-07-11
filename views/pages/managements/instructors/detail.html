@@ -1,0 +1,381 @@
+<div class="dialog-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <div class="dialog-inner mh-490">
+                    <div class="contact-hd dialog-hd">
+                        <h5 class="tag-a">Instructor Information</h5>
+                        <br>
+                        <table class="table table-striped">
+                            <tbody>
+                            <tr>
+                                <th class="sorting_1">First Name</th>
+                                <td class="pdf-30">{{.User.FirstName}}</td>
+                            </tr>
+                            <tr>
+                                <th class="sorting_1">Last Name</th>
+                                <td class="pdf-30">{{.User.LastName}}</td>
+                            </tr>
+                            <tr>
+                                <th class="sorting_1">Email</th>
+                                <td class="pdf-30">{{.User.Email}}</td>
+                            </tr>
+                            <tr>
+                                <th class="sorting_1">Phone Number</th>
+                                <td class="pdf-30">{{.User.PhoneNumber}}</td>
+                            </tr>
+                            <tr>
+                                <th class="sorting_1">Address</th>
+                                <td class="pdf-30">{{.User.Address}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                <div class="dialog-inner sm-res-mg-t-30 mh-490">
+                    <div class="data-table-list" style="padding: 0;">
+
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-9 col-sm-12">
+                                <h5 class="tag-a">Study Programs</h5>
+                            </div>
+                            <div class="col-lg-3 col-sm-12 t-right">
+                                <button class="btn btn-green btn-reco-mg btn-button-mg waves-effect">
+                                    <a href="/managements/instructors/create/study-program/{{.User.UserID}}" class="btn-green">
+                                              <span><i class="fas fa-plus"></i>
+                                            </span> Add
+                                    </a>
+
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-study-programs" class="table table-striped dataTable c-f-dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id">STT</th>
+                                        <th>Image</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th class="t-ac">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="dialog-inner mg-t-30 mh-250">
+                    <div class="data-table-list" style="padding: 0;">
+                        <div class="basic-tb-hd row">
+                            <div class="col-lg-10 col-sm-12">
+                                <h5 class="tag-a">Courses</h5>
+                            </div>
+                            <div class="col-lg-2 col-sm-12 t-right">
+                                <button class="btn btn-green btn-reco-mg btn-button-mg waves-effect">
+                                    <a href="/managements/instructors/create/course/{{.User.UserID}}" class="btn-green">
+                                          <span><i class="fas fa-plus"></i>
+                                        </span> Add Courses
+                                    </a>
+
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="dataTables_wrapper">
+                                <table id="table-courses" class="table table-striped dataTable c-f-dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-id-9">STT</th>
+                                        <th>Name</th>
+                                        <th>Study Program</th>
+                                        <th>Description</th>
+                                        <th class="t-ac">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var UserID = {{.User.UserID}};
+        $.fn.dataTable.ext.errMode = 'none';
+        var table_study_programs = $('#table-study-programs').DataTable({
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url: '/managements/instructors/api/study-programs/'+UserID,
+                type: 'POST',
+                "contentType": "application/json",
+                "data": function (d) {
+                    return JSON.stringify(d);
+                }
+
+            },
+            columns: [
+                {
+                    "data": null,
+                    "searchable": false,
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return table_study_programs.rows().count() > 0 ?
+                            meta.row + meta.settings._iDisplayStart + 1 : 0;
+                    }
+                },
+                {
+                    data: 'StudyProgram.image',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+
+                            return `<img src="/assets/images/study_programs/${data}" width="100" height="80">`;
+
+
+                        }
+                        return data;
+                    }
+                },
+                {data: 'StudyProgram.title'},
+                {data: 'StudyProgram.description'},
+                {
+                    data: 'study_program_user_id',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+                            return `<div class="row" style="margin:0;">
+                                          <div class="col-sm-12 t-center">
+                                            <a>
+                                              <i class="fas fa-trash cl-del item-course" data-item-course="${data}" aria-hidden="true" title="Delete"></i>
+                                            </a>
+                                          </div>
+                                        </div>`;
+
+
+                        }
+                        return data;
+                    }
+                }
+            ],
+
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart;
+                api.column(0, {page: 'current'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            },
+            "ordering": true,
+            lengthMenu: [[5, 10], ['5', '10']],
+        });
+
+        $('#table-study-programs tbody').on('click', '.item-course', function() {
+            var StudyProgramID = $(this).data('item-course');
+            swal({
+                title: 'Confirm Delete ?',
+                icon: 'warning',
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        className: "btn btn-danger",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary",
+                        closeModal: true
+                    }
+                }
+            }).then((result=>{
+                if(result){
+                    $.ajax({
+                        url: '/managements/instructors/study-programs/' + StudyProgramID,
+                        type: 'DELETE',
+                        success: function (response) {
+                            if(response === "Success"){
+                                swal({
+                                    title: 'Successfully !',
+                                    icon: 'success',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary"
+                                    }
+                                })
+                                table_study_programs.ajax.reload();
+                                table_courses.ajax.reload();
+                            }else {
+                                swal({
+                                    title: 'Error !',
+                                    text: response,
+                                    icon: 'warning',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-danger"
+                                    }
+                                })
+                            }
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error deleting row:", status, error);
+                        }
+                    });
+                }
+
+            }))
+
+        });
+
+        var table_courses = $('#table-courses').DataTable({
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url: '/managements/instructors/api/courses/'+UserID,
+                type: 'POST',
+                "contentType": "application/json",
+                "data": function (d) {
+                    return JSON.stringify(d);
+                }
+
+            },
+            columns: [
+                {
+                    "data": null,
+                    "searchable": false,
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return table_courses.rows().count() > 0 ?
+                            meta.row + meta.settings._iDisplayStart + 1 : 0;
+                    }
+                },
+                {data: 'Course.name'},
+                {data: 'Course.StudyProgram.title'},
+                {data: 'Course.description'},
+                {
+                    data: 'course_user_id',
+                    render: function (data, type, full, row) {
+                        if (type === 'display') {
+
+                            return `<div class="row" style="margin:0;">
+                                          <div class="col-sm-6 t-center">
+                                            <a href="/managements/instructors/edit/course/${data}">
+                                              <i class="fas fa-edit cl-ed" aria-hidden="true" title="Edit"></i>
+                                            </a>
+                                          </div>
+                                          <div class="col-sm-6 t-center">
+                                            <a>
+                                              <i class="fas fa-trash cl-del item-delete-course" data-delete-course="${data}" aria-hidden="true" title="Delete"></i>
+                                            </a>
+                                          </div>
+                                        </div>`;
+
+
+                        }
+                        return data;
+                    }
+                }
+            ],
+
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart;
+                api.column(0, {page: 'current'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            },
+            "ordering": true,
+            lengthMenu: [[5, 10], ['5', '10']],
+
+        });
+
+        $('#table-courses tbody').on('click', '.item-delete-course', function() {
+            var CourseID = $(this).data('delete-course');
+            swal({
+                title: 'Confirm Delete ?',
+                icon: 'warning',
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        className: "btn btn-danger",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary",
+                        closeModal: true
+                    }
+                }
+            }).then((result=>{
+                if(result){
+                    $.ajax({
+                        url: '/managements/instructors/courses/' + CourseID,
+                        type: 'DELETE',
+                        success: function (response) {
+                            if(response === "Success"){
+                                swal({
+                                    title: 'Successfully !',
+                                    icon: 'success',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary"
+                                    }
+                                })
+                                table_courses.ajax.reload();
+                            }else {
+                                swal({
+                                    title: 'Error !',
+                                    text: response,
+                                    icon: 'warning',
+                                    button: {
+                                        text: "Close",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-danger"
+                                    }
+                                })
+                            }
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error deleting row:", status, error);
+                        }
+                    });
+                }
+
+            }))
+
+        });
+
+    });
+</script>

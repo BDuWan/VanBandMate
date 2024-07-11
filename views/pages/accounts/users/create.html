@@ -1,0 +1,168 @@
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+                    <div class="basic-tb-hd">
+                        <h2>Create User</h2>
+                        <!--                        <p>Text Inputs with different sizes by height and column.</p>-->
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-example-wrap">
+                                <div class="form-example-int form-horizental">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Type User</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <div class="bootstrap-select">
+                                                        <select class="selectpicker" name="type_user_id" id="ip-type-user">
+                                                            {{ range $row := .TypeUsers }}
+                                                            <option value="{{$row.TypeUserID}}">{{$row.Name}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Role</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <div class="bootstrap-select">
+                                                        <select class="selectpicker" name="role_id" id="ip-role">
+                                                            {{ range $row := .Roles }}
+                                                            <option value="{{$row.RoleID}}">{{$row.Name}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm" id="lb-first-name">First Name</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter your first name" id="ip-first-name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm" id="lb-last-name">Last Name</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter your last name" id="ip-last-name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Email</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter your email" id="ip-email">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Phone Number</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter your phone number" id="ip-phone-number">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Address</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter your address" id="ip-address">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15" id="form-referral-code">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Referral Code</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="text" class="form-control input-sm ip-u" placeholder="Enter your referral code" id="ip-referral-code">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int form-horizental mg-t-15">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                                <label class="hrzn-fm">Password</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                                <div class="nk-int-st">
+                                                    <input type="password" class="form-control ip-u" placeholder="Enter your password" id="ip-password">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-example-int mg-t-15">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                                        </div>
+                                        <div class="col-lg-8 col-md-7 col-sm-7 col-xs-12">
+                                            <button class="btn btn-success notika-btn-success waves-effect" id="btn-submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/web/cr-acc-users.js"></script>

@@ -1,250 +1,234 @@
 <!DOCTYPE html>
-<!-- Created by CodingLab |www.youtube.com/c/CodingLabYT-->
-<html lang="en" dir="ltr">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <!--<title> Login and Registration Form in HTML & CSS | CodingLab </title>-->
-    <title>Useful Knowledge</title>
-    <link rel="shortcut icon" href="/assets/images/Useful_Knowledge.png">
-    <link rel="stylesheet" href="/assets/css/style-login.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Forms - Azzara Bootstrap 4 Admin Dashboard</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="/assets/azzara/img/icon.ico" type="image/x-icon"/>
 
-    <!-- Fontawesome CDN Link -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Fonts and icons -->
+    <script src="/assets/azzara/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Open+Sans:300,400,600,700"]},
+            custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['/assets/azzara/css/fonts.css']},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/assets/azzara/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/azzara/css/azzara.min.css">
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="/assets/azzara/css/demo.css">
 </head>
-
 <body>
-    <div class="container">
-        <div class="forms">
-            <div class="form-content">
-                <div class="signup-form">
-                    <div><a style="font-size: 20px;font-weight: bold;color:#7939db;">Welcome To Access My Courses</a></div>
-                    <br>
-                    <div class="title">Register</div>
-                    <div class="widget-tabs-int tab-ctm-wp">
-                        <div class="widget-tabs-list">
-                            <ul class="nav nav-tabs tab-nav-right">
-                                <li class="active"><a data-toggle="tab" href="#student-su">Student</a></li>
-                                <li><a data-toggle="tab" href="#instructor-su">Instructor</a></li>
-                            </ul>
-                            <div class="tab-content tab-custom-st tab-ctn-right">
-                                <div id="student-su" class="tab-pane fade in active">
-                                    <div class="tab-ctn">
-                                        <div class="input-boxes">
-                                            <div class="input-box">
-                                                <i class="fas fa-id-badge"></i>
-                                                <input type="text" id="first-name-stu" class="input-stu"
-                                                    placeholder="Enter your first name" required>
+<div>
+    <div class="content">
+        <div class="page-inner">
+            <div class="row">
+                <div class="wizard-container wizard-round col-md-6">
+                    <div class="wizard-header text-center">
+                        <img src="/assets/images/logo_van_band_mate_png.png" alt="" style="width: 25%;">
+                        <h3 class="wizard-title"><b>Đăng kí</b> Tài khoản mới</h3>
+                    </div>
+                    <form>
+                        <div class="wizard-body">
+                            <div class="row">
+
+                                <ul class="wizard-menu nav nav-pills nav-primary">
+                                    <li class="step" style="width: 33.3333%;">
+                                        <a class="nav-link active" href="#about" data-toggle="tab" aria-expanded="true"><i class="fa fa-user mr-0"></i> Thông tin</a>
+                                    </li>
+                                    <li class="step" style="width: 33.3333%;">
+                                        <a class="nav-link" href="#account" data-toggle="tab"><i class="fa fa-file mr-2"></i> Tài khoản</a>
+                                    </li>
+                                    <li class="step" style="width: 33.3333%;">
+                                        <a class="nav-link" href="#address" data-toggle="tab"><i class="fa fa-map-signs mr-2"></i> Địa chỉ</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br><br>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="about">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h4 class="info-text">Nhập thông tin cá nhân của bạn</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Họ và tên đệm:</label>
+                                                <input name="lastname" type="text" class="form-control" 14px>
                                             </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-id-badge"></i>
-                                                <input type="text" id="last-name-stu" class="input-stu"
-                                                    placeholder="Enter your last name" required>
+
+                                            <div class="form-group">
+                                                <label>Tên :</label>
+                                                <input name="firstname" type="text" class="form-control" 14px>
                                             </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-envelope"></i>
-                                                <input type="email" id="email-stu" class="input-stu"
-                                                    placeholder="Enter your email" required>
-                                            </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-phone-alt"></i>
-                                                <input type="text" id="phone-number-stu" class="input-stu"
-                                                    placeholder="Enter your phone number" required>
-                                            </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                                <input type="text" id="address-stu" class="input-stu"
-                                                    placeholder="Enter your address" required>
-                                            </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-lock"></i>
-                                                <input type="password" id="password-stu" class="input-stu"
-                                                    placeholder="Enter your password" required>
-                                            </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-qrcode"></i>
-                                                <input type="text" id="referral-code-stu" class="input-stu"
-                                                    placeholder="Enter your referral code" required>
-                                            </div>
-                                            <div class="g-recaptcha" data-sitekey="6Le0zQoqAAAAAEuMBHci1hCfcPxV5ZUTdkmTHivY"></div>
-                                            <div class="button input-box" id="sb-student">
-                                                <input type="submit" value="Submit">
+                                        </div>
+
+                                        <div class="col-md-6">
+
+                                                <div class="form-group">
+                                                    <label>Ngày sinh</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="datepicker" name="datepicker" 14px>
+                                                        <div class="input-group-append">
+														<span class="input-group-text">
+															<i class="fa fa-calendar-check"></i>
+														</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            <div class="form-group">
+                                                <label>Ảnh đại diện:</label>
+                                                <div class="input-file input-file-image">
+                                                    <img class="img-upload-preview img-circle" width="100" height="100" src="http://placehold.it/100x100" alt="preview">
+                                                    <input type="file" class="form-control form-control-file" id="uploadImg" name="uploadImg" accept="image/*">
+                                                    <label for="uploadImg" class=" label-input-file btn btn-primary">Upload a Image</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="instructor-su" class="tab-pane fade">
-                                    <div class="tab-ctn">
-                                        <div class="input-boxes">
-                                            <div class="input-box">
-                                                <i class="fas fa-id-badge"></i>
-                                                <input type="text" id="first-name-instr" class="input-instr"
-                                                    placeholder="Enter your first name" required>
+                                <div class="tab-pane" id="account">
+                                    <h4 class="info-text">Thiết lập tài khoản </h4>
+                                    <div class="row">
+                                        <div class="col-md-8 ml-auto mr-auto">
+                                            <div class="form-group">
+                                                <label>Email :</label>
+                                                <input type="email" name="email" class="form-control" 14px>
                                             </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-id-badge"></i>
-                                                <input type="text" id="last-name-instr" class="input-instr"
-                                                    placeholder="Enter your last name" required>
+                                            <div class="form-group">
+                                                <label>Mật khẩu :</label>
+                                                <input type="password" name="password" class="form-control" 14px>
                                             </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-envelope"></i>
-                                                <input type="email" id="email-instr" class="input-instr"
-                                                    placeholder="Enter your email" required>
+                                            <div class="form-group">
+                                                <label>Xác nhận mật khẩu :</label>
+                                                <input type="password" name="confirmpassword" class="form-control" 14px>
                                             </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-phone-alt"></i>
-                                                <input type="text" id="phone-number-instr" class="input-instr"
-                                                    placeholder="Enter your phone number" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="address">
+                                    <h4 class="info-text">Nhập địa chỉ của bạn</h4>
+                                    <div class="row">
+                                        <div class="col-sm-8 ml-auto mr-auto">
+                                            <div class="form-group">
+                                                <label>Tỉnh/Thành phố</label>
+                                                <div class="select2-input">
+                                                    <select id="basic" name="basic" class="form-control" style="width: 100%">
+                                                        <option value="">&nbsp;</option>
+                                                            <option value="AK">Alaska</option>
+                                                            <option value="HI">Hawaii</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                                <input type="text" id="address-instr" class="input-instr"
-                                                    placeholder="Enter your address" required>
-                                            </div>
-                                            <div class="input-box">
-                                                <i class="fas fa-lock"></i>
-                                                <input type="password" id="password-instr" class="input-instr"
-                                                    placeholder="Enter your password" required>
-                                            </div>
-                                            <div class="g-recaptcha" id="recaptcha2" data-sitekey="6Le0zQoqAAAAAEuMBHci1hCfcPxV5ZUTdkmTHivY" id="recaptcha2"></div>
-                                            <div class="button input-box" id="sb-instructor">
-                                                <input type="submit" value="Submit">
+
+                                            <div class="form-group">
+                                                <label>Address</label>
+
+                                                <textarea name="address" rows="3" class="form-control" 14px></textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="text sign-up-text">Already have an account? <a href="/login"><label>Login now</label></a></div>
+
+                        <div class="wizard-action">
+                            <div class="pull-left">
+                                <input type="button" class="btn btn-previous btn-fill btn-default" name="previous" value="Previous">
+                            </div>
+                            <div class="pull-right">
+                                <input type="button" class="btn btn-next btn-danger" name="next" value="Next">
+                                <input type="button" class="btn btn-finish btn-danger" name="finish" value="Finish" style="display: none;">
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <script src="/assets/js/vendor/jquery-1.12.4.min.js"></script>
-    <script src="/assets/js/sweetalert.min.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script>
-        $('#sb-student').click(function () {
-            const jsonData = {
-                first_name: $("#first-name-stu").val(),
-                last_name: $("#last-name-stu").val(),
-                email: $("#email-stu").val(),
-                phone_number: $("#phone-number-stu").val(),
-                address: $("#address-stu").val(),
-                password: $("#password-stu").val(),
-                referral_code: $("#referral-code-stu").val(),
-                recaptcha_response: grecaptcha.getResponse(0)
-            };
+</div>
+<!--   Core JS Files   -->
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+<script src="/assets/azzara/js/core/popper.min.js"></script>
+<script src="/assets/azzara/js/core/bootstrap.min.js"></script>
+<!-- jQuery UI -->
+<script src="/assets/azzara/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="/assets/azzara/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+<!-- Moment JS -->
+<script src="/assets/azzara/js/plugin/moment/moment.min.js"></script>
+<!-- Bootstrap Toggle -->
+<script src="/assets/azzara/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+<!-- jQuery Scrollbar -->
+<script src="/assets/azzara/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+<!-- DateTimePicker -->
+<script src="/assets/azzara/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
+<script src="/assets/azzara/js/plugin/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+<!-- Select2 -->
+<script src="/assets/azzara/js/plugin/select2/select2.full.min.js"></script>
+<!-- Bootstrap Wizard -->
+<script src="/assets/azzara/js/plugin/bootstrap-wizard/bootstrapwizard.js"></script>
+<!-- jQuery Validation -->
+<script src="/assets/azzara/js/plugin/jquery.validate/jquery.validate.min.js"></script>
+<!-- Azzara JS -->
+<script src="/assets/azzara/js/ready.min.js"></script>
+<!-- Azzara DEMO methods, don't include it in your project! -->
+<script src="/assets/azzara/js/setting-demo.js"></script>
+<script>
+    // Code for the Validator
+    var $validator = $('.wizard-container form').validate({
+        validClass : "success",
+        highlight: function(element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function(element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+</script>
+<script>
+    $('#datepicker').datetimepicker({
+        format: 'DD/MM/YYYY',
+    });
 
-            $.ajax({
-                url: '/signup/stu',
-                method: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify(jsonData),
+    $('#basic').select2({
+        theme: "bootstrap"
+    });
 
-                success: function (response) {
-                    if (response === "Success") {
-                        swal({
-                            title: 'Successfully !',
-                            text: 'Create account successfully',
-                            icon: 'success',
-                            button: {
-                                text: "Close",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-primary"
-                            }
-                        }).then((value) => {
-                            if (value) {
-                                window.location.href = "/login";
-                            }
-                        });
-                        //$('.input-stu').val("");
-                    } else {
-                        swal({
-                            title: 'Error !',
-                            text: response,
-                            icon: 'warning',
-                            button: {
-                                text: "Close",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-danger"
-                            }
-                        })
-                        grecaptcha.reset(0);
-                    }
+    $('#multiple').select2({
+        theme: "bootstrap"
+    });
 
-                },
-                error: function () {
-                    console.log('Error occurred while retrieving options');
-                }
-            });
+    $('#multiple-states').select2({
+        theme: "bootstrap"
+    });
+
+    $('#tagsinput').tagsinput({
+        tagClass: 'badge-info'
+    });
+
+    $( function() {
+        $( "#slider" ).slider({
+            range: "min",
+            max: 100,
+            value: 40,
         });
-
-        $('#sb-instructor').click(function () {
-            var jsonData = {
-                first_name: $("#first-name-instr").val(),
-                last_name: $("#last-name-instr").val(),
-                email: $("#email-instr").val(),
-                phone_number: $("#phone-number-instr").val(),
-                address: $("#address-instr").val(),
-                password: $("#password-instr").val(),
-                referral_code: $("#referral-code-instr").val(),
-                recaptcha_response: grecaptcha.getResponse(1)
-            };
-
-            $.ajax({
-                url: '/signup/instr',
-                method: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify(jsonData),
-
-                success: function (response) {
-                    if (response === "Success") {
-                        swal({
-                            title: 'Successfully !',
-                            text: 'Create account successfully',
-                            icon: 'success',
-                            button: {
-                                text: "Close",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-primary"
-                            }
-                        }).then((value) => {
-                            if (value) {
-                                window.location.href = "/login";
-                            }
-                        });
-                        //$('.input-instr').val("");
-                    } else {
-                        swal({
-                            title: 'Error !',
-                            text: response,
-                            icon: 'warning',
-                            button: {
-                                text: "Close",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-danger"
-                            }
-                        })
-                        grecaptcha.reset(1);
-                    }
-                },
-                error: function () {
-                    console.log('Error occurred while retrieving options');
-                }
-            });
+        $( "#slider-range" ).slider({
+            range: true,
+            min: 0,
+            max: 500,
+            values: [ 75, 300 ]
         });
-    </script>
-
-    <script src="/assets/js/bootstrap.min.js"></script>
+    } );
+</script>
+<script type="text/javascript" src="/assets/azzara/js/themera.js"></script>
 </body>
-
 </html>

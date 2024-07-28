@@ -157,14 +157,10 @@ func GenData() {
 	}
 
 	user := models.User{
-		TypeUserID:  1,
-		CodeUser:    "ADM0001",
 		FirstName:   "Administrators",
 		RoleID:      1,
 		Email:       "Admin@gmail.com",
 		PhoneNumber: "0123456789",
-		Address:     "California",
-		Username:    "Administrators",
 		Password:    utils.HashingPassword("Admin@#$2024"),
 		State:       true,
 		Verify:      true,

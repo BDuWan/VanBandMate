@@ -24,12 +24,12 @@ func GetAccUsers(c *fiber.Ctx) error {
 
 func APIPostAccUserAdmin(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: APIPostAccUserAdmin")
-	var users []models.User
+	var users []models.User1
 	var query *gorm.DB
 	var req structs.ReqBody
 	DB := initializers.DB
 
-	query = DB.Model(&models.User{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 1)
+	query = DB.Model(&models.User1{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 1)
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -98,12 +98,12 @@ func APIPostAccUserAdmin(c *fiber.Ctx) error {
 
 func APIPostAccUserSales(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: APIPostAccUserSales")
-	var users []models.User
+	var users []models.User1
 	var query *gorm.DB
 	var req structs.ReqBody
 	DB := initializers.DB
 
-	query = DB.Model(&models.User{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 2)
+	query = DB.Model(&models.User1{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 2)
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -172,12 +172,12 @@ func APIPostAccUserSales(c *fiber.Ctx) error {
 
 func APIPostAccUserBusiness(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: APIPostAccUserBusiness")
-	var users []models.User
+	var users []models.User1
 	var query *gorm.DB
 	var req structs.ReqBody
 	DB := initializers.DB
 
-	query = DB.Model(&models.User{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 3)
+	query = DB.Model(&models.User1{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 3)
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -246,12 +246,12 @@ func APIPostAccUserBusiness(c *fiber.Ctx) error {
 
 func APIPostAccUserInstructors(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: APIPostAccUserInstructors")
-	var users []models.User
+	var users []models.User1
 	var query *gorm.DB
 	var req structs.ReqBody
 	DB := initializers.DB
 
-	query = DB.Model(&models.User{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 4)
+	query = DB.Model(&models.User1{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 4)
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -320,12 +320,12 @@ func APIPostAccUserInstructors(c *fiber.Ctx) error {
 
 func APIPostAccUserStudents(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: APIPostAccUserStudents")
-	var users []models.User
+	var users []models.User1
 	var query *gorm.DB
 	var req structs.ReqBody
 	DB := initializers.DB
 
-	query = DB.Model(&models.User{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 5)
+	query = DB.Model(&models.User1{}).Joins("Role").Where("users.deleted", false).Where("users.type_user_id", 5)
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -415,13 +415,13 @@ func GetAccCreateUser(c *fiber.Ctx) error {
 func PostAccCreateUser(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: PostAccCreateUser")
 	var user structs.AccUser
-	var account models.User
+	var account models.User1
 	var codeUser string
 	var validator = "ok"
 
 	DB := initializers.DB
 	if err := c.BodyParser(&user); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User1 Fail")
 	}
 
 	userLogin := GetSessionUser(c)
@@ -434,7 +434,7 @@ func PostAccCreateUser(c *fiber.Ctx) error {
 		return c.JSON(validator)
 	}
 
-	if err := DB.Where("email", user.Email).First(&models.User{}).Error; err != nil {
+	if err := DB.Where("email", user.Email).First(&models.User1{}).Error; err != nil {
 		account.TypeUserID = user.TypeUserID
 		account.FirstName = user.FirstName
 		account.LastName = user.LastName
@@ -456,7 +456,7 @@ func PostAccCreateUser(c *fiber.Ctx) error {
 		account.UpdatedAt = time.Now()
 		account.CreatedBy = userLogin.UserID
 
-		var checkReferralCode models.User
+		var checkReferralCode models.User1
 		if user.ReferralCode != "" {
 			if err := DB.Where("type_user_id = ? or type_user_id = ?", 2, 3).Where(
 				"code_user", user.ReferralCode).First(&checkReferralCode).Error; err != nil {
@@ -522,7 +522,7 @@ func PostAccCreateUser(c *fiber.Ctx) error {
 
 func DeleteAccUserID(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: DeleteAccUserID")
-	//var user models.User
+	//var user models.User1
 	DB := initializers.DB
 	userId := c.Params("id")
 
@@ -532,7 +532,7 @@ func DeleteAccUserID(c *fiber.Ctx) error {
 
 	}
 	if idUser < 2 {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: User > 1")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: User1 > 1")
 
 		return c.JSON("Can not delete this user.")
 	}
@@ -548,7 +548,7 @@ func DeleteAccUserID(c *fiber.Ctx) error {
 	//user.DeletedBy = GetSessionUser(c).UserID
 	//user.DeletedAt = time.Now()
 
-	if err := DB.Where("user_id", userId).Delete(&models.User{}).Error; err != nil {
+	if err := DB.Where("user_id", userId).Delete(&models.User1{}).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not update user when delete:  " + err.Error())
 		return c.JSON("Can not delete this user.")
 	}
@@ -558,7 +558,7 @@ func DeleteAccUserID(c *fiber.Ctx) error {
 
 func GetAccUserID(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetAccUserID")
-	var user models.User
+	var user models.User1
 	var roles []models.Role
 	var typeUsers []models.TypeUser
 
@@ -592,7 +592,7 @@ func GetAccUserID(c *fiber.Ctx) error {
 	//}
 
 	return c.Render("pages/accounts/users/edit", fiber.Map{
-		"User": user,
+		"User1": user,
 		//"data":       data,
 		"Roles": roles,
 		//"RoleID":     user.RoleID,
@@ -605,17 +605,17 @@ func GetAccUserID(c *fiber.Ctx) error {
 func UpdateAccUserID(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: UpdateAccUserID")
 	var user structs.AccUser
-	var account models.User
+	var account models.User1
 	DB := initializers.DB
 
 	userId := c.Params("id")
 
 	if err := c.BodyParser(&user); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User1 Fail")
 	}
 
 	if err := DB.Where("user_id", userId).First(&account).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User1 Fail")
 		return c.JSON("Can not found account")
 	}
 
@@ -643,7 +643,7 @@ func UpdateAccUserID(c *fiber.Ctx) error {
 
 func UpdateAccStateUser(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: UpdateAccStateUser")
-	var user models.User
+	var user models.User1
 	DB := initializers.DB
 	form := new(structs.FormStateUser)
 	if err := c.BodyParser(form); err != nil {

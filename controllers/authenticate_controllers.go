@@ -53,8 +53,8 @@ func CheckPermission(permissionName string, c *fiber.Ctx) bool {
 
 }
 
-func GetSessionUser(c *fiber.Ctx) models.User {
-	var user models.User
+func GetSessionUser(c *fiber.Ctx) models.User1 {
+	var user models.User1
 	var rolPer []models.RolePermission
 	sess, _ := SessAuth.Get(c)
 	email := sess.Get("email")

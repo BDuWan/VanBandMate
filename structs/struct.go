@@ -17,6 +17,23 @@ type User struct {
 	RecaptchaResponse      string `json:"recaptcha_response"`
 }
 
+type SignUpForm struct {
+	FirstName         string `form:"first_name"`
+	LastName          string `form:"last_name"`
+	PhoneNumber       string `form:"phone_number"`
+	Image             string `form:"image"`
+	RoleID            int    `form:"role_id"`
+	Email             string `form:"email"`
+	Password          string `form:"password"`
+	ConfirmPassword   string `form:"confirm_password"`
+	ProvinceCode      string `form:"province_code"`
+	DistrictCode      string `form:"district_code"`
+	WardCode          string `form:"ward_code"`
+	AddressDetail     string `form:"address_detail"`
+	DateOfBirth       string `form:"date_of_birth"`
+	RecaptchaResponse string `form:"recaptcha_response"`
+}
+
 type AccUser struct {
 	FirstName              string `json:"first_name"`
 	LastName               string `json:"last_name"`

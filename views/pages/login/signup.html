@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Forms - Azzara Bootstrap 4 Admin Dashboard</title>
@@ -17,145 +17,175 @@
             }
         });
     </script>
+    </style>
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="/assets/azzara/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/azzara/css/azzara.min.css">
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="/assets/azzara/css/demo.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-<div>
-    <div class="content">
-        <div class="page-inner">
-            <div class="row">
-                <div class="wizard-container wizard-round col-md-6">
-                    <div class="wizard-header text-center">
-                        <img src="/assets/images/logo_van_band_mate_png.png" alt="" style="width: 25%;">
-                        <h3 class="wizard-title"><b>Đăng kí</b> Tài khoản mới</h3>
-                    </div>
-                    <form>
-                        <div class="wizard-body">
-                            <div class="row">
+<div class="content">
+    <div class="page-inner">
+        <div class="row">
+            <div class="wizard-container wizard-round col-md-6">
+                <div class="wizard-header text-center">
+                    <img src="/assets/images/logo_van_band_mate_png.png" alt="" style="width: 25%;">
+                    <h3 class="wizard-title"><b>Đăng kí</b> Tài khoản mới</h3>
+                </div>
+                <form>
+                    <div class="wizard-body">
+                        <div class="row">
 
-                                <ul class="wizard-menu nav nav-pills nav-primary">
-                                    <li class="step" style="width: 33.3333%;">
-                                        <a class="nav-link active" href="#about" data-toggle="tab" aria-expanded="true"><i class="fa fa-user mr-0"></i> Thông tin</a>
-                                    </li>
-                                    <li class="step" style="width: 33.3333%;">
-                                        <a class="nav-link" href="#account" data-toggle="tab"><i class="fa fa-file mr-2"></i> Tài khoản</a>
-                                    </li>
-                                    <li class="step" style="width: 33.3333%;">
-                                        <a class="nav-link" href="#address" data-toggle="tab"><i class="fa fa-map-signs mr-2"></i> Địa chỉ</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <br><br>
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="about">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h4 class="info-text">Nhập thông tin cá nhân của bạn</h4>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Họ và tên đệm:</label>
-                                                <input name="lastname" type="text" class="form-control" 14px>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Tên :</label>
-                                                <input name="firstname" type="text" class="form-control" 14px>
-                                            </div>
+                            <ul class="wizard-menu nav nav-pills nav-primary">
+                                <li class="step" style="width: 33.3333%;">
+                                    <a class="nav-link active" href="#about" data-toggle="tab" aria-expanded="true"><i class="fa fa-user mr-0"></i> Thông tin</a>
+                                </li>
+                                <li class="step" style="width: 33.3333%;">
+                                    <a class="nav-link" href="#account" data-toggle="tab"><i class="fa fa-file mr-2"></i> Tài khoản</a>
+                                </li>
+                                <li class="step" style="width: 33.3333%;">
+                                    <a class="nav-link" href="#address" data-toggle="tab"><i class="fa fa-map-signs mr-2"></i> Địa chỉ</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <br><br>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="about">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4 class="info-text">Nhập thông tin cá nhân của bạn</h4>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Họ và tên đệm:</label>
+                                            <input name="lastname" type="text" class="form-control" 14px>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Tên :</label>
+                                            <input name="firstname" type="text" class="form-control" 14px>
+                                        </div>
 
-                                                <div class="form-group">
-                                                    <label>Ngày sinh</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="datepicker" name="datepicker" 14px>
-                                                        <div class="input-group-append">
-														<span class="input-group-text">
-															<i class="fa fa-calendar-check"></i>
-														</span>
-                                                        </div>
+                                        <div class="form-group">
+                                            <label>Số điện thoại :</label>
+                                            <input name="phone_number" type="text" class="form-control" 14px>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                            <div class="form-group">
+                                                <label>Ngày sinh</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="datepicker" name="datepicker" 14px>
+                                                    <div class="input-group-append">
+                                                    <span class="input-group-text">
+                                                        <i class="fa fa-calendar-check"></i>
+                                                    </span>
                                                     </div>
                                                 </div>
+                                            </div>
 
-
-                                            <div class="form-group">
-                                                <label>Ảnh đại diện:</label>
-                                                <div class="input-file input-file-image">
-                                                    <img class="img-upload-preview img-circle" width="100" height="100" src="http://placehold.it/100x100" alt="preview">
-                                                    <input type="file" class="form-control form-control-file" id="uploadImg" name="uploadImg" accept="image/*">
-                                                    <label for="uploadImg" class=" label-input-file btn btn-primary">Upload a Image</label>
-                                                </div>
+                                        <div class="form-group">
+                                            <label>Ảnh đại diện:</label>
+                                            <div class="input-file input-file-image">
+                                                <img class="img-upload-preview img-circle" width="100" height="100" src="http://placehold.it/100x100" alt="preview">
+                                                <input type="file" class="form-control form-control-file" id="image" name="uploadImg" accept="image/*">
+                                                <label for="image" class=" label-input-file btn btn-primary">Tải ảnh lên</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="account">
-                                    <h4 class="info-text">Thiết lập tài khoản </h4>
-                                    <div class="row">
-                                        <div class="col-md-8 ml-auto mr-auto">
-                                            <div class="form-group">
-                                                <label>Email :</label>
-                                                <input type="email" name="email" class="form-control" 14px>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Mật khẩu :</label>
-                                                <input type="password" name="password" class="form-control" 14px>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Xác nhận mật khẩu :</label>
-                                                <input type="password" name="confirmpassword" class="form-control" 14px>
-                                            </div>
+                            </div>
+                            <div class="tab-pane" id="account">
+                                <h4 class="info-text">Thiết lập tài khoản </h4>
+                                <div class="row">
+                                    <div class="col-md-8 ml-auto mr-auto">
+                                        <div class="form-group">
+                                            <label>Loại tài khoản :</label>
+                                            <select id="role" class="form-control" style="width: 100%">
+                                                <option value="">&nbsp;</option>
+                                                <option value="2">Chủ loa đài</option>
+                                                <option value="3">Nhạc công</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Email :</label>
+                                            <input type="email" name="email" class="form-control" 14px>
+
+                                        </div>
+                                        <div class="form-group">
+                                             <label>Mật khẩu :</label>
+                                             <input id="password" name="password" type="password" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Xác nhận mật khẩu :</label>
+                                            <input name="cfpassword" type="password" class="form-control">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="address">
-                                    <h4 class="info-text">Nhập địa chỉ của bạn</h4>
-                                    <div class="row">
-                                        <div class="col-sm-8 ml-auto mr-auto">
-                                            <div class="form-group">
-                                                <label>Tỉnh/Thành phố</label>
-                                                <div class="select2-input">
-                                                    <select id="basic" name="basic" class="form-control" style="width: 100%">
-                                                        <option value="">&nbsp;</option>
-                                                            <option value="AK">Alaska</option>
-                                                            <option value="HI">Hawaii</option>
-                                                    </select>
-                                                </div>
+                            </div>
+                            <div class="tab-pane" id="address">
+                                <h4 class="info-text">Nhập địa chỉ của bạn</h4>
+                                <div class="row">
+                                    <div class="col-sm-8 ml-auto mr-auto">
+                                        <div class="form-group">
+                                            <label>Tỉnh/Thành phố</label>
+                                            <div class="select2-input">
+                                                <select id="province" class="form-control select2" style="width: 100%">
+                                                </select>
                                             </div>
-
-                                            <div class="form-group">
-                                                <label>Address</label>
-
-                                                <textarea name="address" rows="3" class="form-control" 14px></textarea>
+                                            <label>Quận/Huyện</label>
+                                            <div class="select2-input">
+                                                <select id="district" class="form-control select2" style="width: 100%">
+                                                </select>
+                                            </div>
+                                            <label>Xã/Phường/Thị trấn</label>
+                                            <div class="select2-input">
+                                                <select id="ward" class="form-control select2" style="width: 100%">
+                                                </select>
                                             </div>
                                         </div>
+
+                                        <div class="form-group">
+                                            <label>Thông tin thêm (vd: số nhà, thôn, xóm,...) </label>
+
+                                            <textarea name="address" rows="3" class="form-control" 14px></textarea>
+                                        </div>
+                                        <br>
+                                        <div class="g-recaptcha" data-sitekey="6Le0zQoqAAAAAEuMBHci1hCfcPxV5ZUTdkmTHivY"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="wizard-action">
-                            <div class="pull-left">
-                                <input type="button" class="btn btn-previous btn-fill btn-default" name="previous" value="Previous">
-                            </div>
-                            <div class="pull-right">
-                                <input type="button" class="btn btn-next btn-danger" name="next" value="Next">
-                                <input type="button" class="btn btn-finish btn-danger" name="finish" value="Finish" style="display: none;">
-                            </div>
-                            <div class="clearfix"></div>
+                    <div class="wizard-action">
+                        <div class="pull-left">
+                            <input type="button" class="btn btn-previous btn-fill btn-default" name="previous" value="Previous">
                         </div>
-                    </form>
-                </div>
+                        <div class="pull-right">
+                            <input type="button" class="btn btn-next btn-danger" name="next" value="Next">
+                            <input type="button" class="btn btn-finish btn-danger" id="finishBtn" name="finish" value="Finish" style="display: none;">
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div style="text-align: center;">
+                            Đã có tài khoản?
+                            <a href="/login">
+                                <label style="cursor: pointer;">Đăng nhập ngay</label>
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <!--   Core JS Files   -->
 <script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
 <script src="/assets/azzara/js/core/popper.min.js"></script>
@@ -174,6 +204,8 @@
 <script src="/assets/azzara/js/plugin/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
 <!-- Select2 -->
 <script src="/assets/azzara/js/plugin/select2/select2.full.min.js"></script>
+<!-- Sweet Alert -->
+<script src="/assets/azzara/js/plugin/sweetalert/sweetalert.min.js"></script>
 <!-- Bootstrap Wizard -->
 <script src="/assets/azzara/js/plugin/bootstrap-wizard/bootstrapwizard.js"></script>
 <!-- jQuery Validation -->
@@ -182,24 +214,175 @@
 <script src="/assets/azzara/js/ready.min.js"></script>
 <!-- Azzara DEMO methods, don't include it in your project! -->
 <script src="/assets/azzara/js/setting-demo.js"></script>
+<!--<script>-->
+<!--    // Code for the Validator-->
+<!--    var $validator = $('.wizard-container form').validate({-->
+<!--        validClass : "success",-->
+<!--        highlight: function(element) {-->
+<!--            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');-->
+<!--        },-->
+<!--        success: function(element) {-->
+<!--            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
 <script>
-    // Code for the Validator
-    var $validator = $('.wizard-container form').validate({
-        validClass : "success",
-        highlight: function(element) {
-            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-        },
-        success: function(element) {
-            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+    function formatDate(dateString) {
+        // Giả sử dateString có định dạng ngày tháng năm (dd-mm-yyyy)
+        const parts = dateString.split("-");
+        const day = parts[0];
+        const month = parts[1];
+        const year = parts[2];
+        return `${year}-${month}-${day}`;
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        // xử lí chọn địa chỉ
+        var provinces =  {{ .provinces}};
+        var districts =  {{ .districts}};
+        var wards = {{ .wards}};
+
+        var $select_province = $('#province');
+        var $select_district = $('#district');
+        var $select_ward = $('#ward');
+        $select_province.append($('<option>', {
+            value: 0,
+            text: "--"
+        }));
+        $.each(provinces, function(index, province) {
+            $select_province.append($('<option>', {
+                value: province.code,
+                text: province.name
+            }));
+        });
+
+        $select_province.change(function() {
+            var selectedProvinceCode = $(this).val();
+
+            $select_ward.empty();
+
+            $select_district.empty();
+            $select_district.append($('<option>', {
+                value: 0,
+                text: "--"
+            }));
+
+            $.each(districts, function(index, district) {
+                if(district.province_code === selectedProvinceCode) {
+                    $select_district.append($('<option>', {
+                        value: district.code,
+                        text: district.full_name
+                    }));
+                }
+            });
+        });
+
+        $select_district.change(function() {
+            var selectedDistrictCode = $(this).val();
+            $select_ward.empty();
+            $select_ward.append($('<option>', {
+                value: 0,
+                text: "--"
+            }));
+
+            $.each(wards, function(index, ward) {
+                if(ward.district_code === selectedDistrictCode) {
+                    $select_ward.append($('<option>', {
+                        value: ward.code,
+                        text: ward.full_name
+                    }));
+                }
+            });
+        });
+
+        //Xử lí gửi ajax
+        $('#finishBtn').on('click', function(e) {
+            e.preventDefault();
+            var formData = {};
+
+            // Mã hóa ảnh sang base64
+            var file = $('input[name="uploadImg"]')[0].files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    formData.last_name = $('input[name="lastname"]').val();
+                    formData.first_name = $('input[name="firstname"]').val();
+                    formData.phone_number = $('input[name="phone_number"]').val();
+                    formData.date_of_birth = $('input[id="datepicker"]').val();
+                    formData.role_id = $('#role').val();
+                    formData.email = $('input[name="email"]').val();
+                    formData.password = $('input[name="password"]').val();
+                    formData.confirm_password = $('input[name="cfpassword"]').val();
+                    formData.province_code = $('#province').val();
+                    formData.district_code = $('#district').val();
+                    formData.ward_code = $('#ward').val();
+                    formData.address_detail = $('textarea[name="address"]').val();
+                    formData.recaptcha_response = grecaptcha.getResponse(0);
+                    formData.image = reader.result;
+                    sendFormData(formData);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                formData.last_name = $('input[name="lastname"]').val();
+                formData.first_name = $('input[name="firstname"]').val();
+                formData.phone_number = $('input[name="phone_number"]').val();
+                formData.date_of_birth = $('input[id="datepicker"]').val();
+                formData.role_id = $('#role').val();
+                formData.email = $('input[name="email"]').val();
+                formData.password = $('input[name="password"]').val();
+                formData.confirm_password = $('input[name="cfpassword"]').val();
+                formData.province_code = $('#province').val();
+                formData.district_code = $('#district').val();
+                formData.ward_code = $('#ward').val();
+                formData.address_detail = $('textarea[name="address"]').val();
+                formData.recaptcha_response = grecaptcha.getResponse(0);
+                formData.image = "";
+                sendFormData(formData);
+            }
+        });
+
+        function sendFormData(formData) {
+            $.ajax({
+                url: '/signup',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if(response === "Success"){
+                        swal("", "Đăng kí tài khoản thành công", {
+                            icon : "success",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-success'
+                                }
+                            },
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                        grecaptcha.reset();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Registration failed: ' + error);
+                }
+            });
         }
     });
 </script>
+
 <script>
     $('#datepicker').datetimepicker({
         format: 'DD/MM/YYYY',
     });
 
-    $('#basic').select2({
+    $('.select2').select2({
         theme: "bootstrap"
     });
 

@@ -4,15 +4,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html/v2"
 	"lms/controllers"
 	"lms/initializers"
 	"lms/routes"
 	"log"
 	"os"
-	"time"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html/v2"
 )
 
 // Default name value for the service
@@ -92,18 +90,19 @@ func startWeb() {
 	//}()
 
 }
-func startDailyTask() {
-	go func() {
-		ticker := time.NewTicker(2 * time.Hour)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-ticker.C:
-				controllers.DailyUpdatePeriod()
-			}
-		}
-	}()
-}
+
+//	func startDailyTask() {
+//		go func() {
+//			ticker := time.NewTicker(2 * time.Hour)
+//			defer ticker.Stop()
+//			for {
+//				select {
+//				case <-ticker.C:
+//					controllers.DailyUpdatePeriod()
+//				}
+//			}
+//		}()
+//	}
 func main() {
 
 	//flag.Parse()
@@ -154,7 +153,7 @@ func main() {
 	//if err != nil {
 	//	log.Fatalf("failed to %s %s: %v", cmd, svcName, err)
 	//}
-	startDailyTask()
+	//startDailyTask()
 	startWeb()
 }
 

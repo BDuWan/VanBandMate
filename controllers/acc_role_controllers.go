@@ -98,7 +98,7 @@ func DeleteAccRoleID(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: DeleteAccRoleID")
 	var role models.Role
 	var rolePer models.RolePermission
-	//var user models.User
+	//var user models.User1
 	userLogin := GetSessionUser(c)
 	DB := initializers.DB
 	roleId := c.Params("id")
@@ -138,7 +138,7 @@ func DeleteAccRoleID(c *fiber.Ctx) error {
 	}
 
 	//user.RoleID = 5
-	if err := DB.Model(&models.User{}).Where("role_id", roleId).Updates(map[string]interface{}{"role_id": gorm.Expr("type_user_id")}).Error; err != nil {
+	if err := DB.Model(&models.User1{}).Where("role_id", roleId).Updates(map[string]interface{}{"role_id": gorm.Expr("type_user_id")}).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not update user when update role:  " + err.Error())
 		return c.JSON("Can not update user when delete this role.")
 	}

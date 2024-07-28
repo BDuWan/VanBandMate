@@ -61,12 +61,12 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Họ và tên đệm:</label>
-                                            <input name="lastname" type="text" class="form-control" 14px>
+                                            <input name="firstname" type="text" class="form-control" 14px>
                                         </div>
 
                                         <div class="form-group">
                                             <label>Tên :</label>
-                                            <input name="firstname" type="text" class="form-control" 14px>
+                                            <input name="lastname" type="text" class="form-control" 14px>
                                         </div>
 
                                         <div class="form-group">
@@ -165,11 +165,11 @@
 
                     <div class="wizard-action">
                         <div class="pull-left">
-                            <input type="button" class="btn btn-previous btn-fill btn-default" name="previous" value="Previous">
+                            <input type="button" class="btn btn-previous btn-fill btn-default" name="previous" value="Quay lại">
                         </div>
                         <div class="pull-right">
-                            <input type="button" class="btn btn-next btn-danger" name="next" value="Next">
-                            <input type="button" class="btn btn-finish btn-danger" id="finishBtn" name="finish" value="Finish" style="display: none;">
+                            <input type="button" class="btn btn-next btn-danger" name="next" value="Tiếp">
+                            <input type="button" class="btn btn-finish btn-danger" id="finishBtn" name="finish" value="Đăng ký" style="display: none;">
                         </div>
                         <div class="clearfix"></div>
                         <br>
@@ -356,6 +356,10 @@
                                     className : 'btn btn-success'
                                 }
                             },
+                        }).then((value) => {
+                            if (value) {
+                                window.location.href = "/login";
+                            }
                         });
                     }else {
                         swal("", response, {

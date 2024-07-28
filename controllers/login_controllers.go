@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"github.com/go-resty/resty/v2"
 	"image"
 	"image/jpeg"
@@ -14,6 +13,7 @@ import (
 	"lms/utils"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -89,10 +89,6 @@ func PostLogin(c *fiber.Ctx) error {
 		return c.JSON("Can not access. Please wait for the administrator to approve the account.")
 	}
 
-	if user.RoleID == 2 {
-		return c.JSON("This is a sales director account. Please log in at sales department")
-	}
-
 	if !utils.CheckPasswordHash(form.Password, user.Password) {
 		return c.JSON("Wrong password")
 	}
@@ -123,14 +119,12 @@ func PostSignup(c *fiber.Ctx) error {
 	if err := c.BodyParser(&signupForm); err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
 	}
-
 	//process signup logic
 	validator := ValidatorSignUpInput(signupForm)
 	if validator != "ok" {
 		return c.JSON(validator)
 	}
 	//reCAPTCHA
-	fmt.Println(signupForm.Email)
 	recaptchaResponse := signupForm.RecaptchaResponse
 	if recaptchaResponse == "" {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: reCAPTCHA response not found")
@@ -190,10 +184,19 @@ func PostSignup(c *fiber.Ctx) error {
 		}
 
 		account.CreatedBy = account.UserID
+		imageName := "avatar" + strconv.Itoa(account.UserID) + ".jpg"
+		account.Image = imageName
 
 		if err := DB.Updates(&account).Error; err != nil {
 			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Can not create account")
 			return c.JSON("Can not create account")
+		}
+		if signupForm.Image != "" {
+			path := "public/assets/img/avatar/"
+			saveImageResult := SaveImage(signupForm.Image, path, imageName)
+			if saveImageResult != "ok" {
+				return c.JSON(saveImageResult)
+			}
 		}
 
 		var admin []string
@@ -204,13 +207,6 @@ func PostSignup(c *fiber.Ctx) error {
 			go SendEmail("New registered account", "Student with Email: "+account.Email+" register for a new account.", item)
 		}
 
-		if signupForm.Image != "" {
-			path := "public/assets/img/avatar/"
-			saveImageResult := SaveImage(signupForm.Image, path, "123.jpg")
-			if saveImageResult != "ok" {
-				return c.JSON(saveImageResult)
-			}
-		}
 		return c.JSON("Success")
 	}
 
@@ -240,25 +236,72 @@ func GetLogout(c *fiber.Ctx) error {
 }
 
 func ValidatorSignUpInput(user structs.SignUpForm) string {
+	//name
 	if user.FirstName == "" || user.LastName == "" {
 		return "Họ và tên không được để trống"
 	}
-	if user.Email == "" {
-		return "Email không được để trống"
+	regexName := "[0-9!@#$%^&*()_+?:;,./={}~]"
+	regexN := regexp.MustCompile(regexName)
+	if regexN.MatchString(user.FirstName) {
+		return "Họ và tên đệm không được có số hoặc kí tự đặc biệt"
 	}
+
+	if regexN.MatchString(user.LastName) {
+		return "Tên không được có số hoặc kí tự đặc biệt"
+	}
+
+	//sdt
 	if user.PhoneNumber == "" {
 		return "Số điện thoại không được để trống"
 	}
+	regexPhone := "^[0-9]{10,}$"
+	regexP := regexp.MustCompile(regexPhone)
+	if !regexP.MatchString(user.PhoneNumber) {
+		return "Vui lòng nhập số điện thoại hợp lệ"
+	}
 
+	//dob
+	if user.DateOfBirth == "" {
+		return "Vui lòng nhập ngày sinh"
+	}
+
+	layout := "02/01/2006"
+	date, _ := time.Parse(layout, user.DateOfBirth)
+
+	if time.Now().Year()-date.Year() < 18 {
+		return "Cần đạt tối thiểu 18 tuổi"
+	}
+
+	//role
+	if user.RoleID == 0 {
+		return "Bạn chưa chọn loại tài khoản"
+	}
+
+	//email
+	if user.Email == "" {
+		return "Email không được để trống"
+	}
+	regexEmail := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	regexE := regexp.MustCompile(regexEmail)
+	if !regexE.MatchString(user.Email) {
+		return "Vui lòng nhập email hợp lệ"
+	}
+
+	//password
 	if user.Password == "" {
 		return "Mật khẩu không được để trống"
+	}
+	testPassword := []string{".{8,}", "[a-z]", "[A-Z]", "[0-9]", "[!@#$%^&*()?]"}
+	for _, test := range testPassword {
+		t, _ := regexp.MatchString(test, user.Password)
+		if !t {
+			return "Mật khẩu cần có tối thiểu 8 kí tự, phải bao gồm ít nhất 1 chữ hoa, chữ thường, số và kí tự đặc biệt"
+		}
 	}
 	if user.Password != user.ConfirmPassword {
 		return "Mật khẩu xác nhận không trùng khớp"
 	}
-	if user.RoleID == 0 {
-		return "Bạn chưa chọn loại tài khoản"
-	}
+	//address
 	if user.ProvinceCode == "0" {
 		return "Vui lòng chọn tỉnh/thành phố"
 	}
@@ -268,37 +311,7 @@ func ValidatorSignUpInput(user structs.SignUpForm) string {
 	if user.WardCode == "0" {
 		return "Vui lòng chọn xã/phường/thị trấn"
 	}
-	regexFirstname := "^[a-zA-Z]{2,}$"
-	regexFN := regexp.MustCompile(regexFirstname)
-	if !regexFN.MatchString(user.FirstName) {
-		return "Tên không được có số hoặc kí tự đặc biệt"
-	}
 
-	regexLastname := "^[a-zA-Z]{2,}$"
-	regexLN := regexp.MustCompile(regexLastname)
-	if !regexLN.MatchString(user.LastName) {
-		return "Họ và tên đệm không được có số hoặc kí tự đặc biệt"
-	}
-
-	regexEmail := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-	regexE := regexp.MustCompile(regexEmail)
-	if !regexE.MatchString(user.Email) {
-		return "Vui lòng nhập email hợp lệ"
-	}
-
-	regexPhone := "^[0-9]{10,}$"
-	regexP := regexp.MustCompile(regexPhone)
-	if !regexP.MatchString(user.PhoneNumber) {
-		return "Vui lòng nhập số điện thoại hợp lệ"
-	}
-
-	testPassword := []string{".{8,}", "[a-z]", "[A-Z]", "[0-9]", "[!@#$%^&*()?]"}
-	for _, test := range testPassword {
-		t, _ := regexp.MatchString(test, user.Password)
-		if !t {
-			return "Mật khẩu cần có tối thiểu 8 kí tự, phải bao gồm ít nhất 1 chữ hoa, chữ thường, số và kí tự đặc biệt"
-		}
-	}
 	return "ok"
 }
 

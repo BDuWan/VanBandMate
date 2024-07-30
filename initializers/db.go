@@ -38,48 +38,48 @@ func MigrateDB() {
 	if err := DB.AutoMigrate(&models.RolePermission{}); err != nil {
 		outputdebug.String("[LMS]: " + err.Error())
 	}
-	if err := DB.AutoMigrate(&models.TypeUser{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
+	//if err := DB.AutoMigrate(&models.TypeUser{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
 	if err := DB.AutoMigrate(&models.User{}); err != nil {
 		outputdebug.String("[LMS]: " + err.Error())
 	}
-	if err := DB.AutoMigrate(&models.StudyProgram{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.Course{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.StudyProgramUser{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.CourseUser{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.Document{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.Assignment{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.AssignmentUser{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.Lesson{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.FileUser{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.PriceProgram{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.Payment{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
-	if err := DB.AutoMigrate(&models.PriceUser{}); err != nil {
-		outputdebug.String("[LMS]: " + err.Error())
-	}
+	//if err := DB.AutoMigrate(&models.StudyProgram{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.Course{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.StudyProgramUser{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.CourseUser{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.Document{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.Assignment{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.AssignmentUser{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.Lesson{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.FileUser{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.PriceProgram{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.Payment{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
+	//if err := DB.AutoMigrate(&models.PriceUser{}); err != nil {
+	//	outputdebug.String("[LMS]: " + err.Error())
+	//}
 }
 func GenData() {
 	roles := []models.Role{
@@ -90,13 +90,13 @@ func GenData() {
 		{Name: "Student"},
 	}
 
-	typeUsers := []models.TypeUser{
-		{Name: "Administrator"},
-		{Name: "Sale Agent"},
-		{Name: "Business"},
-		{Name: "Instructor"},
-		{Name: "Student"},
-	}
+	//typeUsers := []models.TypeUser{
+	//	{Name: "Administrator"},
+	//	{Name: "Sale Agent"},
+	//	{Name: "Business"},
+	//	{Name: "Instructor"},
+	//	{Name: "Student"},
+	//}
 
 	permissions := []models.Permission{
 		{Name: "Home", Permission: "home"},
@@ -172,21 +172,21 @@ func GenData() {
 		DeletedAt:   time.Now(),
 	}
 
-	priceProgram := models.PriceProgram{
-		Price:       10000,
-		Commission:  2000,
-		Description: "Default",
-		Deleted:     false,
-		CreatedBy:   1,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-	}
-
-	for _, data := range typeUsers {
-		if err := DB.Create(&data).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-		}
-	}
+	//priceProgram := models.PriceProgram{
+	//	Price:       10000,
+	//	Commission:  2000,
+	//	Description: "Default",
+	//	Deleted:     false,
+	//	CreatedBy:   1,
+	//	CreatedAt:   time.Now(),
+	//	UpdatedAt:   time.Now(),
+	//}
+	//
+	//for _, data := range typeUsers {
+	//	if err := DB.Create(&data).Error; err != nil {
+	//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+	//	}
+	//}
 
 	for _, data := range roles {
 		if err := DB.Create(&data).Error; err != nil {
@@ -210,8 +210,8 @@ func GenData() {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
 	}
 
-	if err := DB.Create(&priceProgram).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-	}
+	//if err := DB.Create(&priceProgram).Error; err != nil {
+	//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+	//}
 
 }

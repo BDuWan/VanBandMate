@@ -1,9 +1,5 @@
 package structs
 
-import (
-	"lms/models"
-)
-
 type User struct {
 	FirstName              string `json:"first_name"`
 	LastName               string `json:"last_name"`
@@ -207,18 +203,19 @@ type CommissionPay struct {
 	UserID int     `json:"user_id"`
 	Price  float64 `json:"price"`
 }
-type DataWS struct {
-	AssignmentN int `json:"assignment_n"`
-	LessonN     int `json:"lesson_n"`
-	Assignments []models.AssignmentUser
-	Lessons     []models.Lesson
-}
 
-type TopCourseUser struct {
-	CourseID int    `json:"course_id"`
-	Title    string `json:"title"`
-	Number   int    `json:"number"`
-}
+//type DataWS struct {
+//	AssignmentN int `json:"assignment_n"`
+//	LessonN     int `json:"lesson_n"`
+//	Assignments []models.AssignmentUser
+//	Lessons     []models.Lesson
+//}
+
+//type TopCourseUser struct {
+//	CourseID int    `json:"course_id"`
+//	Title    string `json:"title"`
+//	Number   int    `json:"number"`
+//}
 
 type TopSaleUser struct {
 	ReferralCode string `json:"referral_code"`

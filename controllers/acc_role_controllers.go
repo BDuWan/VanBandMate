@@ -155,7 +155,6 @@ func PostAccCreateRole(c *fiber.Ctx) error {
 
 	form := new(structs.RoleForm)
 	if err := c.BodyParser(form); err != nil {
-
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
 		return c.JSON(err.Error())
 	}
@@ -163,6 +162,10 @@ func PostAccCreateRole(c *fiber.Ctx) error {
 	if err := validator.New().Struct(form); err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Validate create role: " + err.Error())
 		return c.JSON("Invalid input: " + err.Error())
+	}
+
+	if err := DB.Where("name", form.Name).First(&models.Role{}).Error; err == nil {
+		return c.JSON("Cannot create role with duplicate name")
 	}
 
 	role.Name = form.Name

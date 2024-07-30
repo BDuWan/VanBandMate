@@ -8,6 +8,7 @@ import (
 	"lms/utils"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -500,20 +501,20 @@ func PostAccCreateUser(c *fiber.Ctx) error {
 			return c.JSON("Can not create account")
 		}
 
-		if account.TypeUserID == 2 || account.TypeUserID == 3 {
-			var commissionUser models.CommissionUser
-			commissionUser.UserID = account.UserID
-			commissionUser.CommissionTotal = 0
-			commissionUser.CommissionPaid = 0
-			commissionUser.CommissionDebt = 0
-			commissionUser.PeriodID = 0
-			commissionUser.Deleted = false
-			commissionUser.CreatedAt = time.Now()
-			commissionUser.CreatedBy = account.UserID
-			if err := DB.Create(&commissionUser).Error; err != nil {
-				outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Can not create commission user")
-			}
-		}
+		//if account.TypeUserID == 2 || account.TypeUserID == 3 {
+		//	var commissionUser models.CommissionUser
+		//	commissionUser.UserID = account.UserID
+		//	commissionUser.CommissionTotal = 0
+		//	commissionUser.CommissionPaid = 0
+		//	commissionUser.CommissionDebt = 0
+		//	commissionUser.PeriodID = 0
+		//	commissionUser.Deleted = false
+		//	commissionUser.CreatedAt = time.Now()
+		//	commissionUser.CreatedBy = account.UserID
+		//	if err := DB.Create(&commissionUser).Error; err != nil {
+		//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Can not create commission user")
+		//	}
+		//}
 		return c.JSON("Success")
 	}
 
@@ -672,19 +673,19 @@ func UpdateAccStateUser(c *fiber.Ctx) error {
 }
 
 func ValidatorCreateAccInput(user structs.AccUser) string {
-	if user.FirstName == "" {
+	if strings.TrimSpace(user.FirstName) == "" {
 		return "Firstname can not be blank"
 	}
-	if user.LastName == "" {
+	if strings.TrimSpace(user.LastName) == "" {
 		return "Lastname can not be blank"
 	}
-	if user.Email == "" {
+	if strings.TrimSpace(user.Email) == "" {
 		return "Email can not be blank"
 	}
-	if user.PhoneNumber == "" {
+	if strings.TrimSpace(user.PhoneNumber) == "" {
 		return "PhoneNumber can not be blank"
 	}
-	if user.Address == "" {
+	if strings.TrimSpace(user.Address) == "" {
 		return "Address can not be blank"
 	}
 	//if user.Username == "" {

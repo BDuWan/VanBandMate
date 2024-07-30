@@ -10,10 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetCodeUser(c *fiber.Ctx) string {
-	return GetSessionUser(c).CodeUser
-}
-
 func IsChecked(currentID int, checkedID []models.RolePermission) bool {
 
 	for _, check := range checkedID {
@@ -29,122 +25,108 @@ func IsSelected(currentID, selectedID int) bool {
 	return currentID == selectedID
 }
 
-func IsCheckCourse(currentID int, checkedID []models.CourseUser) bool {
-	for _, check := range checkedID {
-		if check.CourseID == currentID {
-			return true
-		}
-	}
+//func IsCheckCourse(currentID int, checkedID []models.CourseUser) bool {
+//	for _, check := range checkedID {
+//		if check.CourseID == currentID {
+//			return true
+//		}
+//	}
+//
+//	return false
+//}
+//func IsCheckStudyProgram(currentID int, checkedID []models.StudyProgramUser) bool {
+//	for _, check := range checkedID {
+//		if check.StudyProgramID == currentID {
+//			return true
+//		}
+//	}
+//
+//	return false
+//}
+//func IsCheckClass(currentID int, checkedID []models.ClassUser) bool {
+//	for _, check := range checkedID {
+//		if check.ClassID == currentID {
+//			return true
+//		}
+//	}
+//
+//	return false
+//}
 
-	return false
-}
-func IsCheckStudyProgram(currentID int, checkedID []models.StudyProgramUser) bool {
-	for _, check := range checkedID {
-		if check.StudyProgramID == currentID {
-			return true
-		}
-	}
-
-	return false
-}
-func IsCheckClass(currentID int, checkedID []models.ClassUser) bool {
-	for _, check := range checkedID {
-		if check.ClassID == currentID {
-			return true
-		}
-	}
-
-	return false
-}
-
-func IsStudentOrInstructor(typeUserID int) bool {
-	if typeUserID == 5 || typeUserID == 4 {
-		return true
-	}
-
-	return false
-}
-
-func IsInstructor(typeUserID int) bool {
-	if typeUserID == 4 {
-		return true
-	}
-
-	return false
-}
-
-func StatusAssignment(status int) string {
-	var stt string
-	switch status {
-	case 1:
-		{
-			stt = "Has not been submitted"
-			break
-		}
-	case 2:
-		{
-			stt = "Submitted"
-			break
-		}
-	case 3:
-		{
-			stt = "Late submission"
-			break
-		}
-
-	}
-	return stt
-}
-
-func IsSaleBusiness(typeUserID int) bool {
-	if typeUserID == 2 || typeUserID == 3 {
-		return true
-	}
-
-	return false
-}
-
-func IsSale(typeUserID int) bool {
-	if typeUserID == 2 {
-		return true
-	}
-
-	return false
-}
-func IsBusiness(typeUserID int) bool {
-	if typeUserID == 3 {
-		return true
-	}
-
-	return false
-}
+//func IsStudentOrInstructor(typeUserID int) bool {
+//	if typeUserID == 5 || typeUserID == 4 {
+//		return true
+//	}
+//
+//	return false
+//}
+//
+//func IsInstructor(typeUserID int) bool {
+//	if typeUserID == 4 {
+//		return true
+//	}
+//
+//	return false
+//}
+//
+//func StatusAssignment(status int) string {
+//	var stt string
+//	switch status {
+//	case 1:
+//		{
+//			stt = "Has not been submitted"
+//			break
+//		}
+//	case 2:
+//		{
+//			stt = "Submitted"
+//			break
+//		}
+//	case 3:
+//		{
+//			stt = "Late submission"
+//			break
+//		}
+//
+//	}
+//	return stt
+//}
+//
+//func IsSaleBusiness(typeUserID int) bool {
+//	if typeUserID == 2 || typeUserID == 3 {
+//		return true
+//	}
+//
+//	return false
+//}
+//
+//func IsSale(typeUserID int) bool {
+//	if typeUserID == 2 {
+//		return true
+//	}
+//
+//	return false
+//}
+//func IsBusiness(typeUserID int) bool {
+//	if typeUserID == 3 {
+//		return true
+//	}
+//
+//	return false
+//}
 
 func IsVerify(c *fiber.Ctx) bool {
 
 	return GetSessionUser(c).Verify
 }
 
-func IsStudentCtx(c *fiber.Ctx) bool {
-	if GetSessionUser(c).TypeUserID == 5 {
-		return true
-	}
-
-	return false
-}
-func IsInstructorCtx(c *fiber.Ctx) bool {
-	if GetSessionUser(c).TypeUserID == 4 {
-		return true
-	}
-
-	return false
-}
-func IsStudent(typeUserID int) bool {
-	if typeUserID == 5 {
-		return true
-	}
-
-	return false
-}
+//	GetUserID func IsStudent(typeUserID int) bool {
+//		if typeUserID == 5 {
+//			return true
+//		}
+//
+//		return false
+//	}
 func GetUserID(c *fiber.Ctx) int {
 	sess, _ := SessAuth.Get(c)
 	idUser := fmt.Sprintf("%d", sess.Get("user_id"))

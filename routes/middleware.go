@@ -8,8 +8,7 @@ import (
 
 func CheckAuthentication(c *fiber.Ctx) bool {
 	sess, _ := controllers.SessAuth.Get(c)
-	username := sess.Get("login_success")
-	return username != nil
+	return sess.Get("login_success") != nil
 }
 
 func IsAuthenticated(c *fiber.Ctx) error {

@@ -45,6 +45,7 @@ type User struct {
 	FirstName     string    `gorm:"column:first_name;size:50"`
 	LastName      string    `gorm:"column:last_name;size:50"`
 	RoleID        int       `gorm:"column:role_id"`
+	Role          Role      `gorm:"foreignKey:RoleID;references:RoleID"`
 	Email         string    `gorm:"column:email;size:50;unique"`
 	ProvinceCode  string    `gorm:"column:province_code;size:50"`
 	DistrictCode  string    `gorm:"column:district_code;size:50"`

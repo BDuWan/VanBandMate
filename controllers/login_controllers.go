@@ -48,6 +48,7 @@ func GetSignup(c *fiber.Ctx) error {
 	}
 	if err := DB.Find(&wards).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		return c.Redirect("/errors/404")
 	}
 	return c.Render("pages/login/signup", fiber.Map{
 		"provinces": provinces,
@@ -55,13 +56,10 @@ func GetSignup(c *fiber.Ctx) error {
 		"wards":     wards,
 	})
 }
-func GetSignupSale(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetSignupSale")
-	return c.Render("pages/login/signup_sale", fiber.Map{})
-}
 func PostLogin(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: PostLogin")
 	var user models.User
+	//var permissions []models.RolePermission
 
 	DB := initializers.DB
 	form := new(models.User)
@@ -73,24 +71,24 @@ func PostLogin(c *fiber.Ctx) error {
 	}
 
 	if form.Email == "" {
-		return c.JSON("Email can not be blank")
+		return c.JSON("Vui lòng nhập email")
 	}
 	if form.Password == "" {
-		return c.JSON("Password can not be blank")
+		return c.JSON("Vui lòng nhập mật khẩu")
 	}
 	if err := DB.Where(
 		"BINARY email = ?", form.Email).Where(
 		"deleted", false).First(&user).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-		return c.JSON("Email does not exist")
+		return c.JSON("Enail không tồn tại")
 	}
 
 	if !user.State {
-		return c.JSON("Can not access. Please wait for the administrator to approve the account.")
+		return c.JSON("Tài khoản chưa được admin chấp thuận. Vui lòng đợi")
 	}
 
 	if !utils.CheckPasswordHash(form.Password, user.Password) {
-		return c.JSON("Wrong password")
+		return c.JSON("Sai mật khẩu")
 	}
 	user.Session = "session_" + form.Email
 	if err := DB.Save(&user).Error; err != nil {
@@ -98,11 +96,19 @@ func PostLogin(c *fiber.Ctx) error {
 		return c.JSON("")
 	}
 
+	//if err := DB.Model(&models.RolePermission{}).Joins("Permission").Where(
+	//	"role_permissions.role_id", user.RoleID).Where(
+	//	"role_permissions.deleted", false).Find(&permissions).Error; err != nil {
+	//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+	//}
+	//fmt.Println(permissions)
+
 	sess, _ := SessAuth.Get(c)
 	sess.Set("email", user.Email)
 	sess.Set("login_success", "authenticated")
 	sess.Set("user_id", user.UserID)
 	sess.Set("role_id", user.RoleID)
+	//sess.Set("permissions", permissions)
 	sess.Set("sessionId", "session_"+form.Email)
 	if err := sess.Save(); err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
@@ -169,7 +175,7 @@ func PostSignup(c *fiber.Ctx) error {
 		account.Password = utils.HashingPassword(signupForm.Password)
 		account.DateOfBirth = date
 		account.Session = ""
-		account.State = true
+		account.State = false
 		account.Verify = false
 		account.Deleted = false
 		account.CreatedAt = time.Now()
@@ -217,20 +223,12 @@ func GetLogout(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetLogout")
 	sess, _ := SessAuth.Get(c)
 
-	isSale := false
-	if sess.Get("role_id") == 2 {
-		isSale = true
-	}
-
 	if err := sess.Reset(); err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
 	}
 
 	if err := sess.Save(); err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-	}
-	if isSale {
-		return c.Redirect("/login_sale")
 	}
 	return c.Redirect("/login")
 }

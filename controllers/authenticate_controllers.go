@@ -10,12 +10,6 @@ import (
 )
 
 func CheckPermission(permissionName string, c *fiber.Ctx) bool {
-
-	//var rolePer models.RolePermission
-	//var permission models.Permission
-
-	//DB := initializers.DB
-	//user := GetSessionUser(c)
 	sess, _ := SessAuth.Get(c)
 	userInterface := sess.Get("rolePermission")
 	if userInterface == nil {
@@ -34,27 +28,13 @@ func CheckPermission(permissionName string, c *fiber.Ctx) bool {
 			return true
 		}
 	}
-	//if err := DB.Select("permission_id").First(&permission, "permission = ?", permissionName).Error; err != nil {
-	//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-	//
-	//	return false
-	//}
-	//
-	//if err := DB.Select("role_permission_id").Where("role_id = ? AND permission_id = ?", user.RoleID, permission.PermissionID).First(&rolePer).Error; err != nil {
-	//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-	//
-	//	return false
-	//}
-	//if rolePer.RolePermissionID == 0 {
-	//	return false
-	//}
 
 	return false
 
 }
 
-func GetSessionUser(c *fiber.Ctx) models.User1 {
-	var user models.User1
+func GetSessionUser(c *fiber.Ctx) models.User {
+	var user models.User
 	var rolPer []models.RolePermission
 	sess, _ := SessAuth.Get(c)
 	email := sess.Get("email")
@@ -66,6 +46,7 @@ func GetSessionUser(c *fiber.Ctx) models.User1 {
 	if err := initializers.DB.Model(&models.RolePermission{}).Preload("Permission").Where("role_id", user.RoleID).Find(&rolPer).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not found permission in check session")
 	}
+	//fmt.Println(rolPer)
 
 	sess.Set("rolePermission", rolPer)
 

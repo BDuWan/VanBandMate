@@ -1,5 +1,14 @@
 package controllers
 
+import (
+	"fmt"
+	"github.com/gofiber/fiber/v2"
+	"github.com/zetamatta/go-outputdebug"
+	"lms/initializers"
+	"lms/models"
+	"time"
+)
+
 //
 //import (
 //	"fmt"
@@ -17,50 +26,72 @@ package controllers
 //	"gopkg.in/gomail.v2"
 //)
 //
-//func GetInformation(c *fiber.Ctx) error {
-//	var user models.User
-//	var roles []models.Role
-//	var typeUsers []models.TypeUser
-//
-//	DB := initializers.DB
-//	sess, _ := SessAuth.Get(c)
-//	sessionID, ok := sess.Get("sessionId").(string)
-//	if !ok {
-//		return c.RedirectBack("")
-//	}
-//
-//	if err := DB.Table("users").Where("session = ?", sessionID).First(&user).Error; err != nil {
-//		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-//			"message": "User not found",
-//		})
-//	}
-//
-//	if err := DB.Where("deleted", false).Find(&roles).Error; err != nil {
-//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-//		fmt.Println("loi3")
-//		return c.RedirectBack("")
-//	}
-//
-//	if err := DB.Select("type_user_id", "name").Find(&typeUsers).Error; err != nil {
-//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-//		fmt.Println("loi4")
-//		return c.RedirectBack("")
-//	}
-//
-//	//data := struct {
-//	//	Roles      []models.Role
-//	//	UserRoleID int
-//	//}{
-//	//	Roles:      roles,
-//	//	UserRoleID: role.RoleID, // Set the ID of the selected category
-//	//}
-//
-//	return c.Render("pages/home/information", fiber.Map{
-//		"User": user,
-//		"Ctx":  c,
-//	}, "layouts/main")
-//}
-//
+
+func GetProfileID(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Get Profile ID")
+
+	DB := initializers.DB
+	userLogin := GetSessionUser(c)
+	user := new(models.User)
+	if err := DB.Model(&models.User{}).Joins("Role").Joins(
+		"Province").Joins("District").Joins("Ward").Where(
+		"user_id", userLogin.UserID).First(user).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Cannot get user")
+	}
+	sess, _ := SessAuth.Get(c)
+	permissions := sess.Get("rolePermission")
+
+	return c.Render("pages/home/profile", fiber.Map{
+		"Permissions": permissions,
+		"User":        user,
+		"Ctx":         c,
+	}, "layouts/main")
+}
+
+func GetInformation(c *fiber.Ctx) error {
+	var user models.User
+	var roles []models.Role
+	var typeUsers []models.TypeUser
+
+	DB := initializers.DB
+	sess, _ := SessAuth.Get(c)
+	sessionID, ok := sess.Get("sessionId").(string)
+	if !ok {
+		return c.RedirectBack("")
+	}
+
+	if err := DB.Table("users").Where("session = ?", sessionID).First(&user).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "User not found",
+		})
+	}
+
+	if err := DB.Where("deleted", false).Find(&roles).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		fmt.Println("loi3")
+		return c.RedirectBack("")
+	}
+
+	if err := DB.Select("type_user_id", "name").Find(&typeUsers).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		fmt.Println("loi4")
+		return c.RedirectBack("")
+	}
+
+	//data := struct {
+	//	Roles      []models.Role
+	//	UserRoleID int
+	//}{
+	//	Roles:      roles,
+	//	UserRoleID: role.RoleID, // Set the ID of the selected category
+	//}
+
+	return c.Render("pages/home/information", fiber.Map{
+		"User": user,
+		"Ctx":  c,
+	}, "layouts/main")
+}
+
 //func PutUpdateUserInformation(c *fiber.Ctx) error {
 //	var user models.User
 //	var form structs.AccUser

@@ -1,0 +1,105 @@
+<div class="row">
+	<div class="col-md-4">
+		<div class="card card-profile card-secondary">
+			<div class="card-header" style="background-image: url('../assets/img/blogpost.jpg')">
+				<div class="profile-picture">
+					<div class="avatar avatar-xxl">
+						<img src="/assets/img/avatar/{{.User.Image}}" class="avatar-img rounded-circle">
+					</div>
+				</div>
+			</div>
+			<div class="card-body">
+				<div class="user-profile text-center">
+					<div class="name" readonly="">{{.User.LastName}} {{.User.FirstName}}</div>
+					<div class="job">{{.User.Role.Name}}</div>
+					<div readonly="">SDT: {{.User.PhoneNumber}}</div>
+					<div readonly="">Email: {{.User.Email}}</div>
+					<br>
+					<div class="social-media">
+						<a class="btn btn-primary btn-sm btn-link" rel="publisher" href="{{.User.LinkFacebook}}">
+							<span class="btn-label just-icon"><i class="flaticon-facebook"></i> </span>
+						</a>
+					</div>
+				</div>
+			</div>
+<!--			<div class="card-footer">-->
+<!--				<div class="row user-stats text-center">-->
+<!--					<div class="col">-->
+<!--						<div class="number">125</div>-->
+<!--						<div class="title">Post</div>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="card card-with-nav">
+			<div class="card-header">
+				<div class="row row-nav-line">
+					<ul class="nav nav-tabs nav-line nav-color-secondary" role="tablist">
+						<li class="nav-item"> <a class="nav-link active show" data-toggle="tab" href="#profile" role="tab" aria-selected="true">Thông tin cá nhân</a> </li>
+						<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile" role="tab" aria-selected="false">Thống kê</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="card-body">
+				<div class="row mt-3">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Name</label>
+							<label class="form-control">
+								{{.User.LastName}} {{.User.FirstName}}
+							</label>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Email</label>
+							<label class="form-control">{{.User.Email}}</label>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label>Ngày sinh</label>
+							<label class="form-control" style="word-wrap: break-word; white-space: normal">{{.User.DateOfBirth | FormatDate}}</label>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label>Giới tính</label>
+							<label class="form-control">
+								{{if eq .User.Gender 1}}
+								Nam
+								{{else if eq .User.Gender 2}}
+								Nữ
+								{{else if eq .User.Gender 3}}
+								Khác
+								{{else}}
+								Người dùng chưa nhập
+								{{end}}
+							</label>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label>Số điện thoại</label>
+							<label class="form-control">{{.User.PhoneNumber}}</label>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Địa chỉ</label>
+							<label class="form-control" style="word-wrap: break-word; white-space: normal">
+								{{.User.AddressDetail}} {{.User.Ward.FullName}}, {{.User.District.FullName}}, {{.User.Province.FullName}}
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

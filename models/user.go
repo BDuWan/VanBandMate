@@ -47,9 +47,14 @@ type User struct {
 	RoleID        int       `gorm:"column:role_id"`
 	Role          Role      `gorm:"foreignKey:RoleID;references:RoleID"`
 	Email         string    `gorm:"column:email;size:50;unique"`
+	Gender        int       `gorm:"column:gender"`
+	LinkFacebook  string    `json:"link_facebook" gorm:"size:500"`
 	ProvinceCode  string    `gorm:"column:province_code;size:50"`
+	Province      Province  `gorm:"foreignKey:ProvinceCode;references:Code"`
 	DistrictCode  string    `gorm:"column:district_code;size:50"`
+	District      District  `gorm:"foreignKey:DistrictCode;references:Code"`
 	WardCode      string    `gorm:"column:ward_code;size:50"`
+	Ward          Ward      `gorm:"foreignKey:WardCode;references:Code"`
 	AddressDetail string    `gorm:"column:address_detail;size:255"`
 	PhoneNumber   string    `gorm:"column:phone_number;size:15"`
 	Image         string    `gorm:"column:image;size:50"`

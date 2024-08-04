@@ -31,9 +31,8 @@ func RouteInit(app *fiber.App) {
 
 	//app.Put("/home/update", controllers.PutUpdateUserInformation)
 	home := app.Group("/home", IsAuthenticated, CheckSession)
-	//home.Get("/information", controllers.GetInformation)
-	//home.Get("/changePassword", controllers.GetChangePassword)
 	home.Get("", controllers.GetHome)
+	home.Get("/profile/:id", controllers.GetProfileID)
 
 	accounts := app.Group("/accounts", IsAuthenticated, CheckSession, CheckVerify)
 

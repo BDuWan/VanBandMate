@@ -80,7 +80,7 @@ func PostLogin(c *fiber.Ctx) error {
 		"BINARY email = ?", form.Email).Where(
 		"deleted", false).First(&user).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-		return c.JSON("Enail không tồn tại")
+		return c.JSON("Email không tồn tại")
 	}
 
 	if !user.State {
@@ -164,10 +164,12 @@ func PostSignup(c *fiber.Ctx) error {
 	}
 	if err := DB.Where("email", signupForm.Email).First(&models.User{}).Error; err != nil {
 		account.RoleID = signupForm.RoleID
+		account.Gender = signupForm.Gender
 		account.FirstName = signupForm.FirstName
 		account.LastName = signupForm.LastName
 		account.Email = signupForm.Email
 		account.PhoneNumber = signupForm.PhoneNumber
+		account.LinkFacebook = signupForm.LinkFacebook
 		account.ProvinceCode = signupForm.ProvinceCode
 		account.DistrictCode = signupForm.DistrictCode
 		account.WardCode = signupForm.WardCode
@@ -235,8 +237,11 @@ func GetLogout(c *fiber.Ctx) error {
 
 func ValidatorSignUpInput(user structs.SignUpForm) string {
 	//name
-	if user.FirstName == "" || user.LastName == "" {
-		return "Họ và tên không được để trống"
+	if strings.TrimSpace(user.LastName) == "" {
+		return "Họ và tên đệm không được để trống"
+	}
+	if strings.TrimSpace(user.FirstName) == "" {
+		return "Tên không được để trống"
 	}
 	regexName := "[0-9!@#$%^&*()_+?:;,./={}~]"
 	regexN := regexp.MustCompile(regexName)
@@ -249,7 +254,7 @@ func ValidatorSignUpInput(user structs.SignUpForm) string {
 	}
 
 	//sdt
-	if user.PhoneNumber == "" {
+	if strings.TrimSpace(user.PhoneNumber) == "" {
 		return "Số điện thoại không được để trống"
 	}
 	regexPhone := "^[0-9]{10,}$"
@@ -276,7 +281,7 @@ func ValidatorSignUpInput(user structs.SignUpForm) string {
 	}
 
 	//email
-	if user.Email == "" {
+	if strings.TrimSpace(user.Email) == "" {
 		return "Email không được để trống"
 	}
 	regexEmail := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
@@ -286,7 +291,7 @@ func ValidatorSignUpInput(user structs.SignUpForm) string {
 	}
 
 	//password
-	if user.Password == "" {
+	if strings.TrimSpace(user.Password) == "" {
 		return "Mật khẩu không được để trống"
 	}
 	testPassword := []string{".{8,}", "[a-z]", "[A-Z]", "[0-9]", "[!@#$%^&*()?]"}

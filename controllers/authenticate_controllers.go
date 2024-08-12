@@ -46,7 +46,6 @@ func GetSessionUser(c *fiber.Ctx) models.User {
 	if err := initializers.DB.Model(&models.RolePermission{}).Preload("Permission").Where("role_id", user.RoleID).Find(&rolPer).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not found permission in check session")
 	}
-	//fmt.Println(rolPer)
 
 	sess.Set("rolePermission", rolPer)
 

@@ -135,7 +135,7 @@ func GetUserID(c *fiber.Ctx) int {
 	return userId
 }
 func FormatDate(t time.Time) string {
-	return t.Format("02-01-2006")
+	return t.Format("02/01/2006")
 }
 func FormatTime(eventTime time.Time) string {
 	return eventTime.Format("2006-01-02 15:04:05")

@@ -7,6 +7,7 @@ import (
 type Role struct {
 	RoleID    int       `json:"role_id" gorm:"primaryKey;autoIncrement"`
 	Name      string    `json:"name" gorm:"size:100"`
+	Describe  string    `json:"describe"`
 	Deleted   bool      `json:"deleted"`
 	DeletedBy int       `json:"deleted_by"`
 	UpdatedBy int       `json:"updated_by"`

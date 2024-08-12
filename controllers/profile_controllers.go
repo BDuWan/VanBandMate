@@ -1,11 +1,14 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"
 	"lms/initializers"
 	"lms/models"
+	"lms/structs"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -29,13 +32,12 @@ import (
 
 func GetProfileID(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Get Profile ID")
-
+	userId := c.Params("id")
 	DB := initializers.DB
-	userLogin := GetSessionUser(c)
 	user := new(models.User)
 	if err := DB.Model(&models.User{}).Joins("Role").Joins(
 		"Province").Joins("District").Joins("Ward").Where(
-		"user_id", userLogin.UserID).First(user).Error; err != nil {
+		"user_id", userId).First(user).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Cannot get user")
 	}
 	sess, _ := SessAuth.Get(c)
@@ -48,113 +50,167 @@ func GetProfileID(c *fiber.Ctx) error {
 	}, "layouts/main")
 }
 
-func GetInformation(c *fiber.Ctx) error {
-	var user models.User
-	var roles []models.Role
-	var typeUsers []models.TypeUser
-
+func GetUserInfo(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Get UserInfo")
 	DB := initializers.DB
+	var provinces []models.Province
+	var districts []models.District
+	var wards []models.Ward
+	userLogin := GetSessionUser(c)
+	user := new(models.User)
+	if err := DB.Model(&models.User{}).Joins("Role").Joins(
+		"Province").Joins("District").Joins("Ward").Where(
+		"user_id", userLogin.UserID).First(user).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Cannot get user")
+	}
 	sess, _ := SessAuth.Get(c)
-	sessionID, ok := sess.Get("sessionId").(string)
-	if !ok {
-		return c.RedirectBack("")
-	}
+	permissions := sess.Get("rolePermission")
 
-	if err := DB.Table("users").Where("session = ?", sessionID).First(&user).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "User not found",
-		})
-	}
-
-	if err := DB.Where("deleted", false).Find(&roles).Error; err != nil {
+	if err := DB.Find(&provinces).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-		fmt.Println("loi3")
-		return c.RedirectBack("")
 	}
-
-	if err := DB.Select("type_user_id", "name").Find(&typeUsers).Error; err != nil {
+	if err := DB.Find(&districts).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-		fmt.Println("loi4")
-		return c.RedirectBack("")
+	}
+	if err := DB.Find(&wards).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		return c.Redirect("/errors/404")
 	}
 
-	//data := struct {
-	//	Roles      []models.Role
-	//	UserRoleID int
-	//}{
-	//	Roles:      roles,
-	//	UserRoleID: role.RoleID, // Set the ID of the selected category
-	//}
-
-	return c.Render("pages/home/information", fiber.Map{
-		"User": user,
-		"Ctx":  c,
+	return c.Render("pages/home/userinfo", fiber.Map{
+		"Permissions": permissions,
+		"User":        user,
+		"provinces":   provinces,
+		"districts":   districts,
+		"wards":       wards,
+		"Ctx":         c,
 	}, "layouts/main")
 }
 
-//func PutUpdateUserInformation(c *fiber.Ctx) error {
-//	var user models.User
-//	var form structs.AccUser
-//	DB := initializers.DB
-//
-//	if err := c.BodyParser(&form); err != nil {
-//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
-//	}
-//	sess, _ := SessAuth.Get(c)
-//	sessionID, ok := sess.Get("sessionId").(string)
-//	if !ok {
-//		return c.RedirectBack("")
-//	}
-//
-//	if err := DB.Table("users").Where("session = ?", sessionID).First(&user).Error; err != nil {
-//		return c.JSON("Can not found account")
-//	}
-//	if user.Verify == false {
-//		return c.JSON("Unable to update information, please verify account")
-//	}
-//
-//	user.FirstName = form.FirstName
-//	user.LastName = form.LastName
-//	user.RoleID = form.RoleID
-//	user.Email = form.Email
-//	user.PhoneNumber = form.PhoneNumber
-//	user.Address = form.Address
-//	user.UpdatedAt = time.Now()
-//	user.UpdatedBy = GetSessionUser(c).UserID
-//
-//	var checkRef models.User
-//	// referralCode := true
-//	if user.ReferralCode == "" {
-//		if form.ReferralCode != "" {
-//			if err := DB.Where("deleted", false).Where("code_user", user.ReferralCode).First(&checkRef).Error; err != nil {
-//				// referralCode = false
-//				user.ReferralCode = form.ReferralCode
-//			}
-//		}
-//
-//	}
-//
-//	result := ValidatorUpdateAccUser(form)
-//	if result != "ok" {
-//		return c.JSON(result)
-//	}
-//
-//	if err := DB.Table("users").Where("session = ?", sessionID).Updates(&user).Error; err != nil {
-//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Can not update account")
-//		return c.JSON("Can not update account")
-//	}
-//
-//	// if user.TypeUserID == 5 {
-//	// 	if referralCode == false {
-//	// 		resultGainCommission := GainCommissionSaleBusiness(user.ReferralCode, user.CreatedAt)
-//	// 		if resultGainCommission != "ok" {
-//	// 			return c.SendString(resultGainCommission)
-//	// 		}
-//	// 	}
-//
-//	// }
-//	return c.JSON("Success")
-//}
+func PutUserInfo(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Put User Info")
+	var updateInfoForm structs.UpdateInfoForm
+	var account models.User
+	userLogin := GetSessionUser(c)
+	DB := initializers.DB
+	if err := c.BodyParser(&updateInfoForm); err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
+	}
+	validator := ValidatorUpdateInfoInput(updateInfoForm)
+	if validator != "ok" {
+		return c.JSON(validator)
+	}
+	layout := "02/01/2006"
+	date, err := time.Parse(layout, updateInfoForm.DateOfBirth)
+	if err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: error parsing date of birth")
+	}
+
+	if err := DB.Where("user_id", userLogin.UserID).First(&account).Error; err == nil {
+		if account.Email != updateInfoForm.Email {
+			if err := DB.Where("email", updateInfoForm.Email).First(&models.User{}).Error; err == nil {
+				return c.JSON("Email đã được sử dụng, vui lòng chọn 1 email khác")
+			}
+		}
+		account.Gender = updateInfoForm.Gender
+		account.FirstName = updateInfoForm.FirstName
+		account.LastName = updateInfoForm.LastName
+		account.Email = updateInfoForm.Email
+		account.PhoneNumber = updateInfoForm.PhoneNumber
+		account.LinkFacebook = updateInfoForm.LinkFacebook
+		account.ProvinceCode = updateInfoForm.ProvinceCode
+		account.DistrictCode = updateInfoForm.DistrictCode
+		account.WardCode = updateInfoForm.WardCode
+		account.AddressDetail = updateInfoForm.AddressDetail
+		account.DateOfBirth = date
+		account.State = false
+		account.Verify = false
+		account.UpdatedAt = time.Now()
+		account.UpdatedBy = 0
+
+		if err := DB.Updates(&account).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Can not create account")
+			return c.JSON("Không thể cập nhật thông tin")
+		}
+		imageName := "avatar" + strconv.Itoa(account.UserID) + ".jpg"
+
+		if updateInfoForm.Image != "" {
+			path := "public/assets/img/avatar/"
+			saveImageResult := SaveImage(updateInfoForm.Image, path, imageName)
+			if saveImageResult != "ok" {
+				return c.JSON(saveImageResult)
+			}
+		}
+
+		return c.JSON("Success")
+	}
+	return c.JSON("Đã xảy ra lỗi khi lấy thông tin người dùng")
+}
+
+func ValidatorUpdateInfoInput(user structs.UpdateInfoForm) string {
+	//name
+	if strings.TrimSpace(user.LastName) == "" {
+		return "Họ và tên đệm không được để trống"
+	}
+	if strings.TrimSpace(user.FirstName) == "" {
+		return "Tên không được để trống"
+	}
+	regexName := "[0-9!@#$%^&*()_+?:;,./={}~]"
+	regexN := regexp.MustCompile(regexName)
+	if regexN.MatchString(user.FirstName) {
+		return "Họ và tên đệm không được có số hoặc kí tự đặc biệt"
+	}
+
+	if regexN.MatchString(user.LastName) {
+		return "Tên không được có số hoặc kí tự đặc biệt"
+	}
+
+	//sdt
+	if strings.TrimSpace(user.PhoneNumber) == "" {
+		return "Số điện thoại không được để trống"
+	}
+	regexPhone := "^[0-9]{10,}$"
+	regexP := regexp.MustCompile(regexPhone)
+	if !regexP.MatchString(user.PhoneNumber) {
+		return "Vui lòng nhập số điện thoại hợp lệ"
+	}
+
+	//dob
+	if user.DateOfBirth == "" {
+		return "Vui lòng nhập ngày sinh"
+	}
+
+	layout := "02/01/2006"
+	date, _ := time.Parse(layout, user.DateOfBirth)
+
+	if time.Now().Year()-date.Year() < 18 {
+		return "Cần đạt tối thiểu 18 tuổi"
+	}
+
+	//email
+	if user.Email == "" {
+		return "Email không được để trống"
+	}
+	regexEmail := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	regexE := regexp.MustCompile(regexEmail)
+	if !regexE.MatchString(user.Email) {
+		return "Vui lòng nhập email hợp lệ"
+	}
+
+	//address
+	if user.ProvinceCode == "0" {
+		return "Vui lòng chọn tỉnh/thành phố"
+	}
+	if user.DistrictCode == "0" {
+		return "Vui lòng chọn quận/huyện"
+	}
+	if user.WardCode == "0" {
+		return "Vui lòng chọn xã/phường/thị trấn"
+	}
+
+	return "ok"
+}
+
 //
 //func ValidatorUpdateAccUser(user structs.AccUser) string {
 //	regexEmail := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`

@@ -38,15 +38,15 @@ func CheckVerify(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func CheckPerHome(c *fiber.Ctx) error {
+func CheckPermissionHome(c *fiber.Ctx) error {
 	if !controllers.CheckPermission("home", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerDashboard(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("dashboard", c) {
+func CheckPermissionMngRole(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("ql_tai_khoan", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()

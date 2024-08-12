@@ -61,33 +61,47 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Họ và tên đệm:</label>
-                                            <input name="firstname" type="text" class="form-control" 14px>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Tên :</label>
                                             <input name="lastname" type="text" class="form-control" 14px>
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Số điện thoại :</label>
-                                            <input name="phone_number" type="text" class="form-control" 14px>
+                                            <label>Tên :</label>
+                                            <input name="firstname" type="text" class="form-control" 14px>
                                         </div>
-                                    </div>
 
-                                    <div class="col-md-6">
-
-                                            <div class="form-group">
-                                                <label>Ngày sinh</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" id="datepicker" name="datepicker" 14px>
-                                                    <div class="input-group-append">
+                                        <div class="form-group">
+                                            <label>Giới tính :</label>
+                                            <select id="gender" class="form-control" style="width: 100%">
+                                                <option value="">&nbsp;</option>
+                                                <option value="1">Nam</option>
+                                                <option value="2">Nữ</option>
+                                                <option value="3">Khác</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Ngày sinh</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="datepicker" name="datepicker" 14px>
+                                                <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="fa fa-calendar-check"></i>
                                                     </span>
-                                                    </div>
                                                 </div>
                                             </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Số điện thoại :</label>
+                                            <input name="phone_number" type="text" class="form-control" 14px>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Link Facebook (không bắt buộc) :</label>
+                                            <input name="link_facebook" type="text" class="form-control" 14px>
+                                        </div>
 
                                         <div class="form-group">
                                             <label>Ảnh đại diện:</label>
@@ -309,8 +323,10 @@
                     formData.last_name = $('input[name="lastname"]').val();
                     formData.first_name = $('input[name="firstname"]').val();
                     formData.phone_number = $('input[name="phone_number"]').val();
+                    formData.link_facebook = $('input[name="link_facebook"]').val();
                     formData.date_of_birth = $('input[id="datepicker"]').val();
                     formData.role_id = $('#role').val();
+                    formData.gender = $('#gender').val();
                     formData.email = $('input[name="email"]').val();
                     formData.password = $('input[name="password"]').val();
                     formData.confirm_password = $('input[name="cfpassword"]').val();
@@ -327,8 +343,10 @@
                 formData.last_name = $('input[name="lastname"]').val();
                 formData.first_name = $('input[name="firstname"]').val();
                 formData.phone_number = $('input[name="phone_number"]').val();
+                formData.link_facebook = $('input[name="link_facebook"]').val();
                 formData.date_of_birth = $('input[id="datepicker"]').val();
                 formData.role_id = $('#role').val();
+                formData.gender = $('#gender').val();
                 formData.email = $('input[name="email"]').val();
                 formData.password = $('input[name="password"]').val();
                 formData.confirm_password = $('input[name="cfpassword"]').val();

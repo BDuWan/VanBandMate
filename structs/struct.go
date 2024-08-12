@@ -17,8 +17,10 @@ type SignUpForm struct {
 	FirstName         string `form:"first_name"`
 	LastName          string `form:"last_name"`
 	PhoneNumber       string `form:"phone_number"`
+	LinkFacebook      string `form:"link_facebook"`
 	Image             string `form:"image"`
 	RoleID            int    `form:"role_id"`
+	Gender            int    `form:"gender"`
 	Email             string `form:"email"`
 	Password          string `form:"password"`
 	ConfirmPassword   string `form:"confirm_password"`
@@ -28,6 +30,21 @@ type SignUpForm struct {
 	AddressDetail     string `form:"address_detail"`
 	DateOfBirth       string `form:"date_of_birth"`
 	RecaptchaResponse string `form:"recaptcha_response"`
+}
+
+type UpdateInfoForm struct {
+	FirstName     string `form:"first_name"`
+	LastName      string `form:"last_name"`
+	PhoneNumber   string `form:"phone_number"`
+	LinkFacebook  string `form:"link_facebook"`
+	Image         string `form:"image"`
+	Gender        int    `form:"gender"`
+	Email         string `form:"email"`
+	ProvinceCode  string `form:"province_code"`
+	DistrictCode  string `form:"district_code"`
+	WardCode      string `form:"ward_code"`
+	AddressDetail string `form:"address_detail"`
+	DateOfBirth   string `form:"date_of_birth"`
 }
 
 type AccUser struct {
@@ -58,8 +75,9 @@ type ReqBody struct {
 }
 
 type RoleForm struct {
-	Name         string `form:"name" validate:"required,min=3,max=30"`
-	PermissionID []int  `form:"permission_id" validate:"required"`
+	Name        string `form:"name"`
+	Describe    string `form:"describe"`
+	Permissions []int  `form:"permissions"`
 }
 
 type FormStateUser struct {

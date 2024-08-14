@@ -9,7 +9,7 @@ import (
 )
 
 //func GetHome(c *fiber.Ctx) error {
-//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetHome")
+//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetHome")
 //	var studyPrograms []models.StudyProgram
 //	var studyProgramUser []models.StudyProgramUser
 //	DB := initializers.DB
@@ -21,15 +21,15 @@ import (
 //			"Course.deleted", false).Where(
 //			"course_users.deleted", false).Where(
 //			"course_users.user_id", userLogin.UserID).Pluck("Course.study_program_id", &programId).Error; err != nil {
-//			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+//			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 //		}
 //		if err := DB.Where("deleted", false).Where("study_program_id in ?", programId).Find(&studyPrograms).Error; err != nil {
-//			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+//			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 //		}
 //
 //	} else {
 //		if err := DB.Where("deleted", false).Find(&studyPrograms).Error; err != nil {
-//			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+//			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 //		}
 //	}
 //
@@ -38,7 +38,7 @@ import (
 //		"StudyProgram.deleted", false).Where(
 //		"User.deleted", false).Where(
 //		"study_program_users.deleted", false).Find(&studyProgramUser).Error; err != nil {
-//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 //	}
 //
 //	if userLogin.TypeUserID == 2 || userLogin.TypeUserID == 3 {
@@ -57,17 +57,17 @@ import (
 //}
 
 func GetHome(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetHome")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetHome")
 	DB := initializers.DB
 	userLogin := GetSessionUser(c)
 	user := new(models.User)
 	if err := DB.Model(&models.User{}).Joins("Role").Where("user_id", userLogin.UserID).First(user).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Cannot get user")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Cannot get user")
 	}
 	sess, _ := SessAuth.Get(c)
 	permissions := sess.Get("rolePermission")
 
-	return c.Render("pages/home/index", fiber.Map{
+	return c.Render("pages/info/index", fiber.Map{
 		"Permissions": permissions,
 		"User":        user,
 		"Ctx":         c,

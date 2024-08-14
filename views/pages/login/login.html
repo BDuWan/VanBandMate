@@ -43,7 +43,7 @@
                         </div>
                         <div class="text sign-up-text">Chưa có tài khoản? <a href="/signup"><label>Đăng kí ngay</label></a>
                         </div>
-                        <div class="text sign-up-text"><a id="forgotPassword"><label style="font-weight: bold; color: #7939db !important;">Quên mật khẩu</label></a>
+                        <div class="text sign-up-text"><a href="/forgot-password"><label style="font-weight: bold; color: #7939db !important;">Quên mật khẩu</label></a>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
 
                 success: function (response) {
                     if (response === "Login success") {
-                        window.location.href = "/home";
+                        window.location.href = "/info";
                     }
                     else {
                         swal({

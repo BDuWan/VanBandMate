@@ -20,6 +20,7 @@
                         <th>STT</th>
                         <th>Tên vai trò</th>
                         <th>Mô tả</th>
+                        <th>Số lượng tài khoản</th>
                         <th style="width: 10%">Thao tác</th>
                     </tr>
                     </thead>
@@ -55,6 +56,7 @@
                 },
                 {data: 'name'},
                 {data: 'describe'},
+                {data: 'number_user'},
                 {
                     data: 'role_id',
                     "searchable": false,
@@ -114,11 +116,6 @@
             alert('Detail button clicked for role_id: ' + roleId);
         });
 
-        // Sự kiện cho nút Remove
-        $(document).on('click', '.btn-remove', function() {
-            var roleId = $(this).data('role-id');
-            alert('Remove button clicked for role_id: ' + roleId);
-        });
     });
 </script>
 <script>
@@ -198,11 +195,12 @@
                     return false;
                 }
                 var role = response.data
-                $('#editRoleModal #addName').val(role.name);
-                $('#editRoleModal #addDescribe').val(role.describe);
+                $('#editRoleModal #editName').val(role.name);
+                $('#editRoleModal #editDescribe').val(role.describe);
+                $('#updateRoleButton').data('role-id', roleId);
 
                 // // Xử lý các quyền
-                $('#editRoleModal #permissionsList input[type=checkbox]').each(function () {
+                $('#editRoleModal #editPermissionsList input[type=checkbox]').each(function () {
                     var checkbox = $(this);
                     var permissionId = parseInt(checkbox.val(), 10);
 
@@ -214,6 +212,121 @@
                 });
                 $('#editRoleModal').modal('show');
             }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('#updateRoleButton').on('click', function() {
+            var roleId = $(this).data('role-id');
+            // Lấy giá trị của các trường
+            const roleName = $('#editName').val();
+            const roleDescribe = $('#editDescribe').val();
+
+            const selectedPermissions = [];
+            $('#editPermissionsList input[name="permission"]:checked').each(function() {
+                selectedPermissions.push($(this).val());
+            });
+
+            // Tạo đối tượng chứa dữ liệu vai trò
+            const roleForm = {
+                name: roleName,
+                describe: roleDescribe,
+                permissions: selectedPermissions
+            };
+
+            $.ajax({
+                url: '/mng-role/api/update/'+roleId,
+                type: 'PUT',
+                data: roleForm,
+                success: function(response) {
+                    if(response === "success"){
+                        swal("", "Cập nhật vai trò thành công", {
+                            icon : "success",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-success'
+                                }
+                            },
+                        }).then(() => {
+                            $('#editName').val('');
+                            $('#editDescribe').val('');
+                            $('#editPermissionsList input[name="permission"]').prop('checked', false);
+                            $('#editRoleModal').modal('hide');
+                            $('#table-role').DataTable().ajax.reload();
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Đã xảy ra lỗi khi cập nhật vai trò.');
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.btn-remove', function () {
+            var roleId = $(this).data('role-id');
+            $.ajax({
+                url: '/mng-role/api/delete/'+roleId,
+                type: 'DELETE',
+                success: function(response) {
+                    if(response === "success"){
+                        swal({
+                            title: 'Bạn có chắc chắn muốn xóa?',
+                            text: "",
+                            type: 'warning',
+                            buttons:{
+                                confirm: {
+                                    text : 'Xóa',
+                                    className : 'btn btn-success'
+                                },
+                                cancel: {
+                                    visible: true,
+                                    className: 'btn btn-danger'
+                                }
+                            }
+                        }).then((Delete) => {
+                            if (Delete) {
+                                swal({
+                                    title: 'Deleted!',
+                                    text: 'Bạn đã xóa vai trò thành công',
+                                    type: 'success',
+                                    buttons : {
+                                        confirm: {
+                                            className : 'btn btn-success'
+                                        }
+                                    }
+                                });
+                            } else {
+                                swal.close();
+                            }
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Đã xảy ra lỗi khi xóa vai trò.');
+                }
+            });
         });
     });
 </script>

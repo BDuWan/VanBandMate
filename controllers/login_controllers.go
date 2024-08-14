@@ -31,23 +31,23 @@ const (
 )
 
 func GetLogin(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetLogin")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetLogin")
 	return c.Render("pages/login/login", fiber.Map{})
 }
 func GetSignup(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetSignup")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetSignup")
 	DB := initializers.DB
 	var provinces []models.Province
 	var districts []models.District
 	var wards []models.Ward
 	if err := DB.Find(&provinces).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	}
 	if err := DB.Find(&districts).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	}
 	if err := DB.Find(&wards).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.Redirect("/errors/404")
 	}
 	return c.Render("pages/login/signup", fiber.Map{
@@ -57,7 +57,7 @@ func GetSignup(c *fiber.Ctx) error {
 	})
 }
 func PostLogin(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: PostLogin")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: PostLogin")
 	var user models.User
 	//var permissions []models.RolePermission
 
@@ -65,7 +65,7 @@ func PostLogin(c *fiber.Ctx) error {
 	form := new(models.User)
 
 	if err := c.BodyParser(form); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 
 		return c.JSON("Can not get input data")
 	}
@@ -79,7 +79,7 @@ func PostLogin(c *fiber.Ctx) error {
 	if err := DB.Where(
 		"BINARY email = ?", form.Email).Where(
 		"deleted", false).First(&user).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON("Email không tồn tại")
 	}
 
@@ -90,16 +90,16 @@ func PostLogin(c *fiber.Ctx) error {
 	if !utils.CheckPasswordHash(form.Password, user.Password) {
 		return c.JSON("Sai mật khẩu")
 	}
-	user.Session = "session_" + form.Email
+	//user.Session = "session_" + form.Email
 	if err := DB.Save(&user).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON("")
 	}
 
 	//if err := DB.Model(&models.RolePermission{}).Joins("Permission").Where(
 	//	"role_permissions.role_id", user.RoleID).Where(
 	//	"role_permissions.deleted", false).Find(&permissions).Error; err != nil {
-	//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+	//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	//}
 	//fmt.Println(permissions)
 
@@ -109,9 +109,9 @@ func PostLogin(c *fiber.Ctx) error {
 	sess.Set("user_id", user.UserID)
 	sess.Set("role_id", user.RoleID)
 	//sess.Set("permissions", permissions)
-	sess.Set("sessionId", "session_"+form.Email)
+	//sess.Set("sessionId", "session_"+form.Email)
 	if err := sess.Save(); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	}
 
 	return c.JSON("Login success")
@@ -121,9 +121,10 @@ func PostSignup(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: PostSignup")
 	var signupForm structs.SignUpForm
 	var account models.User
+	var role models.Role
 	DB := initializers.DB
 	if err := c.BodyParser(&signupForm); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Format User Fail")
 	}
 	//process signup logic
 	validator := ValidatorSignUpInput(signupForm)
@@ -133,7 +134,7 @@ func PostSignup(c *fiber.Ctx) error {
 	//reCAPTCHA
 	recaptchaResponse := signupForm.RecaptchaResponse
 	if recaptchaResponse == "" {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: reCAPTCHA response not found")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: reCAPTCHA response not found")
 		return c.JSON("Vui lòng xác thực reCaptcha")
 	}
 
@@ -160,7 +161,7 @@ func PostSignup(c *fiber.Ctx) error {
 	layout := "02/01/2006"
 	date, err := time.Parse(layout, signupForm.DateOfBirth)
 	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: error parsing date of birth")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: error parsing date of birth")
 	}
 	if err := DB.Where("email", signupForm.Email).First(&models.User{}).Error; err != nil {
 		account.RoleID = signupForm.RoleID
@@ -176,7 +177,7 @@ func PostSignup(c *fiber.Ctx) error {
 		account.AddressDetail = signupForm.AddressDetail
 		account.Password = utils.HashingPassword(signupForm.Password)
 		account.DateOfBirth = date
-		account.Session = ""
+		//account.Session = ""
 		account.State = false
 		account.Verify = false
 		account.Deleted = false
@@ -187,7 +188,7 @@ func PostSignup(c *fiber.Ctx) error {
 		account.UpdatedBy = 0
 
 		if err := DB.Create(&account).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Can not create account")
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")
 			return c.JSON("Can not create account")
 		}
 
@@ -196,8 +197,8 @@ func PostSignup(c *fiber.Ctx) error {
 		account.Image = imageName
 
 		if err := DB.Updates(&account).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Can not create account")
-			return c.JSON("Can not create account")
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")
+			return c.JSON("Đã xa ra lỗi khi tạo tài khoản")
 		}
 		if signupForm.Image != "" {
 			path := "public/assets/img/avatar/"
@@ -207,14 +208,22 @@ func PostSignup(c *fiber.Ctx) error {
 			}
 		}
 
-		var admin []string
-		if err := DB.Table("users").Where("deleted", false).Where("type_user_id = 1").Pluck("email", &admin).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Not found admin")
+		//var admin []string
+		//if err := DB.Table("users").Where("deleted", false).Where("type_user_id = 1").Pluck("email", &admin).Error; err != nil {
+		//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Not found admin")
+		//}
+		//for _, item := range admin {
+		//	go SendEmail("New registered account", "Student with Email: "+account.Email+" register for a new account.", item)
+		//}
+		if err := DB.Where("role_id", account.RoleID).Where("deleted", false).First(&role).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Không tìm thấy vai trò")
 		}
-		for _, item := range admin {
-			go SendEmail("New registered account", "Student with Email: "+account.Email+" register for a new account.", item)
+		role.NumberUser += 1
+		if err := DB.Save(&role).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Lỗi khi cập nhật vai trò")
 		}
-
 		return c.JSON("Success")
 	}
 
@@ -222,15 +231,15 @@ func PostSignup(c *fiber.Ctx) error {
 }
 
 func GetLogout(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetLogout")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetLogout")
 	sess, _ := SessAuth.Get(c)
 
 	if err := sess.Reset(); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	}
 
 	if err := sess.Save(); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	}
 	return c.Redirect("/login")
 }
@@ -327,26 +336,26 @@ func SaveImage(image_base64 string, path string, image_name string) string {
 
 	imageBytes, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return "Cannot upload image"
 	}
 
 	img, _, err := image.Decode(bytes.NewReader(imageBytes))
 	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return "Cannot upload image"
 	}
 
 	out, err := os.Create(path + image_name)
 	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return "Cannot upload image"
 	}
 	defer out.Close()
 
 	err = jpeg.Encode(out, img, nil)
 	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return "Cannot upload image"
 	}
 	return "ok"

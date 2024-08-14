@@ -15,7 +15,7 @@ import (
 )
 
 func GetRolePage(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetAccRoles")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetAccRoles")
 	userLogin := GetSessionUser(c)
 	sess, _ := SessAuth.Get(c)
 	permissions := sess.Get("rolePermission")
@@ -79,7 +79,7 @@ func APIGetRoleID(c *fiber.Ctx) error {
 }
 
 func APIPostCreateRole(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: PostAccCreateRole")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostCreateRole")
 	var role models.Role
 	userLogin := GetSessionUser(c)
 
@@ -87,7 +87,7 @@ func APIPostCreateRole(c *fiber.Ctx) error {
 
 	roleForm := new(structs.RoleForm)
 	if err := c.BodyParser(roleForm); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON(err.Error())
 	}
 
@@ -110,7 +110,7 @@ func APIPostCreateRole(c *fiber.Ctx) error {
 	role.CreatedAt = time.Now()
 
 	if err := DB.Create(&role).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 
 		return c.JSON("Can not create role")
 	}
@@ -119,15 +119,125 @@ func APIPostCreateRole(c *fiber.Ctx) error {
 		var rolePer models.RolePermission
 		rolePer.RoleID = role.RoleID
 		rolePer.PermissionID = permissionId
-		rolePer.Deleted = false
 		rolePer.CreatedBy = userLogin.UserID
 		rolePer.CreatedAt = time.Now()
-		rolePer.DeletedAt = time.Now()
 		if err := DB.Create(&rolePer).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 			return c.RedirectBack("")
 		}
 	}
+	return c.JSON("success")
+}
+
+func APIPutUpdateRoleID(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPutUpdateRoleID")
+	var role models.Role
+	userLogin := GetSessionUser(c)
+	DB := initializers.DB
+	roleId := c.Params("id")
+
+	idRole, err := strconv.Atoi(roleId)
+	if err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+
+	}
+	if idRole <= 3 {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Role cannot be update")
+		return c.JSON("Vai trò này không thể được sửa đổi")
+	}
+	form := new(structs.RoleForm)
+	if err := c.BodyParser(form); err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+
+		return c.JSON("Dữ liệu không hợp lệ")
+	}
+
+	if err := DB.Where("role_id = ?", roleId).Where("deleted", false).First(&role).Error; err != nil {
+
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Vai trò đã bị xóa")
+	}
+	if strings.TrimSpace(form.Name) == "" {
+		return c.JSON("Tên vai trò không được để trống")
+	}
+	if form.Name != role.Name {
+		if err := DB.Where("name", form.Name).First(&models.Role{}).Error; err == nil {
+			return c.JSON("Tên vai trò đã được sử dụng")
+		}
+	}
+
+	if len(form.Permissions) < 1 {
+		return c.JSON("Cần chọn ít nhất 1 quyền")
+	}
+
+	role.Name = form.Name
+	role.Describe = form.Describe
+	role.UpdatedBy = userLogin.UserID
+	role.UpdatedAt = time.Now()
+
+	if err := DB.Model(&role).Updates(&role).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+
+		return c.JSON("Đã xảy ra lỗi khi cập nhật vai trò")
+	}
+
+	if err := DB.Where("role_id = ?", roleId).Delete(models.RolePermission{}).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Đã xảy ra lỗi khi cập nhật quyền")
+	}
+
+	for _, permissionId := range form.Permissions {
+		var rolePer models.RolePermission
+
+		rolePer.RoleID = role.RoleID
+		rolePer.PermissionID = permissionId
+		rolePer.CreatedBy = userLogin.UserID
+		rolePer.CreatedAt = time.Now()
+
+		if err := DB.Create(&rolePer).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi khi cập nhật quyền")
+		}
+	}
+
+	return c.JSON("success")
+}
+
+func APIDeleteRoleID(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIDeleteRoleID")
+	var role models.Role
+	userLogin := GetSessionUser(c)
+	DB := initializers.DB
+	roleId := c.Params("id")
+
+	idRole, err := strconv.Atoi(roleId)
+	if err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+
+	}
+	if idRole <= 3 {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Role > 5")
+
+		return c.JSON("Vai trò này không thể xóa")
+	}
+
+	if err := DB.Where("role_id", roleId).Where("deleted", false).First(&role).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]:" + err.Error())
+		return c.JSON("Không tìm thấy vai trò")
+	}
+	if role.NumberUser > 0 {
+		return c.JSON("Có " + strconv.Itoa(role.NumberUser) + " tài khoản thuộc vai trò này. Vui lòng xóa hoặc chuyển các tài khoản này sang vai trò khác trước khi xóa vai trò")
+	}
+
+	role.Deleted = true
+	role.DeletedBy = userLogin.UserID
+	role.DeletedAt = time.Now()
+
+	if err := DB.Model(&role).Updates(&role).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]:" + err.Error())
+		return c.JSON("Can not delete this role.")
+	}
+
 	return c.JSON("success")
 }
 
@@ -137,17 +247,17 @@ func APIPostCreateRole1(c *fiber.Ctx) error {
 	//DB := initializers.DB
 	var roleForm structs.SignUpForm
 	if err := c.BodyParser(&roleForm); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + "Format User Fail")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Format User Fail")
 	}
 	return c.JSON("Success")
 }
 
 func GetAccCreateRole(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetAccCreateRole")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetAccCreateRole")
 	var permissions []models.Permission
 
 	if err := initializers.DB.Find(&permissions).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Not found permissions in create role:  " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Not found permissions in create role:  " + err.Error())
 	}
 
 	return c.Render("pages/accounts/roles/create", fiber.Map{
@@ -157,7 +267,7 @@ func GetAccCreateRole(c *fiber.Ctx) error {
 }
 
 func APIPostAccRoles(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: APIPostAccRoles")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostAccRoles")
 	var roles []models.Role
 	var query *gorm.DB
 	var req structs.ReqBody
@@ -204,7 +314,7 @@ func APIPostAccRoles(c *fiber.Ctx) error {
 	query = query.Offset(req.Start).Limit(req.Length)
 
 	if err := query.Find(&roles).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	}
 
 	return c.JSON(fiber.Map{
@@ -216,7 +326,7 @@ func APIPostAccRoles(c *fiber.Ctx) error {
 }
 
 func DeleteAccRoleID(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: DeleteAccRoleID")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: DeleteAccRoleID")
 	var role models.Role
 	var rolePer models.RolePermission
 	//var user models.User1
@@ -226,17 +336,17 @@ func DeleteAccRoleID(c *fiber.Ctx) error {
 
 	idRole, err := strconv.Atoi(roleId)
 	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 
 	}
 	if idRole < 5 {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Role > 5")
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Role > 5")
 
 		return c.JSON("Can not delete this role.")
 	}
 
 	if err := DB.First(&role, roleId).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Not found role ID: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Not found role ID: " + err.Error())
 		return c.JSON("Can not delete this role.")
 	}
 
@@ -245,22 +355,19 @@ func DeleteAccRoleID(c *fiber.Ctx) error {
 	role.DeletedAt = time.Now()
 
 	if err := DB.Model(&role).Updates(&role).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not update role:  " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not update role:  " + err.Error())
 		return c.JSON("Can not delete this role.")
 	}
 
-	rolePer.Deleted = true
-	rolePer.DeletedBy = userLogin.UserID
-	rolePer.DeletedAt = time.Now()
 	if err := DB.Model(&models.RolePermission{}).Where(
 		"role_id = ?", roleId).Updates(&rolePer).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not delete rol in role permission" + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not delete rol in role permission" + err.Error())
 		return c.JSON("Can not delete this role.")
 	}
 
 	//user.RoleID = 5
 	if err := DB.Model(&models.User1{}).Where("role_id", roleId).Updates(map[string]interface{}{"role_id": gorm.Expr("type_user_id")}).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not update user when update role:  " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not update user when update role:  " + err.Error())
 		return c.JSON("Can not update user when delete this role.")
 	}
 
@@ -268,7 +375,7 @@ func DeleteAccRoleID(c *fiber.Ctx) error {
 }
 
 func GetAccRoleID(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: GetAccRoleID")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetAccRoleID")
 	var role models.Role
 	var perMe []models.RolePermission
 	var permissions []models.Permission
@@ -278,19 +385,19 @@ func GetAccRoleID(c *fiber.Ctx) error {
 
 	err := DB.Where("deleted", false).First(&role, roleId).Error
 	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 
 		return c.RedirectBack("")
 	}
 
 	if err := DB.Select("permission_id").Where("role_id = ? and deleted = ?", roleId, false).Find(&perMe).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 
 		return c.RedirectBack("")
 	}
 
 	if err := DB.Find(&permissions).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 
 		return c.RedirectBack("")
 	}
@@ -301,75 +408,4 @@ func GetAccRoleID(c *fiber.Ctx) error {
 		"Permissions": permissions,
 		"Ctx":         c,
 	}, "layouts/main")
-}
-
-func UpdateAccRoleID(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: UpdateAccRoleID")
-	var role models.Role
-	userLogin := GetSessionUser(c)
-	DB := initializers.DB
-	roleId := c.Params("id")
-
-	idRole, err := strconv.Atoi(roleId)
-	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-
-	}
-	if idRole < 5 {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Role > 5")
-
-		return c.RedirectBack("")
-	}
-	form := new(structs.RoleForm)
-	if err := c.BodyParser(form); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-
-		return c.RedirectBack("")
-	}
-
-	if err := DB.Where("role_id = ?", roleId).First(&role).Error; err != nil {
-
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-
-		return c.RedirectBack("")
-	}
-
-	role.Name = form.Name
-	role.UpdatedBy = userLogin.UserID
-	role.UpdatedAt = time.Now()
-
-	if err := DB.Model(&role).Updates(&role).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-
-		return c.RedirectBack("")
-	}
-
-	if len(form.Permissions) < 1 {
-		return c.RedirectBack("")
-	}
-
-	if err := DB.Where("role_id = ?", roleId).Delete(models.RolePermission{}).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-
-		return c.RedirectBack("")
-	}
-
-	for _, permissionId := range form.Permissions {
-		var rolePer models.RolePermission
-
-		rolePer.RoleID = role.RoleID
-		rolePer.PermissionID = permissionId
-		rolePer.Deleted = false
-		rolePer.CreatedAt = time.Now()
-		rolePer.UpdatedAt = time.Now()
-		rolePer.DeletedAt = time.Now()
-
-		if err := DB.Create(&rolePer).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
-
-			return c.RedirectBack("")
-		}
-	}
-
-	return c.Redirect("/accounts/roles")
 }

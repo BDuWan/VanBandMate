@@ -17,7 +17,6 @@
             }
         });
     </script>
-
     <!-- CSS Files -->
     <link rel="stylesheet" href="/assets/azzara/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/azzara/css/azzara.min.css">
@@ -27,14 +26,13 @@
 <body>
 <div class="wrapper">
     <!--
-            Tip 1: You can change the background color of the main header using: data-background-color="blue | purple | light-blue | green | orange | red"
+        Tip 1: You can change the background color of the main header using: data-background-color="blue | purple | light-blue | green | orange | red"
     -->
-    <div class="main-header" data-background-color="purple">
+    <div class="main-header" data-background-color="light-blue">
         <!-- Logo Header -->
         <div class="logo-header">
-
-            <a href="index.html" class="logo">
-                <img src="/assets/images/logo_van_band_mate_png.png" style="width: 25%" alt="navbar brand" class="navbar-brand">
+            <a href="" class="logo">
+                <img src="/assets/images/logo_van_band_mate_png.png" style="width: 50px" alt="navbar brand" class="navbar-brand">
             </a>
             <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon">
@@ -193,14 +191,14 @@
                                     <div class="avatar-lg"><img src="/assets/img/avatar/{{.User.Image}}" alt="image profile" class="avatar-img rounded"></div>
                                     <div class="u-text">
                                         <h4><span>{{.User.LastName}} {{.User.FirstName}} </span></h4>
-                                        <a href="profile.html" class="btn btn-rounded btn-danger btn-sm">Xem trang cá nhân</a>
+                                        <a href="/info/profile" class="btn btn-rounded btn-danger btn-sm">Xem trang cá nhân</a>
                                     </div>
                                 </div>
                             </li>
                             <li>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Chỉnh sửa thông tin cá nhân</a>
-                                <a class="dropdown-item" href="#">Đổi mật khẩu</a>
+                                <a class="dropdown-item" href="/info/userinfo">Chỉnh sửa thông tin cá nhân</a>
+                                <a class="dropdown-item" href="/info/change-password">Đổi mật khẩu</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/logout">Đăng xuất</a>
                             </li>
@@ -236,17 +234,17 @@
                         <div class="collapse in" id="collapseExample">
                             <ul class="nav">
                                 <li>
-                                    <a href="/home/profile/{{.User.UserID}}">
+                                    <a href="/info/profile">
                                         <span class="link-collapse">Trang cá nhân của tôi</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/home/userinfo">
+                                    <a href="/info/userinfo">
                                         <span class="link-collapse">Chỉnh sửa thông tin cá nhân</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#settings">
+                                    <a href="/info/change-password">
                                         <span class="link-collapse">Đổi mật khẩu</span>
                                     </a>
                                 </li>
@@ -273,6 +271,7 @@
             <div class="page-inner">
                 {{embed}}
             </div>
+            {{template "partials/footer" .}}
         </div>
     </div>
 </div>

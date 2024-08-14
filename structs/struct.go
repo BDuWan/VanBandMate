@@ -115,9 +115,17 @@ type StudyProgramInstructor struct {
 	UserID         int `json:"user_id"`
 }
 
-type FromChangePass struct {
-	CurrentPass string `json:"current_pass"`
-	NewPass     string `json:"new_pass"`
+type FormChangePass struct {
+	OldPass string `json:"old_pass"`
+	NewPass string `json:"new_pass"`
+	CfPass  string `json:"cf_pass"`
+}
+
+type FormUpdatePass struct {
+	Email      string `json:"email"`
+	Password   string `json:"password"`
+	CfPassword string `json:"cf_password"`
+	Otp        string `json:"otp"`
 }
 
 // type CourseUser struct {

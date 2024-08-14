@@ -371,7 +371,7 @@ body {
 }
 
 .main-header {
-    background: #fff;
+    background: #36C2CE;
     min-height: 55px;
     width: 100%;
     position: fixed;
@@ -979,6 +979,7 @@ body {
 
 @media (min-width: 576px) {
     .page-inner {
+        padding-top: 2rem;
         padding-right:1rem;
         padding-left: 1rem
     }
@@ -986,6 +987,7 @@ body {
 
 @media (min-width: 992px) {
     .page-inner {
+        padding-top: 5rem;
         padding-right:2rem;
         padding-left: 2rem
     }
@@ -15596,7 +15598,7 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
         -ms-transform: translate3d(-270px,0,0);
         transform: translate3d(-270px,0,0)!important;
         transition: all .5s;
-        padding-top: 0
+        padding-top: 5px;
     }
 
     .sidebar:before {
@@ -16108,6 +16110,16 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
 
 .login .custom-control-label {
     white-space: nowrap
+}
+
+.login-label {
+    cursor: pointer;
+    font-weight: bold;
+    color: #7939db !important;
+}
+
+.login-label:hover {
+    text-decoration: underline;
 }
 
 @media screen and (max-width: 576px) {

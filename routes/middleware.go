@@ -1,9 +1,8 @@
 package routes
 
 import (
-	"lms/controllers"
-
 	"github.com/gofiber/fiber/v2"
+	"lms/controllers"
 )
 
 func CheckAuthentication(c *fiber.Ctx) bool {
@@ -22,7 +21,7 @@ func CheckSession(c *fiber.Ctx) error {
 	userLogin := controllers.GetSessionUser(c)
 	sess, _ := controllers.SessAuth.Get(c)
 
-	if userLogin.Session != sess.Get("sessionId") {
+	if userLogin.Email != sess.Get("email") {
 		return c.Redirect("/logout")
 	}
 
@@ -38,85 +37,71 @@ func CheckVerify(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func CheckPermissionHome(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("home", c) {
-		return c.Redirect("/errors/403")
-	}
-	return c.Next()
-}
-
-func CheckPermissionMngRole(c *fiber.Ctx) error {
+func CheckPermissionMngAccount(c *fiber.Ctx) error {
 	if !controllers.CheckPermission("ql_tai_khoan", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerStudyPrograms(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("study_programs", c) {
+func CheckPermissionMngRole(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("ql_vai_tro", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerCourses(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("courses", c) {
+func CheckPermissionMngContract(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("ql_hop_dong", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerMngStudyPrograms(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("mng_study_programs", c) {
+func CheckPermissionMngHiringNews(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("ql_tin_tuyen_dung", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerMngCourses(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("mng_courses", c) {
+func CheckPermissionDashboard(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("thong_ke", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerMngInstructors(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("mng_instructors", c) {
+func CheckPermissionMyContract(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("hop_dong_cua_toi", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerMngStudents(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("mng_students", c) {
+func CheckPermissionHiring(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("tuyen_dung", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerMngSaleBusiness(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("mng_sale_business", c) {
+func CheckPermissionFindMusicPlayer(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("tim_kiem_nhac_cong", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerMngPayments(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("mng_payments", c) {
+func CheckPermissionHiringNews(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("xem_tin_tuyen_dung", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
 }
 
-func CheckPerAccUsers(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("account_users", c) {
-		return c.Redirect("/errors/403")
-	}
-	return c.Next()
-}
-
-func CheckPerAccRoles(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("account_roles", c) {
+func CheckPermissionInvitation(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("loi_moi_nhan_duoc", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()

@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="row mt-3">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group form-group-default">
                     <label>Họ và tên đệm</label>
                     <input type="text" class="form-control" name="lastname" placeholder="Họ và tên đệm" value="{{.User.LastName}}">
@@ -11,7 +11,7 @@
                     <input type="text" class="form-control" name="firstname" placeholder="Tên" value="{{.User.FirstName}}">
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="form-group form-group-default">
                     <label>Email</label>
                     <input type="email" class="form-control" name="email" placeholder="Email này cũng chính là email đăng nhập của bạn" value="{{.User.Email}}">
@@ -81,6 +81,15 @@
                 <div class="form-group form-group-default">
                     <label>Địa chỉ chi tiết</label>
                     <input type="text" class="form-control" value="{{.User.AddressDetail}}" name="address" placeholder="Phone">
+                </div>
+                <div class="form-group">
+                    {{if .User.Verify}}
+                    <p>Email đã được xác thực <span style="color: green;">&#10003;</span></p>
+                    {{else}}
+                    <p>Email chưa được xác thực</p>
+                    <button class="btn btn-primary btn-sm" id="verifyEmailButton">Xác thực email</button>
+                    {{end}}
+
                 </div>
             </div>
             <div class="col-md-4 d-flex justify-content-center align-items-center">
@@ -217,7 +226,64 @@
                     }
                 }).then((Value) => {
                     if (Value) {
-                        eventSaveClick(e);
+                        swal({
+                            title: 'Nhập mật khẩu',
+                            html: '<br><input class="form-control" placeholder="Nhập mật khẩu để xác thực chính bạn đang đổi email" id="input-field">',
+                            content: {
+                                element: "input",
+                                attributes: {
+                                    placeholder: "Nhập mật khẩu để xác thực chính bạn đang đổi email",
+                                    type: "password",
+                                    id: "input-field",
+                                    className: "form-control"
+                                },
+                            },
+                            buttons: {
+                                confirm: {
+                                    closeModal: false,
+                                    className: 'btn btn-success'
+                                },
+                                cancel: {
+                                    visible: true,
+                                    className: 'btn btn-danger'
+                                }
+                            },
+                        }).then(function() {
+                            var enteredPassword = $('#input-field').val();
+                            $.ajax({
+                                url: '/check-password',
+                                method: 'POST',
+                                data: { password: enteredPassword },
+                                success: function(response) {
+                                    if (response === "valid") {
+                                        eventSaveClick(e);
+                                    } else {
+                                        swal({
+                                            title: 'Sai mật khẩu',
+                                            text: "Vui lòng thử lại",
+                                            icon: 'error',
+                                            buttons: {
+                                                confirm: {
+                                                    className: 'btn btn-danger'
+                                                }
+                                            },
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    swal({
+                                        title: 'Lỗi',
+                                        text: "Đã có lỗi xảy ra. Vui lòng thử lại sau.",
+                                        icon: 'error',
+                                        buttons: {
+                                            confirm: {
+                                                className: 'btn btn-danger'
+                                            }
+                                        },
+                                    });
+                                }
+                            });
+                        });
                     } else {
                         swal.close();
                     }
@@ -270,7 +336,7 @@
 
         function sendFormData(formData) {
             $.ajax({
-                url: '/home/userinfo',
+                url: '/info/userinfo',
                 type: 'PUT',
                 data: formData,
                 success: function(response) {
@@ -311,5 +377,34 @@
         $('#btn_reset').click(function() {
             location.reload();
         });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        document.getElementById('verifyEmailButton').addEventListener('click', function() {
+            // Gửi yêu cầu xác thực email lên server
+            // Ví dụ:
+            $.ajax({
+                url: '/info/verify-email',
+                method: 'POST',
+                success: function(response) {
+                    if(response === "success"){
+                        swal("", "Gửi email thành công", {
+                            icon : "success",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-success'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Có lỗi xảy ra, vui lòng thử lại sau');
+                }
+            });
+        });
+
     });
 </script>

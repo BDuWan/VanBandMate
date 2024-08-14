@@ -39,10 +39,11 @@ func GetSessionUser(c *fiber.Ctx) models.User {
 	sess, _ := SessAuth.Get(c)
 	email := sess.Get("email")
 
-	if err := initializers.DB.Where("BINARY email = ?", email).First(&user).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not found email in check session")
+	if err := initializers.DB.Model(&models.User{}).Joins("Role").Joins(
+		"Province").Joins("District").Joins("Ward").Where(
+		"email", email).First(&user).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Cannot get user")
 	}
-
 	if err := initializers.DB.Model(&models.RolePermission{}).Preload("Permission").Where("role_id", user.RoleID).Find(&rolPer).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: Can not found permission in check session")
 	}

@@ -41,36 +41,36 @@ type User1 struct {
 }
 
 type User struct {
-	UserID         int       `gorm:"column:user_id;primaryKey;autoIncrement"`
-	FirstName      string    `gorm:"column:first_name;size:50"`
-	LastName       string    `gorm:"column:last_name;size:50"`
-	RoleID         int       `gorm:"column:role_id"`
-	Role           Role      `gorm:"foreignKey:RoleID;references:RoleID"`
-	Email          string    `gorm:"column:email;size:50;unique"`
-	Gender         int       `gorm:"column:gender"`
-	LinkFacebook   string    `json:"link_facebook" gorm:"size:500"`
-	ProvinceCode   string    `gorm:"column:province_code;size:50"`
-	Province       Province  `gorm:"foreignKey:ProvinceCode;references:Code"`
-	DistrictCode   string    `gorm:"column:district_code;size:50"`
-	District       District  `gorm:"foreignKey:DistrictCode;references:Code"`
-	WardCode       string    `gorm:"column:ward_code;size:50"`
-	Ward           Ward      `gorm:"foreignKey:WardCode;references:Code"`
-	AddressDetail  string    `gorm:"column:address_detail;size:255"`
-	PhoneNumber    string    `gorm:"column:phone_number;size:15"`
-	Image          string    `gorm:"column:image;size:50"`
-	DateOfBirth    time.Time `json:"date_of_birth"`
-	Password       string    `gorm:"column:password;size:255"`
-	State          bool      `gorm:"column:state"`
-	Verify         bool      `gorm:"column:verify"`
-	Otp            string    `gorm:"column:otp"`
-	TimeExpiredOtp time.Time `gorm:"column:time_expired_otp"`
-	Deleted        bool      `gorm:"column:deleted"`
-	DeletedBy      int       `gorm:"column:deleted_by"`
-	UpdatedBy      int       `gorm:"column:updated_by"`
-	CreatedBy      int       `gorm:"column:created_by"`
-	CreatedAt      time.Time `gorm:"column:created_at"`
-	UpdatedAt      time.Time `gorm:"column:updated_at"`
-	DeletedAt      time.Time `gorm:"column:deleted_at"`
+	UserID         int       `json:"user_id" gorm:"column:user_id;primaryKey;autoIncrement"`
+	FirstName      string    `json:"first_name" gorm:"column:first_name;size:50"`
+	LastName       string    `json:"last_name" gorm:"column:last_name;size:50"`
+	RoleID         int       `json:"role_id" gorm:"column:role_id"`
+	Role           Role      `json:"role" gorm:"foreignKey:RoleID;references:RoleID"`
+	Email          string    `json:"email" gorm:"column:email;size:50;unique"`
+	Gender         int       `json:"gender" gorm:"column:gender"`
+	LinkFacebook   string    `json:"link_facebook" gorm:"column:link_facebook;size:500"`
+	ProvinceCode   string    `json:"province_code" gorm:"column:province_code;size:50"`
+	Province       Province  `json:"province" gorm:"foreignKey:ProvinceCode;references:Code"`
+	DistrictCode   string    `json:"district_code" gorm:"column:district_code;size:50"`
+	District       District  `json:"district" gorm:"foreignKey:DistrictCode;references:Code"`
+	WardCode       string    `json:"ward_code" gorm:"column:ward_code;size:50"`
+	Ward           Ward      `json:"ward" gorm:"foreignKey:WardCode;references:Code"`
+	AddressDetail  string    `json:"address_detail" gorm:"column:address_detail;size:255"`
+	PhoneNumber    string    `json:"phone_number" gorm:"column:phone_number;size:15"`
+	Image          string    `json:"image" gorm:"column:image;size:50"`
+	DateOfBirth    time.Time `json:"date_of_birth" gorm:"column:date_of_birth"`
+	Password       string    `json:"password" gorm:"column:password;size:255"`
+	State          bool      `json:"state" gorm:"column:state"`
+	Verify         bool      `json:"verify" gorm:"column:verify"`
+	Otp            string    `json:"otp" gorm:"column:otp"`
+	TimeExpiredOtp time.Time `json:"time_expired_otp" gorm:"column:time_expired_otp"`
+	Deleted        bool      `json:"deleted" gorm:"column:deleted"`
+	DeletedBy      int       `json:"deleted_by" gorm:"column:deleted_by"`
+	UpdatedBy      int       `json:"updated_by" gorm:"column:updated_by"`
+	CreatedBy      int       `json:"created_by" gorm:"column:created_by"`
+	CreatedAt      time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt      time.Time `json:"updated_at" gorm:"column:updated_at"`
+	DeletedAt      time.Time `json:"deleted_at" gorm:"column:deleted_at"`
 }
 
 func (u *User) GetFullName() string {

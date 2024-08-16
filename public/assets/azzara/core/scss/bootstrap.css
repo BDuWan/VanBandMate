@@ -3023,7 +3023,7 @@ tbody.collapse.show {
 .pagination {
   display: flex;
   padding-left: 0;
-  list-style: none;
+  list-style-type: none;
   border-radius: 0.25rem; }
 
 .page-link {
@@ -6126,7 +6126,8 @@ button.bg-dark:focus {
 .text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap; }
+  white-space: nowrap;
+}
 
 .text-left {
   text-align: left !important; }
@@ -6149,7 +6150,6 @@ button.bg-dark:focus {
 @media (min-width: 768px) {
   .text-md-left {
     text-align: left !important; }
-
   .text-md-right {
     text-align: right !important; }
 

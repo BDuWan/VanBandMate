@@ -67,7 +67,8 @@ func RouteInit(app *fiber.App) {
 	myContract.Get("", controllers.GetRolePage)
 
 	hiring := app.Group("/hiring", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionHiring)
-	hiring.Get("", controllers.GetRolePage)
+	hiring.Get("", controllers.GetHiringPage)
+	hiring.Get("/api", controllers.APIGetHiring)
 
 	findMusicPlayer := app.Group("/find-music-player", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionFindMusicPlayer)
 	findMusicPlayer.Get("", controllers.GetRolePage)

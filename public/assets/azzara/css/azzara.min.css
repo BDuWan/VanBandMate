@@ -979,17 +979,17 @@ body {
 
 @media (min-width: 576px) {
     .page-inner {
-        padding-top: 2rem;
         padding-right:1rem;
-        padding-left: 1rem
+        padding-left: 1rem;
+        min-height: calc(100vh - 150px);
     }
 }
 
 @media (min-width: 992px) {
     .page-inner {
-        padding-top: 5rem;
         padding-right:2rem;
-        padding-left: 2rem
+        padding-left: 2rem;
+        min-height: calc(100vh - 160px);
     }
 }
 
@@ -15664,10 +15664,11 @@ div.table-responsive>div.dataTables_wrapper>div.row>div[class^=col-]:first-child
     }
 
     .page-inner {
+        min-height: calc(100vh - 150px);
         padding-right: 15px;
         padding-left: 15px;
         margin-right: auto;
-        margin-left: auto
+        margin-left: auto;
     }
 
     .main-header .logo-header {

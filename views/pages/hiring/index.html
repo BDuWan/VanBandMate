@@ -1,0 +1,169 @@
+<div class="page-inner">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-success d-sm-inline-block">
+            <i class="fa fa-plus mr-2"></i> Tạo tin tuyển dụng
+        </button>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-pane" id="address">
+                <div class="row">
+                    <div class="col-sm-2 ml-auto mr-auto">
+                        <div class="form-group">
+                            <label>Người đăng tin</label>
+                            <div>
+                                <select id="employer" class="form-control" style="width: 100%">
+                                    <option value="0" selected>Tất cả</option>
+                                    <option value="1">Chỉ mình tôi</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 ml-auto mr-auto">
+                        <div class="form-group">
+                            <label>Trạng thái</label>
+                            <div>
+                                <select id="hiring-enough" class="form-control" style="width: 100%">
+                                    <option value="0" selected>Tất cả</option>
+                                    <option value="1">Chưa tuyển đủ </option>
+                                    <option value="2">Đã tuyển đủ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 ml-auto mr-auto">
+                        <div class="form-group">
+                            <label>Năm</label>
+                            <div>
+                                <select id="year" class="form-control" style="width: 100%">
+                                    <option value="0" selected>Tất cả</option>
+                                    {{range .Years}}
+                                    <option value="{{.}}">{{.}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 ml-auto mr-auto">
+                        <div class="form-group">
+                            <label>Tháng</label>
+                            <div>
+                                <select id="month" class="form-control" style="width: 100%">
+                                    <option value="0">Tất cả</option>
+                                    <option value="1">Tháng 1</option>
+                                    <option value="2">Tháng 2</option>
+                                    <option value="3">Tháng 3</option>
+                                    <option value="4">Tháng 4</option>
+                                    <option value="5">Tháng 5</option>
+                                    <option value="6">Tháng 6</option>
+                                    <option value="7">Tháng 7</option>
+                                    <option value="8">Tháng 8</option>
+                                    <option value="9">Tháng 9</option>
+                                    <option value="10">Tháng 10</option>
+                                    <option value="11">Tháng 11</option>
+                                    <option value="12">Tháng 12</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 ml-auto mr-auto">
+                        <div class="form-group">
+                            <label>Thời gian tạo</label>
+                            <div>
+                                <select id="time_create" class="form-control" style="width: 100%">
+                                    <option value="0" selected>Tất cả</option>
+                                    <option value="1">Trong năm nay</option>
+                                    <option value="2">Trong tháng này</option>
+                                    <option value="2">Trong hôm nay</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 ml-auto mr-auto">
+                        <div class="form-group">
+                            <label>Sắp xếp theo</label>
+                            <div>
+                                <select id="order" class="form-control" style="width: 100%">
+                                    <option value="0" selected>Mặc định</option>
+                                    <option value="1">Ngày đám cưới</option>
+                                    <option value="2">Thời gian tạo</option>
+                                    <option value="3">Giá tiền</option>
+                                    <option value="4">Địa chỉ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" id="btn-filter" class="btn btn-primary d-sm-inline-block">Lọc theo điều kiện</button>
+            </div>
+
+            <section class="card mt-4">
+                <ul class="list-group list-group-messages list-group-flush" id="list-group">
+                </ul>
+            </section>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+</div>
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+<script src="/assets/js/web/render-list.js"></script>
+<script src="/assets/js/web/format.js"></script>
+<script>
+    $(document).ready(function() {
+        var itemsPerPage = 5;
+        $.ajax({
+            url: '/hiring/api',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                page: 1,
+                itemsPerPage: itemsPerPage,
+            },
+            success: function(response) {
+                var totalItems = response.totalItems;
+                setupPagination(totalItems, itemsPerPage, '#list-group', '#pagination');
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching hiring news: ", error);
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Gán sự kiện click cho nút lọc
+        $('#btn-filter').on('click', function() {
+            // Lấy giá trị từ các ô select
+            var employer = $('#employer').val();
+            var hiringEnough = $('#hiring-enough').val();
+            var year = $('#year').val();
+            var month = $('#month').val();
+            var timeCreate = $('#time_create').val();
+            var order = $('#order').val();
+
+            // Gửi dữ liệu qua AJAX
+            $.ajax({
+                url: '/hiring/filter',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    employer: employer,
+                    hiringEnough: hiringEnough,
+                    year: year,
+                    month: month,
+                    timeCreate: timeCreate,
+                    order: order
+                },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi khi gửi yêu cầu lọc: ", error);
+                }
+            });
+        });
+    });
+</script>

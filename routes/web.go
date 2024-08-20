@@ -37,6 +37,7 @@ func RouteInit(app *fiber.App) {
 	info := app.Group("/info", IsAuthenticated, CheckSession)
 	info.Get("", controllers.GetProfile)
 	info.Get("/profile", controllers.GetProfile)
+	info.Get("/profile/:id", controllers.GetProfileID)
 	info.Get("/userinfo", controllers.GetUserInfo)
 	info.Get("/change-password", controllers.GetChangePasswordPage)
 	info.Put("/change-password", controllers.PutChangePassword)
@@ -69,6 +70,10 @@ func RouteInit(app *fiber.App) {
 	hiring := app.Group("/hiring", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionHiring)
 	hiring.Get("", controllers.GetHiringPage)
 	hiring.Get("/api", controllers.APIGetHiring)
+	hiring.Get("/api/:id", controllers.APIGetHiringID)
+	hiring.Post("/api/filter", controllers.APIGetHiringFilter)
+	hiring.Post("/api/create", controllers.APIPostHiringCreate)
+	hiring.Put("/api/edit/:id", controllers.APIPutHiringUpdate)
 
 	findMusicPlayer := app.Group("/find-music-player", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionFindMusicPlayer)
 	findMusicPlayer.Get("", controllers.GetRolePage)

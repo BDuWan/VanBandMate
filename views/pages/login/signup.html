@@ -239,6 +239,7 @@
 <!--        }-->
 <!--    });-->
 <!--</script>-->
+<script src="/assets/js/web/select-location.js"></script>
 <script>
     function formatDate(dateString) {
         // Giả sử dateString có định dạng ngày tháng năm (dd-mm-yyyy)
@@ -259,55 +260,7 @@
         var $select_province = $('#province');
         var $select_district = $('#district');
         var $select_ward = $('#ward');
-        $select_province.append($('<option>', {
-            value: 0,
-            text: "--"
-        }));
-        $.each(provinces, function(index, province) {
-            $select_province.append($('<option>', {
-                value: province.code,
-                text: province.name
-            }));
-        });
-
-        $select_province.change(function() {
-            var selectedProvinceCode = $(this).val();
-
-            $select_ward.empty();
-
-            $select_district.empty();
-            $select_district.append($('<option>', {
-                value: 0,
-                text: "--"
-            }));
-
-            $.each(districts, function(index, district) {
-                if(district.province_code === selectedProvinceCode) {
-                    $select_district.append($('<option>', {
-                        value: district.code,
-                        text: district.full_name
-                    }));
-                }
-            });
-        });
-
-        $select_district.change(function() {
-            var selectedDistrictCode = $(this).val();
-            $select_ward.empty();
-            $select_ward.append($('<option>', {
-                value: 0,
-                text: "--"
-            }));
-
-            $.each(wards, function(index, ward) {
-                if(ward.district_code === selectedDistrictCode) {
-                    $select_ward.append($('<option>', {
-                        value: ward.code,
-                        text: ward.full_name
-                    }));
-                }
-            });
-        });
+        initLocationSelect1(provinces, districts, wards, $select_province, $select_district, $select_ward);
 
         //Xử lí gửi ajax
         $('#finishBtn').on('click', function(e) {

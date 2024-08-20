@@ -3,7 +3,7 @@
         <div class="card-header">
             <div class="d-flex align-items-center">
                 <h4 class="card-title">Danh sách vai trò</h4>
-                <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addRoleModal">
+                <button id="addRoleModalBtn" class="btn btn-primary btn-round ml-auto">
                     <i class="fa fa-plus"></i>
                     Thêm vai trò
                 </button>
@@ -108,6 +108,16 @@
 
     });
 </script>
+
+<script>
+    $(document).ready(function() {
+        // Khi nhấn nút mở modal
+        $('#addRoleModalBtn').on('click', function() {
+            $('html').removeClass('topbar_open');
+            $('#addRoleModal').modal('show');
+        });
+    });
+</script>
 <script>
     $(document).ready(function() {
         // Sự kiện cho nút Detail
@@ -210,6 +220,7 @@
                         checkbox.prop('checked', false);
                     }
                 });
+                $('html').removeClass('topbar_open');
                 $('#editRoleModal').modal('show');
             }
         });

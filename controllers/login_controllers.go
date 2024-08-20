@@ -193,19 +193,22 @@ func PostSignup(c *fiber.Ctx) error {
 		}
 
 		account.CreatedBy = account.UserID
-		imageName := "avatar" + strconv.Itoa(account.UserID) + ".jpg"
-		account.Image = imageName
 
-		if err := DB.Updates(&account).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")
-			return c.JSON("Đã xa ra lỗi khi tạo tài khoản")
-		}
 		if signupForm.Image != "" {
+			imageName := "avatar" + strconv.Itoa(account.UserID) + ".jpg"
+			account.Image = imageName
 			path := "public/assets/img/avatar/"
 			saveImageResult := SaveImage(signupForm.Image, path, imageName)
 			if saveImageResult != "ok" {
 				return c.JSON(saveImageResult)
 			}
+		} else {
+			account.Image = "default.jpg"
+		}
+
+		if err := DB.Updates(&account).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")
+			return c.JSON("Đã xa ra lỗi khi tạo tài khoản")
 		}
 
 		//var admin []string
@@ -337,26 +340,26 @@ func SaveImage(image_base64 string, path string, image_name string) string {
 	imageBytes, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return "Cannot upload image"
+		return "Hiện chỉ hỗ trợ file ảnh .jpg"
 	}
 
 	img, _, err := image.Decode(bytes.NewReader(imageBytes))
 	if err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return "Cannot upload image"
+		return "Hiện chỉ hỗ trợ file ảnh .jpg"
 	}
 
 	out, err := os.Create(path + image_name)
 	if err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return "Cannot upload image"
+		return "Hiện chỉ hỗ trợ file ảnh .jpg"
 	}
 	defer out.Close()
 
 	err = jpeg.Encode(out, img, nil)
 	if err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return "Cannot upload image"
+		return "Hiện chỉ hỗ trợ file ảnh .jpg"
 	}
 	return "ok"
 }

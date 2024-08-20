@@ -27,6 +27,27 @@ func GetProfile(c *fiber.Ctx) error {
 	}, "layouts/main")
 }
 
+func GetProfileID(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Get Profile ID")
+	userId := c.Params("id")
+	DB := initializers.DB
+	var user models.User
+	sess, _ := SessAuth.Get(c)
+	permissions := sess.Get("rolePermission")
+
+	if err := DB.Model(&models.User{}).Joins("Role").Joins(
+		"Province").Joins("District").Joins("Ward").Where(
+		"user_id", userId).First(&user).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Cannot get user")
+	}
+
+	return c.Render("pages/info/profile", fiber.Map{
+		"Permissions": permissions,
+		"User":        user,
+		"Ctx":         c,
+	}, "layouts/main")
+}
+
 func GetUserInfo(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Get UserInfo")
 	DB := initializers.DB
@@ -45,9 +66,11 @@ func GetUserInfo(c *fiber.Ctx) error {
 
 	if err := DB.Find(&provinces).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.Redirect("/errors/404")
 	}
 	if err := DB.Find(&districts).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.Redirect("/errors/404")
 	}
 	if err := DB.Find(&wards).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
@@ -105,10 +128,6 @@ func PutUserInfo(c *fiber.Ctx) error {
 		account.UpdatedBy = userLogin.UserID
 		fmt.Println(account.Verify)
 
-		if err := DB.Save(&account).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")
-			return c.JSON("Không thể cập nhật thông tin")
-		}
 		imageName := "avatar" + strconv.Itoa(account.UserID) + ".jpg"
 
 		if updateInfoForm.Image != "" {
@@ -117,6 +136,13 @@ func PutUserInfo(c *fiber.Ctx) error {
 			if saveImageResult != "ok" {
 				return c.JSON(saveImageResult)
 			}
+			account.Image = imageName
+		} else {
+			account.Image = "default.jpg"
+		}
+		if err := DB.Save(&account).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")
+			return c.JSON("Không thể cập nhật thông tin")
 		}
 
 		return c.JSON("Success")

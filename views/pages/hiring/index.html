@@ -1,6 +1,9 @@
 <div class="page-inner">
+    <!-- Modal -->
+    {{ template "pages/hiring/modal-create" . }}
+    {{ template "pages/hiring/modal-edit" . }}
     <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-success d-sm-inline-block">
+        <button id="openCreateModalBtn" type="button" class="btn btn-success d-sm-inline-block">
             <i class="fa fa-plus mr-2"></i> Tạo tin tuyển dụng
         </button>
     </div>
@@ -24,9 +27,9 @@
                             <label>Trạng thái</label>
                             <div>
                                 <select id="hiring-enough" class="form-control" style="width: 100%">
-                                    <option value="0" selected>Tất cả</option>
-                                    <option value="1">Chưa tuyển đủ </option>
-                                    <option value="2">Đã tuyển đủ</option>
+                                    <option value="2" selected>Tất cả</option>
+                                    <option value="0">Chưa tuyển đủ </option>
+                                    <option value="1">Đã tuyển đủ</option>
                                 </select>
                             </div>
                         </div>
@@ -70,11 +73,11 @@
                         <div class="form-group">
                             <label>Thời gian tạo</label>
                             <div>
-                                <select id="time_create" class="form-control" style="width: 100%">
+                                <select id="time-create" class="form-control" style="width: 100%">
                                     <option value="0" selected>Tất cả</option>
-                                    <option value="1">Trong năm nay</option>
+                                    <option value="1">Trong hôm nay</option>
                                     <option value="2">Trong tháng này</option>
-                                    <option value="2">Trong hôm nay</option>
+                                    <option value="2">Trong năm nay</option>
                                 </select>
                             </div>
                         </div>
@@ -103,16 +106,19 @@
                 <ul class="list-group list-group-messages list-group-flush" id="list-group">
                 </ul>
             </section>
-            <div class="pagination" id="pagination"></div>
+            <div class="pagination-list" id="pagination"></div>
         </div>
     </div>
 </div>
 <script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
 <script src="/assets/js/web/render-list.js"></script>
+<script src="/assets/js/web/select-location.js"></script>
 <script src="/assets/js/web/format.js"></script>
 <script>
+    var itemsPerPage = 5;
+</script>
+<script>
     $(document).ready(function() {
-        var itemsPerPage = 5;
         $.ajax({
             url: '/hiring/api',
             type: 'GET',
@@ -137,31 +143,259 @@
         // Gán sự kiện click cho nút lọc
         $('#btn-filter').on('click', function() {
             // Lấy giá trị từ các ô select
-            var employer = $('#employer').val();
-            var hiringEnough = $('#hiring-enough').val();
-            var year = $('#year').val();
-            var month = $('#month').val();
-            var timeCreate = $('#time_create').val();
-            var order = $('#order').val();
+            var employer = parseInt($('#employer').val(), 10);
+            var hiringEnough = parseInt($('#hiring-enough').val(), 10);
+            var year = parseInt($('#year').val(), 10);
+            var month = parseInt($('#month').val(), 10);
+            var timeCreate = parseInt($('#time-create').val(), 10);
+            var order = parseInt($('#order').val(), 10);
 
-            // Gửi dữ liệu qua AJAX
+            var jsonData = {
+                employer: employer,
+                hiring_enough: hiringEnough,
+                year: year,
+                month: month,
+                time_create: timeCreate,
+                order: order,
+                items_per_page: itemsPerPage,
+            };
+            const extendedJsonData = {...jsonData};
+            extendedJsonData.page = 1;
+            // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
             $.ajax({
-                url: '/hiring/filter',
-                type: 'GET',
-                dataType: 'json',
-                data: {
-                    employer: employer,
-                    hiringEnough: hiringEnough,
-                    year: year,
-                    month: month,
-                    timeCreate: timeCreate,
-                    order: order
-                },
+                url: '/hiring/api/filter',
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify(extendedJsonData),
                 success: function(response) {
-                    console.log(response);
+                    if(response.message === "success"){
+                        var totalItems = response.totalItems;
+                        setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', jsonData);
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error("Lỗi khi gửi yêu cầu lọc: ", error);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    //Xử lý mở modal
+    $(document).ready(function() {
+        $('#openCreateModalBtn').on('click', function() {
+            $('html').removeClass('topbar_open');
+            $('#createHiringNewsModal').modal('show');
+        });
+        $('#createHiringNewsModal').on('shown.bs.modal', function () {
+            $('#province').select2({
+                dropdownParent: $('#createHiringNewsModal'),
+                theme: "bootstrap",
+            });
+            $('#district').select2({
+                dropdownParent: $('#createHiringNewsModal'),
+                theme: "bootstrap",
+            });
+            $('#ward').select2({
+                dropdownParent: $('#createHiringNewsModal'),
+                theme: "bootstrap",
+            });
+        });
+        $('#editHiringNewsModal').on('shown.bs.modal', function () {
+            $('#edit-province').select2({
+                dropdownParent: $('#editHiringNewsModal'),
+                theme: "bootstrap",
+            });
+            $('#edit-district').select2({
+                dropdownParent: $('#editHiringNewsModal'),
+                theme: "bootstrap",
+            });
+            $('#edit-ward').select2({
+                dropdownParent: $('#editHiringNewsModal'),
+                theme: "bootstrap",
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function (){
+        // xử lí chọn địa chỉ
+        var provinces =  {{ .provinces}};
+        var districts =  {{ .districts}};
+        var wards = {{ .wards}};
+
+        var $select_province = $('#province');
+        var $select_district = $('#district');
+        var $select_ward = $('#ward');
+
+        initLocationSelect1(provinces, districts, wards, $select_province, $select_district, $select_ward);
+    })
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Sự kiện khi nhấn nút "Thêm"
+        $('#createHiringNewsBtn').on('click', function() {
+            // Lấy giá trị của các trường
+            var province = $('#province').val();
+            var district = $('#district').val();
+            var ward = $('#ward').val();
+            var date = $('#datepicker').val();
+            var price = $('#price').val();
+            var address = $('#address').val();
+            var describe = $('#describe').val();
+
+            var postData = {
+                province: province,
+                district: district,
+                ward: ward,
+                date: date,
+                price: price,
+                address: address,
+                describe: describe
+            };
+
+            $.ajax({
+                url: '/hiring/api/create',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(postData),
+                success: function(response) {
+                    if(response === "success"){
+                        swal("", "Tạo tin tuyển dụng thành công", {
+                            icon : "success",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-success'
+                                }
+                            },
+                        }).then(() => {
+                            $('#createHiringNewsModal form')[0].reset();
+                            $('#createHiringNewsModal').modal('hide');
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Đã xảy ra lỗi');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).on('click', '.edit-item', function(event) {
+        event.preventDefault();
+        var hiringNewsId = $(this).data('id');
+        $.ajax({
+            url: '/hiring/api/'+hiringNewsId,
+            method: 'GET',
+            success: function(response) {
+                if(response.message !== "success"){
+                    swal("", response.message, {
+                        icon : "error",
+                        buttons: {
+                            confirm: {
+                                className : 'btn btn-danger'
+                            }
+                        },
+                    });
+                    return false;
+                }
+                var hiringNews = response.data
+                var formattedDate = moment(hiringNews.date, "YYYY-MM-DD").format("DD/MM/YYYY");
+
+                $('#editHiringNewsModal input[name="edit-datepicker"]').val(formattedDate);
+                $('#editHiringNewsModal #edit-describe').val(hiringNews.describe);
+                $('#editHiringNewsModal #edit-address').val(hiringNews.address_detail);
+                $('#editHiringNewsModal #edit-price').val(hiringNews.price);
+
+                var provinces = {{ .provinces}};
+                var districts = {{ .districts}};
+                var wards = {{ .wards}};
+
+                const $select_province = $('#editHiringNewsModal #edit-province');
+                const $select_district = $('#editHiringNewsModal #edit-district');
+                const $select_ward = $('#editHiringNewsModal #edit-ward');
+
+                const provinceCode = hiringNews.province_code;
+                const districtCode = hiringNews.district_code;
+                const wardCode = hiringNews.ward_code;
+                initLocationSelect2(provinces, districts, wards, provinceCode, districtCode, wardCode, $select_province, $select_district, $select_ward);
+                $('#editHiringNewsBtn').data('id', hiringNews.hiring_news_id);
+
+                $('html').removeClass('topbar_open');
+                $('#editHiringNewsModal').modal('show');
+
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#editHiringNewsBtn').on('click', function() {
+            var hiringNewsId = $(this).data('id');
+            // Lấy giá trị của các trường
+            var province = $('#edit-province').val();
+            var district = $('#edit-district').val();
+            var ward = $('#edit-ward').val();
+            var date = $('input[name="edit-datepicker"]').val();
+            var price = $('#edit-price').val();
+            var address = $('#edit-address').val();
+            var describe = $('#edit-describe').val();
+
+            var postData = {
+                province: province,
+                district: district,
+                ward: ward,
+                date: date,
+                price: price,
+                address: address,
+                describe: describe
+            };
+
+            $.ajax({
+                url: '/hiring/api/edit/' + hiringNewsId,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(postData),
+                success: function(response) {
+                    if(response === "success"){
+                        swal("", "Cập nhật tin tuyển dụng thành công", {
+                            icon : "success",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-success'
+                                }
+                            },
+                        }).then(() => {
+                            $('#editHiringNewsModal').modal('hide');
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Đã xảy ra lỗi');
                 }
             });
         });

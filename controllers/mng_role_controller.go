@@ -64,7 +64,6 @@ func APIGetRoleID(c *fiber.Ctx) error {
 	}
 	var permissions []int
 	for _, rp := range rolePermissions {
-		fmt.Println(rp.PermissionID)
 		permissions = append(permissions, rp.PermissionID)
 	}
 	roleData := fiber.Map{

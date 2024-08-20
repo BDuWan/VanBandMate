@@ -3889,20 +3889,20 @@ tbody.collapse.show {
     color: #6c757d
 }
 
-/*.pagination {*/
-/*    display: flex;*/
-/*    padding-left: 0;*/
-/*    list-style: none;*/
-/*    border-radius: .25rem*/
-/*}*/
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: .25rem
+}
 
-#pagination {
+.pagination-list {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#pagination a {
+.pagination-list a {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -3911,18 +3911,18 @@ tbody.collapse.show {
     background-color: #fff;
     color: #333;
     border: 1px solid #ccc;
-    border-radius: 50%;
+    border-radius: .25rem;
     text-decoration: none;
     transition: background-color 0.1s ease;
     margin: 0 2px;
 }
 
-#pagination a:hover {
+.pagination-list a:hover {
     background-color: #007bff;
     color: #fff;
 }
 
-#pagination .active {
+.pagination-list .active {
     background-color: #007bff;
     color: #fff;
 }

@@ -1,0 +1,79 @@
+<div class="modal fade" id="createHiringNewsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 90%">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h3 class="modal-title">
+                    <span class="fw-bold text-center">
+                    Tạo tin tuyển dụng
+                    </span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4 ml-auto mr-auto">
+                                <div class="form-group">
+                                    <label>Tỉnh/Thành phố</label>
+                                    <div class="select2-input">
+                                        <select id="province" class="form-control select2" style="width: 100%">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 ml-auto mr-auto">
+                                <div class="form-group">
+                                    <label>Quận/Huyện</label>
+                                    <div class="select2-input">
+                                        <select id="district" class="form-control select2" style="width: 100%">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 ml-auto mr-auto">
+                                <div class="form-group">
+                                    <label>Xã/Phường/Thị trấn</label>
+                                    <div class="select2-input">
+                                        <select id="ward" class="form-control select2" style="width: 100%">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ml-auto mr-auto">
+                                <div class="form-group">
+                                    <label>Thời gian</label>
+                                    <input type="text" class="form-control" id="datepicker" name="datepicker" placeholder="Thời gian diễn ra đám cưới">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ml-auto mr-auto">
+                                <div class="form-group">
+                                    <label>Giá tiền</label>
+                                    <input type="text" class="form-control" id="price" placeholder="Đơn vị tính là Việt Nam đồng">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ml-auto mr-auto">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết </label>
+                                    <textarea id="address" rows="2" class="form-control" placeholder="Ví dụ: số nhà, thôn, xóm,..." 14px></textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ml-auto mr-auto">
+                                <div class="form-group">
+                                    <label>Mô tả thêm</label>
+                                    <textarea id="describe" rows="2" class="form-control" placeholder="Mô tả thêm nếu có, không bắt buộc" 14px></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer no-bd">
+                <button type="button" id="createHiringNewsBtn" class="btn btn-primary">Tạo tin</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

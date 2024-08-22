@@ -12,7 +12,7 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
             .appendTo($pagination)
             .on('click', function(e) {
                 e.preventDefault();
-                renderList(page, itemsPerPage, listSelector, paginationSelector);
+                renderHiringList(page, itemsPerPage, listSelector, paginationSelector);
                 setupPaginationControls(page);
             });
     }
@@ -21,7 +21,7 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
         $('<div class="page-item"><strong>...</strong></div>').appendTo($pagination);
     }
 
-    renderPageItem(1);
+    // renderPageItem(1);
     function setupPaginationControls(currentPage) {
         $pagination.find('a').removeClass('active');
         $pagination.empty();
@@ -53,11 +53,11 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
     }
 
     // Hiển thị trang đầu tiên
-    renderList(1, itemsPerPage, listSelector, paginationSelector);
+    renderHiringList(1, itemsPerPage, listSelector, paginationSelector);
     setupPaginationControls(1);
 }
 
-function renderList(page, itemsPerPage, listSelector, paginationSelector) {
+function renderHiringList(page, itemsPerPage, listSelector, paginationSelector) {
     $.ajax({
         url: '/hiring/api',
         type: 'GET',
@@ -111,7 +111,7 @@ function setupPaginationFilter(totalItems, itemsPerPage, listSelector, paginatio
         $('<div class="page-item"><strong>...</strong></div>').appendTo($pagination);
     }
 
-    renderPageFilterItem(1);
+    // renderPageFilterItem(1);
     function setupPaginationFilterControls(currentPage) {
         $pagination.find('a').removeClass('active');
         $pagination.empty();
@@ -240,7 +240,86 @@ function renderListItem(item, user_id) {
 $(document).on('click', '.view-detail', function(event) {
     event.preventDefault();
     var hiringNewsId = $(this).data('id');
-    alert(hiringNewsId)
+    $.ajax({
+        url: '/hiring/api/detail/'+hiringNewsId,
+        method: 'GET',
+        success: function(response) {
+            if(response.message !== "success"){
+                swal("", response.message, {
+                    icon : "error",
+                    buttons: {
+                        confirm: {
+                            className : 'btn btn-danger'
+                        }
+                    },
+                });
+                return false;
+            }
+            var hiringNews = response.data;
+            var formattedCreatedAt = moment(hiringNews.created_at, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY HH:mm:ss");
+            var formattedUpdatedAt = moment(hiringNews.updated_at, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY HH:mm:ss");
+            var formattedDate = moment(hiringNews.date, "YYYY-MM-DD").format("DD/MM/YYYY");
+            var formattedPrice = formatPrice(hiringNews.price); // Assuming you have a function to format price
+
+            // Gán giá trị vào các trường trong modal
+            // $('#detailHiringNewsModal #name').text(hiringNews.User.last_name + " " + hiringNews.User.first_name);
+            // $('#detailHiringNewsModal #role').text(hiringNews.User.last_name);
+            $('#detailHiringNewsModal #link-facebook').attr('href', hiringNews.User.link_facebook);
+
+            $('#detailHiringNewsModal .modal-body .avatar-img').attr('src', '/assets/img/avatar/' + hiringNews.User.image);
+            $('#detailHiringNewsModal #detail-name').text(hiringNews.User.last_name + " " + hiringNews.User.first_name);
+            $('#detailHiringNewsModal #detail-role').text(hiringNews.User.role.name);
+            $('#detailHiringNewsModal #detail-phone').text("SDT: " + hiringNews.User.phone_number);
+            $('#detailHiringNewsModal #detail-email').text("Email: " + hiringNews.User.email);
+
+            $('#detailHiringNewsModal #detail-create-at').text(formattedCreatedAt);
+            $('#detailHiringNewsModal #detail-update-at').text(formattedUpdatedAt);
+            $('#detailHiringNewsModal #detail-date').text(formattedDate);
+            $('#detailHiringNewsModal #detail-price').text(formattedPrice);
+
+            $('#detailHiringNewsModal #detail-address').text(
+                hiringNews.address_detail + ", " + hiringNews.Ward.full_name + ", " + hiringNews.District.full_name + ", " + hiringNews.Province.name
+            );
+            $('#detailHiringNewsModal #detail-describe').text(hiringNews.describe);
+
+            $('html').removeClass('topbar_open');
+            $('#detailHiringNewsModal').modal('show');
+
+        }
+    });
+});
+
+$(document).on('click', '.show-item', function(event) {
+    event.preventDefault();
+    var hiringNewsId = $(this).data('id');
+    $.ajax({
+        url: '/hiring/api/list-apply/' + hiringNewsId,
+        method: 'GET',
+        success: function(response) {
+            if(response.message !== "success"){
+                swal("", response.message, {
+                    icon : "error",
+                    buttons: {
+                        confirm: {
+                            className : 'btn btn-danger'
+                        }
+                    },
+                });
+                return false;
+            }
+            var listApply = response.data
+            $.each(listApply, function(index, item) {
+                var listItem = renderListApplyItem(item)
+                $('#showListApplyModal #list-apply').append(listItem);
+            });
+            $('#saveApplyBtn').data('id', hiringNewsId);
+            $('html').removeClass('topbar_open');
+            $('#showListApplyModal').modal('show');
+            $('#showListApplyModal').on('hidden.bs.modal', function () {
+                $('#showListApplyModal #list-apply').empty();
+            });
+        }
+    });
 });
 
 $(document).on('click', '.delete-item', function(event) {
@@ -248,3 +327,95 @@ $(document).on('click', '.delete-item', function(event) {
     var hiringNewsId = $(this).data('id');
     alert(hiringNewsId)
 });
+
+function renderListApplyItem(item) {
+    var formatedApplyAt = formatRelativeDate(item.apply_at);
+    const backgroundColor = item.status == 0 ? 'background-color: #FFFFFF;' : 'background-color: #99FFFF;';
+    const checkboxHtml = item.status == 0
+        ? `<input type="checkbox" class="approve-checkbox" style="width: 25px; height: 25px" data-id="${item.user_hiring_news_id}" data-nhaccong-id="${item.nhaccong_id}" />`
+        : '';
+    return `
+        <li class="list-group-item" style="${backgroundColor}">
+            <div class="list-group-item-figure">
+                <a href="/info/profile/${item.nhaccong_id}" class="user-avatar">
+                    <div class="avatar">
+                        <img src="/assets/img/avatar/${item.User.image}" alt="..." class="avatar-img rounded-circle">
+                    </div>
+                </a>
+            </div>
+            <div class="list-group-item-body pl-3 pl-md-4">
+                <div class="row">
+                    <div class="col-12 col-lg-10">
+                        <strong class="list-group-item-text break-word">${item.User.last_name} ${item.User.first_name}</strong>            
+                        <p class="list-group-item-text">${formatedApplyAt} </p>         
+                    </div>
+                 
+                </div>
+            </div>
+            <div class="list-group-item-figure">
+                ${checkboxHtml}
+            </div>
+        </li>
+    `;
+}
+
+$(document).on('click', '#saveApplyBtn', function(event) {
+    event.preventDefault();
+    var hiringNewsId = $(this).data('id');
+
+    var hiringEnough = $('#showListApplyModal #hiringEnoughCheckbox').is(':checked')
+    var selectedItems = [];
+    $('.approve-checkbox').each(function() {
+        var isChecked = $(this).is(':checked');
+        if(isChecked) {
+            var userHiringNewsId = $(this).data('id');
+            var nhaccongId = $(this).data('nhaccong-id');
+
+            selectedItems.push({
+                user_hiring_news_id: userHiringNewsId,
+                nhaccong_id: nhaccongId
+            });
+        }
+    });
+
+    var formData = {
+        hiring_news_id: hiringNewsId,
+        hiring_enough: hiringEnough,
+        selected_items: selectedItems
+    };
+
+    // Gửi dữ liệu qua AJAX
+    $.ajax({
+        url: '/hiring/api/save-apply',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+            if(response !== "success"){
+                swal("", response, {
+                    icon : "error",
+                    buttons: {
+                        confirm: {
+                            className : 'btn btn-danger'
+                        }
+                    },
+                });
+                return false;
+            }
+            swal("", "Thành công", {
+                icon: "success",
+                buttons: {
+                    confirm: {
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then(function() {
+                $('#showListApplyModal').modal('hide');
+            });
+        },
+        error: function() {
+            swal("Error", "Có lỗi xảy ra khi lưu dữ liệu.", "error");
+        }
+    });
+});
+

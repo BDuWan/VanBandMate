@@ -64,6 +64,7 @@ type User struct {
 	Verify         bool      `json:"verify" gorm:"column:verify"`
 	Otp            string    `json:"otp" gorm:"column:otp"`
 	TimeExpiredOtp time.Time `json:"time_expired_otp" gorm:"column:time_expired_otp"`
+	Commission     float32   `json:"commission" gorm:"column:commission"`
 	Deleted        bool      `json:"deleted" gorm:"column:deleted"`
 	DeletedBy      int       `json:"deleted_by" gorm:"column:deleted_by"`
 	UpdatedBy      int       `json:"updated_by" gorm:"column:updated_by"`

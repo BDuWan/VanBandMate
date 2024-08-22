@@ -2,6 +2,8 @@
     <!-- Modal -->
     {{ template "pages/hiring/modal-create" . }}
     {{ template "pages/hiring/modal-edit" . }}
+    {{ template "pages/hiring/modal-detail" . }}
+    {{ template "pages/hiring/modal-show-list-apply" . }}
     <div class="d-flex justify-content-end">
         <button id="openCreateModalBtn" type="button" class="btn btn-success d-sm-inline-block">
             <i class="fa fa-plus mr-2"></i> Tạo tin tuyển dụng
@@ -103,15 +105,15 @@
             </div>
 
             <section class="card mt-4">
-                <ul class="list-group list-group-messages list-group-flush" id="list-group">
+                <ul class="list-group list-group-messages list-group-flush" id="list-hiring">
                 </ul>
             </section>
-            <div class="pagination-list" id="pagination"></div>
+            <div class="pagination-list" id="pagination-hiring"></div>
         </div>
     </div>
 </div>
 <script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
-<script src="/assets/js/web/render-list.js"></script>
+<script src="/assets/js/web/render-hiring-list.js"></script>
 <script src="/assets/js/web/select-location.js"></script>
 <script src="/assets/js/web/format.js"></script>
 <script>
@@ -129,7 +131,7 @@
             },
             success: function(response) {
                 var totalItems = response.totalItems;
-                setupPagination(totalItems, itemsPerPage, '#list-group', '#pagination');
+                setupPagination(totalItems, itemsPerPage, '#list-hiring', '#pagination-hiring');
             },
             error: function(xhr, status, error) {
                 console.error("Error fetching hiring news: ", error);

@@ -288,7 +288,9 @@ func APIGetHiringID(c *fiber.Ctx) error {
 	DB := initializers.DB
 	userLogin := GetSessionUser(c)
 
-	if err := DB.Where("hiring_news_id", hiringNewsId).Where("deleted", false).First(&hiringNews).Error; err != nil {
+	if err := DB.Model(&models.HiringNews{}).
+		Where("hiring_news_id", hiringNewsId).Where("deleted", false).
+		First(&hiringNews).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON(fiber.Map{
 			"message": "Đã xảy ra lỗi khi lấy dữ liệu",
@@ -304,6 +306,157 @@ func APIGetHiringID(c *fiber.Ctx) error {
 		"message": "success",
 		"data":    hiringNews,
 	})
+}
+
+func APIGetHiringDetailID(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIGetHiringNewsID")
+	var hiringNews models.HiringNews
+	hiringNewsId := c.Params("id")
+	DB := initializers.DB
+
+	if err := DB.Model(&models.HiringNews{}).
+		Joins("Province").Joins("District").Joins("Ward").
+		Joins("User").Joins("User.Role").
+		Where("hiring_news_id", hiringNewsId).Where("hiring_news.deleted", false).
+		First(&hiringNews).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"message": "Đã xảy ra lỗi khi lấy dữ liệu",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "success",
+		"data":    hiringNews,
+	})
+}
+
+func APIGetHiringListApply(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIGetHiringListApply")
+	var userHiringNews []models.UserHiringNews
+	hiringNewsId := c.Params("id")
+	userLogin := GetSessionUser(c)
+	hiringNewsIdInt, err := strconv.Atoi(c.Query("page", "1"))
+
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"message": "id không hợp lệ",
+		})
+	}
+
+	if hiringNewsIdInt != userLogin.UserID {
+		return c.JSON(fiber.Map{
+			"message": "Bạn chỉ được xem danh sách ứng tuyển của tin mà bạn tạo",
+		})
+	}
+
+	DB := initializers.DB
+
+	if err := DB.Model(&models.UserHiringNews{}).Joins("User").
+		Joins("User.Province").Joins("User.District").Joins("User.Ward").
+		Where("hiring_news_id", hiringNewsId).Where("user_hiring_news.status IN ?", []int{0, 1}).
+		Find(&userHiringNews).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"message": "Đã xảy ra lỗi khi lấy dữ liệu",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "success",
+		"data":    userHiringNews,
+	})
+}
+
+func APIPostSaveApply(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostCreateRole")
+	var hiringNews models.HiringNews
+	userLogin := GetSessionUser(c)
+
+	DB := initializers.DB
+	var formSaveApply structs.FormSaveApply
+
+	if err := c.BodyParser(&formSaveApply); err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Dữ liệu không hợp lệ")
+	}
+
+	if err := DB.Where("hiring_news_id = ?", formSaveApply.HiringNewsID).
+		Where("deleted", false).First(&hiringNews).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Tin đã bị xóa")
+	}
+
+	if formSaveApply.HiringEnough != hiringNews.HiringEnough {
+		hiringNews.HiringEnough = formSaveApply.HiringEnough
+
+		if err := DB.Save(&hiringNews).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Không thể cập nhật trạng thái tuyển đủ người")
+		}
+	}
+
+	if len(formSaveApply.SelectedItems) > 0 {
+		var contracts []models.Contract
+		var dupContracts []models.Contract
+		var nhaccongIDs []int
+		for _, item := range formSaveApply.SelectedItems {
+			nhaccongIDs = append(nhaccongIDs, item.NhaccongID)
+		}
+
+		//Kiểm tra xem có ai trùng ngày không
+		if err := DB.Model(&models.Contract{}).
+			Where("nhaccong_id IN ?", nhaccongIDs).
+			Where("DATE(date) = ?", hiringNews.Date.Format("2006-01-02")).
+			Find(&dupContracts).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi")
+		}
+
+		numberDupContracts := len(dupContracts)
+
+		if numberDupContracts > 0 {
+			return c.JSON("Nhạc công trong danh sách bạn chọn đã tồn tại hợp đồng")
+		}
+
+		// Lặp qua các SelectedItems và tạo hợp đồng
+		for _, item := range formSaveApply.SelectedItems {
+			contract := models.Contract{
+				ChuloadaiID:   hiringNews.ChuloadaiID,
+				NhaccongID:    item.NhaccongID,
+				ProvinceCode:  hiringNews.ProvinceCode,
+				DistrictCode:  hiringNews.DistrictCode,
+				WardCode:      hiringNews.WardCode,
+				AddressDetail: hiringNews.AddressDetail,
+				Status:        1,
+				Price:         hiringNews.Price,
+				Date:          hiringNews.Date,
+				Deleted:       false,
+				CreatedBy:     userLogin.UserID,
+				CreatedAt:     time.Now(),
+			}
+			contracts = append(contracts, contract)
+		}
+
+		if err := DB.Create(&contracts).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi trong quá trình tạo hợp đồng")
+		}
+
+		var userHiringNewsIDs []int
+		for _, item := range formSaveApply.SelectedItems {
+			userHiringNewsIDs = append(userHiringNewsIDs, item.UserHiringNewsID)
+		}
+
+		if err := DB.Model(&models.UserHiringNews{}).
+			Where("user_hiring_news_id IN ?", userHiringNewsIDs).
+			Updates(models.UserHiringNews{Status: 1}).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
+		}
+	}
+
+	return c.JSON("success")
 }
 
 func ValidatorHiringNewsInput(hiringNewsForm structs.HiringNewsForm) string {

@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col-md-4">
 		<div class="card card-profile card-secondary">
-			<div class="card-header" style="background-image: url('../assets/img/blogpost.jpg')">
+			<div class="card-header">
 				<div class="profile-picture">
 					<div class="avatar avatar-xxl">
 						<img src="/assets/img/avatar/{{.User.Image}}" class="avatar-img rounded-circle">
@@ -22,14 +22,6 @@
 					</div>
 				</div>
 			</div>
-<!--			<div class="card-footer">-->
-<!--				<div class="row user-stats text-center">-->
-<!--					<div class="col">-->
-<!--						<div class="number">125</div>-->
-<!--						<div class="title">Post</div>-->
-<!--					</div>-->
-<!--				</div>-->
-<!--			</div>-->
 		</div>
 	</div>
 	<div class="col-md-8">
@@ -96,7 +88,7 @@
 						<div class="form-group">
 							<label>Địa chỉ</label>
 							<label class="form-control" style="word-wrap: break-word; white-space: normal">
-								{{.User.AddressDetail}} {{.User.Ward.FullName}}, {{.User.District.FullName}}, {{.User.Province.FullName}}
+								{{.User.AddressDetail}}, {{.User.Ward.FullName}}, {{.User.District.FullName}}, {{.User.Province.FullName}}
 							</label>
 						</div>
 					</div>

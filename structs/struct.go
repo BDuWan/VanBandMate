@@ -110,3 +110,22 @@ type FormFilter struct {
 	Page         int `json:"page"`
 	ItemsPerPage int `json:"items_per_page"`
 }
+
+//	type SelectedItem struct {
+//		UserHiringNewsID int `json:"user_hiring_news_id"`
+//		NhacCongID       int `json:"nhaccong_id"`
+//	}
+//
+//	type FormSaveApply struct {
+//		HiringNewsID  int            `form:"hiring_news_id"`
+//		HiringEnough  bool           `form:"hiring_enough"`
+//		SelectedItems []SelectedItem `form:"selected_items"`
+//	}
+type FormSaveApply struct {
+	HiringNewsID  int  `json:"hiring_news_id"`
+	HiringEnough  bool `json:"hiring_enough"`
+	SelectedItems []struct {
+		UserHiringNewsID int `json:"user_hiring_news_id"`
+		NhaccongID       int `json:"nhaccong_id"`
+	} `json:"selected_items"`
+}

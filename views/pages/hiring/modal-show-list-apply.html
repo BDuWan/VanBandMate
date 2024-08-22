@@ -1,0 +1,32 @@
+<div class="modal fade" id="showListApplyModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 50%">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h3 class="modal-title">
+                    <span class="fw-bold text-center">
+                    Danh sách người ứng tuyển
+                    </span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="hiringEnoughCheckbox" style="width: 30px; height: 30px">
+                        <label class="custom-control-label" for="hiringEnoughCheckbox">Đã tuyển đủ người</label>
+                    </div>
+                </div>
+                <section class="card mt-4">
+                    <ul class="list-group list-group-messages list-group-flush" id="list-apply">
+                    </ul>
+                </section>
+            </div>
+            <div class="modal-footer no-bd">
+                <button type="button" id="saveApplyBtn" class="btn btn-primary">Lưu</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

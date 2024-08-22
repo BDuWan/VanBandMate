@@ -64,15 +64,19 @@ func RouteInit(app *fiber.App) {
 	mngDashboard := app.Group("/dashboard", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionDashboard)
 	mngDashboard.Get("", controllers.GetRolePage)
 
-	myContract := app.Group("/my-contract", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMyContract)
-	myContract.Get("", controllers.GetRolePage)
+	contract := app.Group("/contract", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMyContract)
+	contract.Get("", controllers.GetMyContractPage)
+	contract.Get("/api", controllers.APIGetContract)
 
 	hiring := app.Group("/hiring", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionHiring)
 	hiring.Get("", controllers.GetHiringPage)
 	hiring.Get("/api", controllers.APIGetHiring)
 	hiring.Get("/api/:id", controllers.APIGetHiringID)
+	hiring.Get("/api/detail/:id", controllers.APIGetHiringDetailID)
+	hiring.Get("/api/list-apply/:id", controllers.APIGetHiringListApply)
 	hiring.Post("/api/filter", controllers.APIGetHiringFilter)
 	hiring.Post("/api/create", controllers.APIPostHiringCreate)
+	hiring.Post("/api/save-apply", controllers.APIPostSaveApply)
 	hiring.Put("/api/edit/:id", controllers.APIPutHiringUpdate)
 
 	findMusicPlayer := app.Group("/find-music-player", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionFindMusicPlayer)

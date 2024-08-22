@@ -137,8 +137,6 @@ func PutUserInfo(c *fiber.Ctx) error {
 				return c.JSON(saveImageResult)
 			}
 			account.Image = imageName
-		} else {
-			account.Image = "default.jpg"
 		}
 		if err := DB.Save(&account).Error; err != nil {
 			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")

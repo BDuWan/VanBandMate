@@ -1,5 +1,7 @@
 <div class="page-inner">
     <!-- Modal -->
+    {{ template "pages/contract/modal-detail" . }}
+
     <div class="row">
         <div class="col-md-12">
             <div class="tab-pane" id="address">
@@ -8,11 +10,11 @@
                         <div class="form-group">
                             <label>Trạng thái</label>
                             <div>
-                                <select id="employer" class="form-control" style="width: 100%">
+                                <select id="status" class="form-control" style="width: 100%">
                                     <option value="3" selected>Tất cả</option>
                                     <option value="2">Yêu cầu hủy</option>
-                                    <option value="1">Đã hoàn thành</option>
-                                    <option value="0">Chưa hoàn thành</option>
+                                    <option value="1">Chưa hoàn thành</option>
+                                    <option value="0">Đã hoàn thành</option>
                                 </select>
                             </div>
                         </div>
@@ -70,7 +72,7 @@
                             <label>Sắp xếp theo</label>
                             <div>
                                 <select id="order" class="form-control" style="width: 100%">
-                                    <option value="0" selected>Mặc định</option>
+                                    <option value="0" selected>Trạng thái</option>
                                     <option value="1">Ngày đám cưới</option>
                                     <option value="2">Thời gian tạo</option>
                                     <option value="3">Giá tiền</option>
@@ -118,6 +120,47 @@
             error: function(xhr, status, error) {
                 console.error("Error fetching hiring news: ", error);
             }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Gán sự kiện click cho nút lọc
+        $('#btn-filter').on('click', function() {
+            // Lấy giá trị từ các ô select
+            var status = parseInt($('#status').val(), 10);
+            var year = parseInt($('#year').val(), 10);
+            var month = parseInt($('#month').val(), 10);
+            var timeCreate = parseInt($('#time-create').val(), 10);
+            var order = parseInt($('#order').val(), 10);
+
+            var jsonData = {
+                status: status,
+                year: year,
+                month: month,
+                time_create: timeCreate,
+                order: order,
+                items_per_page: itemsPerPage,
+            };
+            const extendedJsonData = {...jsonData};
+            extendedJsonData.page = 1;
+            // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
+            $.ajax({
+                url: '/contract/api/filter',
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify(extendedJsonData),
+                success: function(response) {
+                    if(response.message === "success"){
+                        var totalItems = response.totalItems;
+                        setupPaginationFilter(totalItems, itemsPerPage, '#list-contract', '#pagination-contract', jsonData);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi khi gửi yêu cầu lọc: ", error);
+                }
+            });
         });
     });
 </script>

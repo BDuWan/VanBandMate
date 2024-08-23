@@ -308,6 +308,10 @@ $(document).on('click', '.show-item', function(event) {
                 return false;
             }
             var listApply = response.data
+            var hiringEnough = response.hiring_enough
+            if(hiringEnough){
+                $('#showListApplyModal #hiringEnoughCheckbox').prop('checked', true);
+            }
             $.each(listApply, function(index, item) {
                 var listItem = renderListApplyItem(item)
                 $('#showListApplyModal #list-apply').append(listItem);

@@ -18,8 +18,8 @@
                             <label>Người đăng tin</label>
                             <div>
                                 <select id="employer" class="form-control" style="width: 100%">
-                                    <option value="0" selected>Tất cả</option>
-                                    <option value="1">Chỉ mình tôi</option>
+                                    <option value="0">Tất cả</option>
+                                    <option value="1" selected>Chỉ mình tôi</option>
                                 </select>
                             </div>
                         </div>
@@ -89,9 +89,9 @@
                             <label>Sắp xếp theo</label>
                             <div>
                                 <select id="order" class="form-control" style="width: 100%">
-                                    <option value="0" selected>Mặc định</option>
-                                    <option value="1">Ngày đám cưới</option>
-                                    <option value="2">Thời gian tạo</option>
+                                    <option value="0" selected>Thời gian tạo</option>
+                                    <option value="2">Mới sửa đổi</option>
+                                    <option value="2">Ngày đám cưới</option>
                                     <option value="3">Giá tiền</option>
                                     <option value="4">Địa chỉ</option>
                                 </select>
@@ -172,7 +172,7 @@
                 success: function(response) {
                     if(response.message === "success"){
                         var totalItems = response.totalItems;
-                        setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', jsonData);
+                        setupPaginationFilter(totalItems, itemsPerPage, '#list-hiring', '#pagination-hiring', jsonData);
                     }
                 },
                 error: function(xhr, status, error) {

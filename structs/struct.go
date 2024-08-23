@@ -111,6 +111,16 @@ type FormFilter struct {
 	ItemsPerPage int `json:"items_per_page"`
 }
 
+type FormFilterContract struct {
+	Status       int `json:"status"`
+	Year         int `json:"year"`
+	Month        int `json:"month"`
+	TimeCreate   int `json:"time_create"`
+	Order        int `json:"order"`
+	Page         int `json:"page"`
+	ItemsPerPage int `json:"items_per_page"`
+}
+
 //	type SelectedItem struct {
 //		UserHiringNewsID int `json:"user_hiring_news_id"`
 //		NhacCongID       int `json:"nhaccong_id"`

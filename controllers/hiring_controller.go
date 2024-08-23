@@ -86,6 +86,8 @@ func APIGetHiring(c *fiber.Ctx) error {
 		Joins("Province").Joins("District").Joins("Ward").
 		Where("hiring_news.deleted = ?", false).
 		Where("User.deleted = ?", false).
+		Where("hiring_news.chuloadai_id", userLogin.UserID).
+		Order("created_at DESC").
 		Offset(offset).Limit(limit).Find(&hiringNews).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
@@ -93,9 +95,11 @@ func APIGetHiring(c *fiber.Ctx) error {
 	}
 
 	// Tính tổng số phần tử
-	if err := DB.Model(&models.HiringNews{}).Joins("User").Where(
-		"hiring_news.deleted = ?", false).Where(
-		"User.deleted = ?", false).Count(&totalItems).Error; err != nil {
+	if err := DB.Model(&models.HiringNews{}).Joins("User").
+		Where("hiring_news.deleted = ?", false).
+		Where("User.deleted = ?", false).
+		Where("hiring_news.chuloadai_id", userLogin.UserID).
+		Count(&totalItems).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -109,8 +113,8 @@ func APIGetHiring(c *fiber.Ctx) error {
 	})
 }
 
-func APIGetHiringFilter(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetHiringFilter")
+func APIPostHiringFilter(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostHiringFilter")
 
 	form := new(structs.FormFilter)
 	if err := c.BodyParser(form); err != nil {
@@ -155,16 +159,16 @@ func APIGetHiringFilter(c *fiber.Ctx) error {
 		query = query.Where("YEAR(hiring_news.created_at) = YEAR(CURDATE())")
 	}
 
-	if form.Order == 1 {
-		query = query.Order("date ASC")
-	} else if form.Order == 2 {
+	if form.Order == 0 {
 		query = query.Order("created_at DESC")
+	} else if form.Order == 1 {
+		query = query.Order("update_at DESC")
+	} else if form.Order == 2 {
+		query = query.Order("date ASC")
 	} else if form.Order == 3 {
-		query = query.Order("price ASC")
+		query = query.Order("price DESC")
 	} else if form.Order == 4 {
 		query = query.Order("ward_code ASC")
-	} else {
-		query = query.Order("hiring_news_id ASC")
 	}
 
 	var totalItems int64
@@ -334,6 +338,7 @@ func APIGetHiringDetailID(c *fiber.Ctx) error {
 func APIGetHiringListApply(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIGetHiringListApply")
 	var userHiringNews []models.UserHiringNews
+	var hiringNews models.HiringNews
 	hiringNewsId := c.Params("id")
 	userLogin := GetSessionUser(c)
 	hiringNewsIdInt, err := strconv.Atoi(c.Query("page", "1"))
@@ -352,6 +357,15 @@ func APIGetHiringListApply(c *fiber.Ctx) error {
 
 	DB := initializers.DB
 
+	if err := DB.Where("hiring_news_id", hiringNewsId).
+		Where("hiring_news.deleted", false).
+		First(&hiringNews).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"message": "Đã xảy ra lỗi khi lấy dữ liệu",
+		})
+	}
+
 	if err := DB.Model(&models.UserHiringNews{}).Joins("User").
 		Joins("User.Province").Joins("User.District").Joins("User.Ward").
 		Where("hiring_news_id", hiringNewsId).Where("user_hiring_news.status IN ?", []int{0, 1}).
@@ -363,8 +377,9 @@ func APIGetHiringListApply(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "success",
-		"data":    userHiringNews,
+		"message":       "success",
+		"data":          userHiringNews,
+		"hiring_enough": hiringNews.HiringEnough,
 	})
 }
 

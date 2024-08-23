@@ -12,7 +12,7 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
             .appendTo($pagination)
             .on('click', function(e) {
                 e.preventDefault();
-                renderHiringList(page, itemsPerPage, listSelector, paginationSelector);
+                renderContractList(page, itemsPerPage, listSelector, paginationSelector);
                 setupPaginationControls(page);
             });
     }
@@ -53,11 +53,11 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
     }
 
     // Hiển thị trang đầu tiên
-    renderHiringList(1, itemsPerPage, listSelector, paginationSelector);
+    renderContractList(1, itemsPerPage, listSelector, paginationSelector);
     setupPaginationControls(1);
 }
 
-function renderHiringList(page, itemsPerPage, listSelector, paginationSelector) {
+function renderContractList(page, itemsPerPage, listSelector, paginationSelector) {
     $.ajax({
         url: '/contract/api',
         type: 'GET',
@@ -83,7 +83,7 @@ function renderHiringList(page, itemsPerPage, listSelector, paginationSelector) 
             });
         },
         error: function(xhr, status, error) {
-            console.error("Error fetching hiring news: ", error);
+            console.error("Đã xảy ra lỗi ", error);
         }
     });
 }
@@ -151,7 +151,7 @@ function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, 
     var extendedJsonData = { ...jsonData };
     extendedJsonData.page = page;
     $.ajax({
-        url: '/hiring/api/filter',
+        url: '/contract/api/filter',
         method: 'POST',
         contentType: "application/json",
         data: JSON.stringify(extendedJsonData),
@@ -172,7 +172,7 @@ function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, 
             });
         },
         error: function(xhr, status, error) {
-            console.error("Error fetching hiring news: ", error);
+            console.error("Error fetching contract news: ", error);
         }
     });
 }
@@ -187,7 +187,7 @@ function renderListItem(item, user_id) {
             ? 'background-color: #99FFFF;'
             : 'background-color: #FFFF99;';
     let statusMessage = null;
-    let btnHtml = `<a href="#" class="dropdown-item confirm-delete-item" data-id="${item.contract_id}">Yêu cầu hủy hợp đồng</a>`
+    let btnHtml = `<a href="#" class="dropdown-item request-delete-item" data-id="${item.contract_id}">Yêu cầu hủy hợp đồng</a>`
 
     if (item.status === 2) {
         if (item.request_delete_by !== user_id) {
@@ -195,20 +195,13 @@ function renderListItem(item, user_id) {
             btnHtml = `<a href="#" class="dropdown-item confirm-delete-item" data-id="${item.contract_id}">Chấp nhận hủy hợp đồng</a>`
         } else if (item.request_delete_by === user_id) {
             statusMessage = "Bạn đã yêu cầu hủy";
-            btnHtml = `<a href="#" class="dropdown-item confirm-delete-item" data-id="${item.contract_id}">Thu hồi yêu cầu hủy</a>`
+            btnHtml = `<a href="#" class="dropdown-item cancel-delete-item" data-id="${item.contract_id}">Thu hồi yêu cầu hủy</a>`
         }
+    } else if (item.status === 0){
+        statusMessage = "Đã hoàn thành";
+        btnHtml =""
     }
     let statusMessageHtml = statusMessage ? `<p class="list-group-item-text">${statusMessage}</p>` : '';
-
-    const confirmDeleteButtonHtml = user_id === item.chuloadai_id
-        ? `<a href="#" class="dropdown-item confirm-delete-item" data-id="${item.contract_id}">Xóa</a>`
-        : '';
-    const editButtonHtml = user_id === item.chuloadai_id
-        ? `<a href="#" class="dropdown-item edit-item" data-id="${item.hiring_news_id}">Chỉnh sửa</a>`
-        : '';
-    const showButtonHtml = user_id === item.chuloadai_id
-        ? `<a href="#" class="dropdown-item show-item" data-id="${item.hiring_news_id}">Xem danh sách ứng tuyển</a>`
-        : '';
 
     return `
         <li class="list-group-item" style="${backgroundColor}">
@@ -248,7 +241,7 @@ function renderListItem(item, user_id) {
                     </button>
                     <div class="dropdown-arrow"></div>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item view-detail" data-id="${item.hiring_news_id}">Xem chi tiết</a>
+                        <a class="dropdown-item view-detail" data-id="${item.contract_id}">Xem chi tiết</a>
                         ${btnHtml}                       
                     </div>
                 </div>
@@ -259,9 +252,10 @@ function renderListItem(item, user_id) {
 
 $(document).on('click', '.view-detail', function(event) {
     event.preventDefault();
-    var hiringNewsId = $(this).data('id');
+    var contractId = $(this).data('id');
+    $('#detailContractModal').modal('show');
     $.ajax({
-        url: '/hiring/api/detail/'+hiringNewsId,
+        url: '/contract/api/detail/'+contractId,
         method: 'GET',
         success: function(response) {
             if(response.message !== "success"){
@@ -275,76 +269,110 @@ $(document).on('click', '.view-detail', function(event) {
                 });
                 return false;
             }
-            var hiringNews = response.data;
-            var formattedCreatedAt = moment(hiringNews.created_at, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY HH:mm:ss");
-            var formattedUpdatedAt = moment(hiringNews.updated_at, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY HH:mm:ss");
-            var formattedDate = moment(hiringNews.date, "YYYY-MM-DD").format("DD/MM/YYYY");
-            var formattedPrice = formatPrice(hiringNews.price); // Assuming you have a function to format price
+            var contract = response.data;
+            var formattedCreatedAt = moment(contract.created_at, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY HH:mm:ss");
+            var formattedDate = moment(contract.date, "YYYY-MM-DD").format("DD/MM/YYYY");
+            var formattedPrice = formatPrice(contract.price);
 
             // Gán giá trị vào các trường trong modal
-            // $('#detailHiringNewsModal #name').text(hiringNews.User.last_name + " " + hiringNews.User.first_name);
-            // $('#detailHiringNewsModal #role').text(hiringNews.User.last_name);
-            $('#detailHiringNewsModal #link-facebook').attr('href', hiringNews.User.link_facebook);
+            // $('#detailContractModal #name').text(hiringNews.User.last_name + " " + hiringNews.User.first_name);
+            // $('#detailContractModal #role').text(hiringNews.User.last_name);
 
-            $('#detailHiringNewsModal .modal-body .avatar-img').attr('src', '/assets/img/avatar/' + hiringNews.User.image);
-            $('#detailHiringNewsModal #detail-name').text(hiringNews.User.last_name + " " + hiringNews.User.first_name);
-            $('#detailHiringNewsModal #detail-role').text(hiringNews.User.role.name);
-            $('#detailHiringNewsModal #detail-phone').text("SDT: " + hiringNews.User.phone_number);
-            $('#detailHiringNewsModal #detail-email').text("Email: " + hiringNews.User.email);
+            $('#detailContractModal #detail-name-chuloadai').text(contract.ChuLoaDai.last_name + " " + contract.ChuLoaDai.first_name);
+            $('#detailContractModal #detail-phone-chuloadai').text("SDT: " + contract.ChuLoaDai.phone_number);
+            $('#detailContractModal #detail-email-chuloadai').text("Email: " + contract.ChuLoaDai.email);
 
-            $('#detailHiringNewsModal #detail-create-at').text(formattedCreatedAt);
-            $('#detailHiringNewsModal #detail-update-at').text(formattedUpdatedAt);
-            $('#detailHiringNewsModal #detail-date').text(formattedDate);
-            $('#detailHiringNewsModal #detail-price').text(formattedPrice);
+            $('#detailContractModal #detail-name-nhaccong').text(contract.NhacCong.last_name + " " + contract.NhacCong.first_name);
+            $('#detailContractModal #detail-phone-nhaccong').text("SDT: " + contract.NhacCong.phone_number);
+            $('#detailContractModal #detail-email-nhaccong').text("Email: " + contract.NhacCong.email);
 
-            $('#detailHiringNewsModal #detail-address').text(
-                hiringNews.address_detail + ", " + hiringNews.Ward.full_name + ", " + hiringNews.District.full_name + ", " + hiringNews.Province.name
+            $('#detailContractModal #detail-create-at').text(formattedCreatedAt);
+            $('#detailContractModal #detail-date').text(formattedDate);
+            $('#detailContractModal #detail-price').text(formattedPrice);
+
+            $('#detailContractModal #detail-address').text(
+                contract.address_detail + ", " + contract.ward.full_name + ", " + contract.district.full_name + ", " + contract.province.name
             );
-            $('#detailHiringNewsModal #detail-describe').text(hiringNews.describe);
 
             $('html').removeClass('topbar_open');
-            $('#detailHiringNewsModal').modal('show');
+            $('#detailContractModal').modal('show');
 
         }
     });
 });
 
-$(document).on('click', '.show-item', function(event) {
-    event.preventDefault();
-    var hiringNewsId = $(this).data('id');
+$(document).on('click', '.request-delete-item', function(e) {
+    e.preventDefault();
+    let contractId = $(this).data('id');
+
     $.ajax({
-        url: '/hiring/api/list-apply/' + hiringNewsId,
-        method: 'GET',
+        url: '/contract/request-delete',
+        type: 'POST',
+        data: { id: contractId },
         success: function(response) {
-            if(response.message !== "success"){
-                swal("", response.message, {
-                    icon : "error",
-                    buttons: {
-                        confirm: {
-                            className : 'btn btn-danger'
-                        }
-                    },
-                });
-                return false;
-            }
-            var listApply = response.data
-            $.each(listApply, function(index, item) {
-                var listItem = renderListApplyItem(item)
-                $('#showListApplyModal #list-apply').append(listItem);
+            swal("", response.message, {
+                icon : response.icon,
+                buttons: {
+                    confirm: {
+                        className : 'btn btn-danger'
+                    }
+                },
             });
-            $('#saveApplyBtn').data('id', hiringNewsId);
-            $('html').removeClass('topbar_open');
-            $('#showListApplyModal').modal('show');
-            $('#showListApplyModal').on('hidden.bs.modal', function () {
-                $('#showListApplyModal #list-apply').empty();
-            });
+        },
+        error: function(xhr, status, error) {
+            // Xử lý lỗi
+            alert('Đã xảy ra lỗi khi yêu cầu hủy hợp đồng.');
         }
     });
 });
 
-$(document).on('click', '.delete-item', function(event) {
-    event.preventDefault();
-    var hiringNewsId = $(this).data('id');
-    alert(hiringNewsId)
+$(document).on('click', '.confirm-delete-item', function(e) {
+    e.preventDefault();
+    let contractId = $(this).data('id');
+
+    $.ajax({
+        url: '/contract/confirm-delete',
+        type: 'POST',
+        data: { id: contractId },
+        success: function(response) {
+            swal("", response.message, {
+                icon : response.icon,
+                buttons: {
+                    confirm: {
+                        className : 'btn btn-danger'
+                    }
+                },
+            });
+        },
+        error: function(xhr, status, error) {
+            // Xử lý lỗi
+            alert('Đã xảy ra lỗi khi chấp nhận hủy hợp đồng.');
+        }
+    });
+});
+
+$(document).on('click', '.cancel-delete-item', function(e) {
+    e.preventDefault();
+    let contractId = $(this).data('id');
+
+    $.ajax({
+        url: '/contract/cancel-delete',
+        type: 'POST',
+        data: { id: contractId },
+        success: function(response) {
+            swal("", response.message, {
+                icon : response.icon,
+                buttons: {
+                    confirm: {
+                        className : 'btn btn-danger'
+                    }
+                },
+            });
+        },
+        error: function(xhr, status, error) {
+            // Xử lý lỗi
+            alert('Đã xảy ra lỗi khi thu hồi yêu cầu hủy hợp đồng.');
+        }
+    });
 });
 

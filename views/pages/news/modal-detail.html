@@ -1,0 +1,98 @@
+<div class="modal fade" id="detailNewsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 90%">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h3 class="modal-title">
+                    <span class="fw-bold text-center">
+                    Chi tiết tin tuyển dụng
+                    </span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card card-profile card-secondary">
+                            <div class="card-header">
+                                <div class="profile-picture">
+                                    <div class="avatar avatar-xxl">
+                                        <img src="/assets/img/avatar/{{.User.Image}}" class="avatar-img rounded-circle">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="user-profile text-center">
+                                    <div class="name" id="detail-name" readonly=""></div>
+                                    <div class="job" id="detail-role"></div>
+                                    <div id="detail-phone" readonly=""></div>
+                                    <div id="detail-email" readonly=""></div>
+                                    <br>
+                                    <div class="social-media">
+                                        <a id="link-facebook" class="btn btn-primary btn-sm btn-link" rel="publisher" href="{{.User.LinkFacebook}}" target="_blank">
+                                            <span class="btn-label just-icon"><i class="flaticon-facebook"></i> </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Thời gian tạo</label>
+                                            <div id="detail-create-at" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Chỉnh sửa cuối</label>
+                                            <div id="detail-update-at" class="form-control"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Ngày đám cưới</label>
+                                            <div id="detail-date" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Giá tiền</label>
+                                            <div id="detail-price" class="form-control"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Địa chỉ</label>
+                                            <div id="detail-address" class="form-control break-word"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Mô tả</label>
+                                            <div id="detail-describe" class="form-control break-word"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer no-bd">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

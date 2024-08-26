@@ -30,3 +30,8 @@ type Contract struct {
 	UpdatedAt       time.Time `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt       time.Time `gorm:"column:deleted_at" json:"deleted_at"`
 }
+
+//Status
+//0: đã hoàn thành
+//1: chưa hoàn thành
+//2: có yêu cầu hủy

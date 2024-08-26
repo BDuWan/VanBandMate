@@ -93,7 +93,7 @@ func CheckPermissionFindMusicPlayer(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func CheckPermissionHiringNews(c *fiber.Ctx) error {
+func CheckPermissionNews(c *fiber.Ctx) error {
 	if !controllers.CheckPermission("xem_tin_tuyen_dung", c) {
 		return c.Redirect("/errors/403")
 	}

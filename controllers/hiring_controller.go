@@ -368,7 +368,8 @@ func APIGetHiringListApply(c *fiber.Ctx) error {
 
 	if err := DB.Model(&models.UserHiringNews{}).Joins("User").
 		Joins("User.Province").Joins("User.District").Joins("User.Ward").
-		Where("hiring_news_id", hiringNewsId).Where("user_hiring_news.status IN ?", []int{0, 1}).
+		Where("hiring_news_id", hiringNewsId).
+		Where("user_hiring_news.status IN ?", []int{0, 1}).
 		Find(&userHiringNews).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON(fiber.Map{
@@ -431,7 +432,7 @@ func APIPostSaveApply(c *fiber.Ctx) error {
 		numberDupContracts := len(dupContracts)
 
 		if numberDupContracts > 0 {
-			return c.JSON("Nhạc công trong danh sách bạn chọn đã tồn tại hợp đồng")
+			return c.JSON("Nhạc công trong danh sách bạn chọn đã tồn tại hợp đồng trùng với ngày trên tin tuyển dụng")
 		}
 
 		// Lặp qua các SelectedItems và tạo hợp đồng
@@ -461,6 +462,14 @@ func APIPostSaveApply(c *fiber.Ctx) error {
 		var userHiringNewsIDs []int
 		for _, item := range formSaveApply.SelectedItems {
 			userHiringNewsIDs = append(userHiringNewsIDs, item.UserHiringNewsID)
+		}
+		//Cập nhật các yêu cầu ứng tuyển liên quan
+		if err := DB.Model(&models.UserHiringNews{}).
+			Where("user_hiring_news_id IN ?", userHiringNewsIDs).
+			Where("DATE(date) = ?", hiringNews.Date.Format("2006-01-02")).
+			Updates(models.UserHiringNews{Status: 3}).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
 		}
 
 		if err := DB.Model(&models.UserHiringNews{}).

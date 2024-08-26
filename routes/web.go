@@ -87,8 +87,12 @@ func RouteInit(app *fiber.App) {
 	findMusicPlayer := app.Group("/find-music-player", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionFindMusicPlayer)
 	findMusicPlayer.Get("", controllers.GetRolePage)
 
-	hiringNews := app.Group("/hiring-news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionHiringNews)
-	hiringNews.Get("", controllers.GetRolePage)
+	news := app.Group("/news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionNews)
+	news.Get("", controllers.GetNewsPage)
+	news.Get("/api", controllers.APIGetNews)
+	news.Get("/api/detail/:id", controllers.APIGetHiringDetailID)
+	news.Post("/apply", controllers.PostNewsApply)
+	news.Post("/cancel-apply", controllers.PostNewsCancelApply)
 
 	invitation := app.Group("/invitation", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionInvitation)
 	invitation.Get("", controllers.GetRolePage)

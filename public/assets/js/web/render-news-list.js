@@ -1,3 +1,4 @@
+var currentPage = 1
 function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
     var $pagination = $(paginationSelector);
 
@@ -57,6 +58,7 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
 }
 
 function renderNewsList(page, itemsPerPage, listSelector, paginationSelector) {
+    currentPage = page
     $.ajax({
         url: '/news/api',
         type: 'GET',
@@ -182,9 +184,13 @@ function renderListItem(item, user_id) {
     var formatedRelativeDate = formatRelativeDate(item.created_at);
     let backgroundColor = 'background-color: #FFFFFF;';
     let statusMessage = null;
+    let enoughMessage = null;
     if (item.hiring_enough) {
         backgroundColor = 'background-color: #99FFFF;';
-        statusMessage = "Đã tuyển đủ người"
+        enoughMessage = "Đã tuyển đủ người"
+        if(item.applicant_status === 1){
+            statusMessage = "Đã được chấp nhận"
+        }
     } else {
         if(item.applicant_status === 0) {
             backgroundColor = 'background-color: #FFCCFF;';
@@ -197,6 +203,7 @@ function renderListItem(item, user_id) {
             statusMessage = "Trùng thời gian"
         }
     }
+    let enoughMessageHtml = enoughMessage ? `<p class="list-group-item-text">${enoughMessage}</p>` : '';
     let statusMessageHtml = statusMessage ? `<p class="list-group-item-text">${statusMessage}</p>` : '';
 
     const applyButtonHtml = !item.hiring_enough && (item.applicant_status === 2 || item.applicant_status === 4)
@@ -230,6 +237,7 @@ function renderListItem(item, user_id) {
                     </div>
                     <div class="col-12 col-lg-2 text-lg-right">
                         <p class="list-group-item-text">Thời gian tạo: ${formatedRelativeDate} </p>
+                        <strong>${enoughMessageHtml}</strong>
                         <strong>${statusMessageHtml}</strong>
                     </div>
                 </div>
@@ -312,6 +320,7 @@ $(document).on('click', '.apply-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
+            renderNewsList(currentPage, itemsPerPage,  '#list-news', '#pagination-news')
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {
@@ -337,6 +346,7 @@ $(document).on('click', '.cancel-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
+            renderNewsList(currentPage, itemsPerPage,  '#list-news', '#pagination-news')
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {

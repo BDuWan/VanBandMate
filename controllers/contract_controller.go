@@ -302,14 +302,44 @@ func PostContractConfirmDelete(c *fiber.Ctx) error {
 	contractID := req.ID
 	DB := initializers.DB
 
+	var contract models.Contract
+
 	if err := DB.Model(&models.Contract{}).
 		Where("contract_id = ?", contractID).
 		Where("deleted = ?", false).
-		Update("deleted", true).Error; err != nil {
+		First(&contract).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON(fiber.Map{
 			"icon":    "error",
-			"message": "Đã xảy ra lỗi khi xóa hợp đồng",
+			"message": "Không tìm thấy hợp đồng",
+		})
+	}
+
+	if err := DB.Model(&contract).Update("deleted", 1).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
+	}
+
+	if err := DB.Model(&models.UserHiringNews{}).
+		Where("DATE(date) = ?", contract.Date.Format("2006-01-02")).
+		Where("status = ?", 3).
+		Select("status").
+		Updates(&models.UserHiringNews{Status: 0}).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"icon":    "error",
+			"message": "Đã xảy ra lỗi",
+		})
+	}
+
+	if err := DB.Model(&models.UserHiringNews{}).
+		Where("DATE(date) = ?", contract.Date.Format("2006-01-02")).
+		Where("status", 1).
+		Updates(models.UserHiringNews{Status: 2}).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"icon":    "error",
+			"message": "Đã xảy ra lỗi",
 		})
 	}
 

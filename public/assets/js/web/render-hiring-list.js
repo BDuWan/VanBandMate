@@ -1,3 +1,4 @@
+var currentPage = 1
 function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
     var $pagination = $(paginationSelector);
 
@@ -58,6 +59,7 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
 }
 
 function renderHiringList(page, itemsPerPage, listSelector, paginationSelector) {
+    currentPage = page
     $.ajax({
         url: '/hiring/api',
         type: 'GET',
@@ -182,6 +184,10 @@ function renderListItem(item, user_id) {
     var formatedPrice = formatPrice(item.price);
     var formatedRelativeDate = formatRelativeDate(item.created_at);
     const backgroundColor = item.hiring_enough == 0 ? 'background-color: #FFFFFF;' : 'background-color: #99FFFF;';
+    let enoughMessageHtml = ''
+    if(item.hiring_enough == 1){
+        enoughMessageHtml = `<p class="list-group-item-text">Đã tuyển đủ</p>`
+    }
     const deleteButtonHtml = user_id === item.chuloadai_id
         ? `<a href="#" class="dropdown-item delete-item" data-id="${item.hiring_news_id}">Xóa</a>`
         : '';
@@ -216,6 +222,7 @@ function renderListItem(item, user_id) {
                     </div>
                     <div class="col-12 col-lg-2 text-lg-right">
                         <p class="list-group-item-text">Thời gian tạo: ${formatedRelativeDate} </p>
+                        <strong>${enoughMessageHtml}</strong>
                     </div>
                 </div>
             </div>
@@ -415,6 +422,7 @@ $(document).on('click', '#saveApplyBtn', function(event) {
                 }
             }).then(function() {
                 $('#showListApplyModal').modal('hide');
+                renderHiringList(currentPage, itemsPerPage,  '#list-hiring', '#pagination-hiring')
             });
         },
         error: function() {

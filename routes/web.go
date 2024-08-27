@@ -91,6 +91,7 @@ func RouteInit(app *fiber.App) {
 	news.Get("", controllers.GetNewsPage)
 	news.Get("/api", controllers.APIGetNews)
 	news.Get("/api/detail/:id", controllers.APIGetHiringDetailID)
+	news.Post("/api/filter", controllers.APIPostNewsFilter)
 	news.Post("/apply", controllers.PostNewsApply)
 	news.Post("/cancel-apply", controllers.PostNewsCancelApply)
 

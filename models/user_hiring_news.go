@@ -10,4 +10,5 @@ type UserHiringNews struct {
 	User             User       `gorm:"foreignKey:NhaccongID;references:UserID"`
 	Status           int        `json:"status"`
 	ApplyAt          time.Time  `json:"apply_at"`
+	Date             time.Time  `json:"date"`
 }

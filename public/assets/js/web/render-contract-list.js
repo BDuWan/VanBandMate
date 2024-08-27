@@ -1,3 +1,4 @@
+var currentPage = 1
 function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
     var $pagination = $(paginationSelector);
 
@@ -58,6 +59,7 @@ function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelec
 }
 
 function renderContractList(page, itemsPerPage, listSelector, paginationSelector) {
+    currentPage = page
     $.ajax({
         url: '/contract/api',
         type: 'GET',
@@ -310,6 +312,7 @@ $(document).on('click', '.request-delete-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
+            renderContractList(currentPage, itemsPerPage,  '#list-contract', '#pagination-contract')
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {
@@ -335,6 +338,7 @@ $(document).on('click', '.confirm-delete-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
+            renderContractList(currentPage, itemsPerPage,  '#list-contract', '#pagination-contract')
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {
@@ -360,6 +364,7 @@ $(document).on('click', '.cancel-delete-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
+            renderContractList(currentPage, itemsPerPage,  '#list-contract', '#pagination-contract')
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {

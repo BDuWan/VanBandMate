@@ -341,19 +341,6 @@ func APIGetHiringListApply(c *fiber.Ctx) error {
 	var hiringNews models.HiringNews
 	hiringNewsId := c.Params("id")
 	userLogin := GetSessionUser(c)
-	hiringNewsIdInt, err := strconv.Atoi(c.Query("page", "1"))
-
-	if err != nil {
-		return c.JSON(fiber.Map{
-			"message": "id không hợp lệ",
-		})
-	}
-
-	if hiringNewsIdInt != userLogin.UserID {
-		return c.JSON(fiber.Map{
-			"message": "Bạn chỉ được xem danh sách ứng tuyển của tin mà bạn tạo",
-		})
-	}
 
 	DB := initializers.DB
 
@@ -363,6 +350,12 @@ func APIGetHiringListApply(c *fiber.Ctx) error {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON(fiber.Map{
 			"message": "Đã xảy ra lỗi khi lấy dữ liệu",
+		})
+	}
+
+	if hiringNews.ChuloadaiID != userLogin.UserID {
+		return c.JSON(fiber.Map{
+			"message": "Bạn chỉ được xem danh sách ứng tuyển của tin mà bạn tạo",
 		})
 	}
 
@@ -385,7 +378,7 @@ func APIGetHiringListApply(c *fiber.Ctx) error {
 }
 
 func APIPostSaveApply(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostCreateRole")
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostSaveApply")
 	var hiringNews models.HiringNews
 	userLogin := GetSessionUser(c)
 
@@ -424,6 +417,7 @@ func APIPostSaveApply(c *fiber.Ctx) error {
 		if err := DB.Model(&models.Contract{}).
 			Where("nhaccong_id IN ?", nhaccongIDs).
 			Where("DATE(date) = ?", hiringNews.Date.Format("2006-01-02")).
+			Where("deleted", false).
 			Find(&dupContracts).Error; err != nil {
 			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 			return c.JSON("Đã xảy ra lỗi")
@@ -463,9 +457,32 @@ func APIPostSaveApply(c *fiber.Ctx) error {
 		for _, item := range formSaveApply.SelectedItems {
 			userHiringNewsIDs = append(userHiringNewsIDs, item.UserHiringNewsID)
 		}
-		//Cập nhật các yêu cầu ứng tuyển liên quan
+
+		var userApplyIDs []int
+		for _, item := range formSaveApply.SelectedItems {
+			userApplyIDs = append(userHiringNewsIDs, item.NhaccongID)
+		}
+
+		////Cập nhật các yêu cầu ứng tuyển liên quan
+		//var userHiringNewsList []models.UserHiringNews
+		//if err := DB.Model(&models.UserHiringNews{}).
+		//	Joins("JOIN hiring_news ON user_hiring_news.hiring_news_id = hiring_news.hiring_news_id").
+		//	Select("user_hiring_news.*, hiring_news.date").
+		//	Where("user_hiring_news.nhaccong_id IN ?", userApplyIDs).
+		//	Where("DATE(hiring_news.date) = ?", hiringNews.Date.Format("2006-01-02")).
+		//	Find(&userHiringNewsList).Error; err != nil {
+		//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		//	return c.JSON("Đã xảy ra lỗi trong quá trình lấy dữ liệu")
+		//}
+		//
+		//// In ra danh sách các bản ghi lấy được
+		//fmt.Println("Danh sách user_hiring_news lấy được:")
+		//for _, item := range userHiringNewsList {
+		//	fmt.Printf("ID: %d, Date: %s, Status: %d\n", item.UserHiringNewsID, item.Status)
+		//}
+
 		if err := DB.Model(&models.UserHiringNews{}).
-			Where("user_hiring_news_id IN ?", userHiringNewsIDs).
+			Where("nhaccong_id IN ?", userApplyIDs).
 			Where("DATE(date) = ?", hiringNews.Date.Format("2006-01-02")).
 			Updates(models.UserHiringNews{Status: 3}).Error; err != nil {
 			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())

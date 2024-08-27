@@ -178,7 +178,7 @@ func PostSignup(c *fiber.Ctx) error {
 		account.Password = utils.HashingPassword(signupForm.Password)
 		account.DateOfBirth = date
 		//account.Session = ""
-		account.State = false
+		account.State = true
 		account.Verify = false
 		account.Deleted = false
 		account.CreatedAt = time.Now()

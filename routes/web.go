@@ -85,7 +85,7 @@ func RouteInit(app *fiber.App) {
 	hiring.Put("/api/edit/:id", controllers.APIPutHiringUpdate)
 
 	findMusicPlayer := app.Group("/find-music-player", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionFindMusicPlayer)
-	findMusicPlayer.Get("", controllers.GetRolePage)
+	findMusicPlayer.Get("", controllers.GetFindMusicPlayerPage)
 
 	news := app.Group("/news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionNews)
 	news.Get("", controllers.GetNewsPage)

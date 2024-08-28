@@ -1,5 +1,7 @@
 package structs
 
+import "lms/models"
+
 type User struct {
 	FirstName              string `json:"first_name"`
 	LastName               string `json:"last_name"`
@@ -132,6 +134,14 @@ type FormFilterNews struct {
 	Order        int    `json:"order"`
 	Page         int    `json:"page"`
 	ItemsPerPage int    `json:"items_per_page"`
+}
+
+type FormFind struct {
+	MaxNumber    int               `json:"maxNumber"`
+	Condition    int               `json:"condition"`
+	HiringNews   models.HiringNews `json:"hiringNews"`
+	Page         int               `json:"page"`
+	ItemsPerPage int               `json:"items_per_page"`
 }
 
 //	type SelectedItem struct {

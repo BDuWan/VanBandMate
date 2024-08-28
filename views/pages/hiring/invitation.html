@@ -1,0 +1,105 @@
+<div class="tab-pane">
+    <div class="row">
+        <div class="col-sm-6 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Thời gian</label>
+                <label class="form-control">{{.HiringNews.Date | FormatDate}}</label>
+            </div>
+        </div>
+
+        <div class="col-sm-6 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Giá tiền</label>
+                <label class="form-control">{{.HiringNews.Price | FormatPrice}}</label>
+            </div>
+        </div>
+        <div class="col-sm-6 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Địa chỉ</label>
+                <label class="form-control break-word">
+                    {{.HiringNews.AddressDetail}}, {{.HiringNews.Ward.FullName}}, {{.HiringNews.District.FullName}}, {{.HiringNews.Province.Name}}
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-6 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Mô tả</label>
+                <label class="form-control break-word">{{.HiringNews.Describe}}</label>
+            </div>
+        </div>
+        <div class="col-sm-6 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Số lượng tuyển tối đa</label>
+                <input type="text" class="form-control" id="max-number">
+            </div>
+        </div>
+        <div class="col-sm-6 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Điều kiện tìm kiếm</label>
+                <div>
+                    <select id="condition" class="form-control" style="width: 100%">
+                        <option value="0" selected>Hiển thị tất cả</option>
+                        <option value="1">Cùng tỉnh/thành phố</option>
+                        <option value="2">Cùng quận/huyện</option>
+                        <option value="3">Cùng xã/phường/thị trấn</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <button type="button" id="btn-find" class="btn btn-primary d-sm-inline-block">Tìm kiếm</button>
+</div>
+
+<section class="card mt-4">
+    <ul class="list-group list-group-messages list-group-flush" id="list-nhaccong">
+    </ul>
+</section>
+
+<div class="pagination-list" id="pagination-nhaccong"></div>
+
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+<script src="/assets/js/web/render-nhaccong-list.js"></script>
+<script src="/assets/js/web/select-location.js"></script>
+<script src="/assets/js/web/format.js"></script>
+<script>
+    var itemsPerPage = 5;
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Gán sự kiện click cho nút lọc
+        $('#btn-find').on('click', function() {
+            // Lấy giá trị từ các ô select
+            var maxNumber = parseInt($('#max-number').val(), 10);
+            var condition = parseInt($('#condition').val(), 10);
+            var hiringNews = {{ .HiringNews }}
+
+            var jsonData = {
+                maxNumber: maxNumber,
+                condition: condition,
+                hiringNews: hiringNews,
+                items_per_page: itemsPerPage,
+            };
+            const extendedJsonData = {...jsonData};
+            extendedJsonData.page = 1;
+            // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
+            $.ajax({
+                url: '/hiring/api/find',
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify(extendedJsonData),
+                success: function(response) {
+                    if(response.message === "success"){
+                        var totalItems = response.totalItems;
+                        setupPaginationFilter(totalItems, itemsPerPage, '#list-nhaccong', '#pagination-nhaccong', jsonData);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi khi gửi yêu cầu lọc: ", error);
+                }
+            });
+        });
+    });
+</script>

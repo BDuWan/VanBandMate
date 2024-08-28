@@ -5,6 +5,7 @@ import (
 	"lms/models"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -48,8 +49,30 @@ func FormatDate(t time.Time) string {
 	return t.Format("02/01/2006")
 }
 func FormatTime(eventTime time.Time) string {
+
 	return eventTime.Format("2006-01-02 15:04:05")
 }
+
+func FormatPrice(price int) string {
+	priceStr := fmt.Sprintf("%d", price)
+	n := len(priceStr)
+
+	if n <= 3 {
+		return priceStr + "đ"
+	}
+
+	var result []string
+	for i := n; i > 0; i -= 3 {
+		start := i - 3
+		if start < 0 {
+			start = 0
+		}
+		result = append([]string{priceStr[start:i]}, result...)
+	}
+
+	return strings.Join(result, ".") + "đ"
+}
+
 func IsTimeAfterNow(t time.Time) bool {
 	return t.After(time.Now())
 }

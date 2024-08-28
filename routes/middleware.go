@@ -86,8 +86,8 @@ func CheckPermissionHiring(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func CheckPermissionFindMusicPlayer(c *fiber.Ctx) error {
-	if !controllers.CheckPermission("tim_kiem_nhac_cong", c) {
+func CheckPermissionSendInvitation(c *fiber.Ctx) error {
+	if !controllers.CheckPermission("loi_moi_da_gui", c) {
 		return c.Redirect("/errors/403")
 	}
 	return c.Next()
@@ -100,7 +100,7 @@ func CheckPermissionNews(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func CheckPermissionInvitation(c *fiber.Ctx) error {
+func CheckPermissionGetInvitation(c *fiber.Ctx) error {
 	if !controllers.CheckPermission("loi_moi_nhan_duoc", c) {
 		return c.Redirect("/errors/403")
 	}

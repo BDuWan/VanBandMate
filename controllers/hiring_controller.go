@@ -230,6 +230,10 @@ func APIPostHiringCreate(c *fiber.Ctx) error {
 	hiringNews.DeletedAt = time.Now()
 	hiringNews.CreatedAt = time.Now()
 
+	if hiringNews.Describe == "" {
+		hiringNews.Describe = "<<Không có mô tả>>"
+	}
+
 	if err := DB.Create(&hiringNews).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 
@@ -276,6 +280,10 @@ func APIPutHiringUpdate(c *fiber.Ctx) error {
 	hiringNews.AddressDetail = hiringNewsForm.Address
 	hiringNews.UpdatedAt = time.Now()
 	hiringNews.UpdatedBy = userLogin.UserID
+
+	if hiringNews.Describe == "" {
+		hiringNews.Describe = "<<Không có mô tả>>"
+	}
 
 	if err := DB.Model(&hiringNews).Updates(&hiringNews).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())

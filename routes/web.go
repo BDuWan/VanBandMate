@@ -75,17 +75,19 @@ func RouteInit(app *fiber.App) {
 
 	hiring := app.Group("/hiring", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionHiring)
 	hiring.Get("", controllers.GetHiringPage)
+	hiring.Get("/invite/:id", controllers.GetHiringInvitePage)
 	hiring.Get("/api", controllers.APIGetHiring)
 	hiring.Get("/api/:id", controllers.APIGetHiringID)
 	hiring.Get("/api/detail/:id", controllers.APIGetHiringDetailID)
 	hiring.Get("/api/list-apply/:id", controllers.APIGetHiringListApply)
 	hiring.Post("/api/filter", controllers.APIPostHiringFilter)
+	hiring.Post("/api/find", controllers.APIPostHiringFind)
 	hiring.Post("/api/create", controllers.APIPostHiringCreate)
 	hiring.Post("/api/save-apply", controllers.APIPostSaveApply)
 	hiring.Put("/api/edit/:id", controllers.APIPutHiringUpdate)
 
-	findMusicPlayer := app.Group("/find-music-player", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionFindMusicPlayer)
-	findMusicPlayer.Get("", controllers.GetFindMusicPlayerPage)
+	sendInvitation := app.Group("/send-invitation", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionSendInvitation)
+	sendInvitation.Get("", controllers.GetUserInfo)
 
 	news := app.Group("/news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionNews)
 	news.Get("", controllers.GetNewsPage)
@@ -95,8 +97,8 @@ func RouteInit(app *fiber.App) {
 	news.Post("/apply", controllers.PostNewsApply)
 	news.Post("/cancel-apply", controllers.PostNewsCancelApply)
 
-	invitation := app.Group("/invitation", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionInvitation)
-	invitation.Get("", controllers.GetRolePage)
+	getInvitation := app.Group("/get-invitation", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionGetInvitation)
+	getInvitation.Get("", controllers.GetRolePage)
 
 	errors := app.Group("/errors", IsAuthenticated, CheckSession)
 	errors.Get("/403", controllers.GetError403)

@@ -54,6 +54,7 @@ func startWeb() {
 		"FormatDate":        controllers.FormatDate,
 		"FormatTime":        controllers.FormatTime,
 		"FormatTimeComment": controllers.FormatTimeComment,
+		"FormatPrice":       controllers.FormatPrice,
 		"IsTimeAfterNow":    controllers.IsTimeAfterNow,
 		"IsSelected":        controllers.IsSelected,
 		"CheckPermission":   controllers.CheckPermission,

@@ -197,6 +197,9 @@ function renderListItem(item, user_id) {
     const showButtonHtml = user_id === item.chuloadai_id
         ? `<a href="#" class="dropdown-item show-item" data-id="${item.hiring_news_id}">Xem danh sách ứng tuyển</a>`
         : '';
+    const inviteButtonHtml = user_id === item.chuloadai_id
+        ? `<a href="/hiring/invite/${item.hiring_news_id}" class="dropdown-item">Tìm kiếm nhạc công</a>`
+        : '';
 
     return `
         <li class="list-group-item" style="${backgroundColor}">
@@ -235,7 +238,8 @@ function renderListItem(item, user_id) {
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item view-detail" data-id="${item.hiring_news_id}">Xem chi tiết</a>
                         ${showButtonHtml}
-                        ${editButtonHtml}
+                        ${inviteButtonHtml}
+                        ${editButtonHtml}                       
                         ${deleteButtonHtml}
                     </div>
                 </div>

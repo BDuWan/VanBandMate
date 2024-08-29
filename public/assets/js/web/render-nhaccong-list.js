@@ -99,7 +99,7 @@ function renderListItem(item, hiringNewsId) {
     } else if(item.invitation_status === 1){
         backgroundColor = 'background-color: #99FF99;';
         statusMessage = "Đã được chấp nhận"
-    } else if(item.invitation_status === 2){
+    } else if(item.invitation_status === 3){
         backgroundColor = 'background-color: #FFFF99;';
         statusMessage = "Bị từ chối"
     }

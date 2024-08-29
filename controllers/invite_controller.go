@@ -65,9 +65,7 @@ func GetHiringInvitePage(c *fiber.Ctx) error {
 		Where("hiring_news_id", hiringNewsId).Where("deleted", false).
 		First(&hiringNews).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return c.JSON(fiber.Map{
-			"message": "Đã xảy ra lỗi khi lấy dữ liệu",
-		})
+		return c.Redirect("/errors/404")
 	}
 
 	if hiringNews.ChuloadaiID != userLogin.UserID {
@@ -179,10 +177,90 @@ func APIPostHiringFind(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message":    "success",
-		"data":       nhaccongs,
-		"user_id":    userLogin.UserID,
-		"page":       page,
-		"totalItems": totalItems,
+		"message":      "success",
+		"data":         nhaccongs,
+		"user_id":      userLogin.UserID,
+		"page":         page,
+		"hiringNewsId": hiringNews.HiringNewsID,
+		"totalItems":   totalItems,
+	})
+}
+
+func PostHiringInvite(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: PostHiringInvite")
+	type Request struct {
+		HiringNewsID int `json:"hiringNewsID"`
+		NhaccongID   int `json:"nhaccongID"`
+	}
+
+	var req Request
+
+	// Parse dữ liệu JSON từ request body
+	if err := c.BodyParser(&req); err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM1]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"icon":    "error",
+			"message": "Đã xảy ra lỗi",
+		})
+	}
+
+	hiringNewsID := req.HiringNewsID
+	nhaccongID := req.NhaccongID
+
+	DB := initializers.DB
+	var hiringNews models.HiringNews
+	var invitations []models.Invitation
+
+	if err := DB.Where("hiring_news_id", hiringNewsID).
+		Where("deleted", false).
+		First(&hiringNews).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM2]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"icon":    "error",
+			"message": "Tin tuyển dụng đã bị xóa",
+		})
+	}
+
+	if err := DB.Where("hiring_news_id", hiringNewsID).
+		Where("nhaccong_id", nhaccongID).
+		Find(&invitations).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM3]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"icon":    "error",
+			"message": "Đã xảy ra lỗi",
+		})
+	}
+
+	if len(invitations) > 0 {
+		invitations[0].Status = 0
+
+		if err := DB.Save(&invitations[0]).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM4]: " + err.Error())
+			return c.JSON(fiber.Map{
+				"icon":    "error",
+				"message": "Đã xảy ra lỗi khi cập nhật",
+			})
+		}
+	} else {
+		newInvitation := models.Invitation{
+			HiringNewsID: hiringNewsID,
+			NhaccongID:   nhaccongID,
+			Status:       0,
+			InviteAt:     time.Now(),
+		}
+
+		if err := DB.Create(&newInvitation).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM5]: " + err.Error())
+			return c.JSON(fiber.Map{
+				"icon":    "error",
+				"message": "Đã xảy ra lỗi khi gửi lời mời",
+			})
+		}
+	}
+
+	// Trả về phản hồi thành công
+	return c.JSON(fiber.Map{
+		"icon":    "success",
+		"message": "Gửi lời mời thành công",
 	})
 }

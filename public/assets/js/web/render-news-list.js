@@ -1,4 +1,5 @@
 var currentPage = 1
+var jsonDataFilter = {}
 function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
     var $pagination = $(paginationSelector);
 
@@ -149,6 +150,7 @@ function setupPaginationFilter(totalItems, itemsPerPage, listSelector, paginatio
 }
 
 function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, jsonData) {
+    jsonDataFilter = { ...jsonData }
     var extendedJsonData = { ...jsonData };
     extendedJsonData.page = page;
     $.ajax({
@@ -320,7 +322,7 @@ $(document).on('click', '.apply-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
-            renderNewsList(currentPage, itemsPerPage,  '#list-news', '#pagination-news')
+            renderListFilter(currentPage, itemsPerPage,  '#list-news', '#pagination-news', jsonDataFilter)
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {
@@ -346,7 +348,7 @@ $(document).on('click', '.cancel-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
-            renderNewsList(currentPage, itemsPerPage,  '#list-news', '#pagination-news')
+            renderListFilter(currentPage, itemsPerPage,  '#list-news', '#pagination-news', jsonDataFilter)
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {

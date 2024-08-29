@@ -1,4 +1,5 @@
 var currentPage = 1
+var jsonDataFilter = {}
 function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
     var $pagination = $(paginationSelector);
 
@@ -150,6 +151,7 @@ function setupPaginationFilter(totalItems, itemsPerPage, listSelector, paginatio
 }
 
 function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, jsonData) {
+    jsonDataFilter = { ...jsonData }
     var extendedJsonData = { ...jsonData };
     extendedJsonData.page = page;
     $.ajax({
@@ -426,7 +428,7 @@ $(document).on('click', '#saveApplyBtn', function(event) {
                 }
             }).then(function() {
                 $('#showListApplyModal').modal('hide');
-                renderHiringList(currentPage, itemsPerPage,  '#list-hiring', '#pagination-hiring')
+                renderListFilter(currentPage, itemsPerPage,  '#list-hiring', '#pagination-hiring', jsonDataFilter)
             });
         },
         error: function() {

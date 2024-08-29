@@ -39,6 +39,7 @@ func GetProfileID(c *fiber.Ctx) error {
 		"Province").Joins("District").Joins("Ward").Where(
 		"user_id", userId).First(&user).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Cannot get user")
+		return c.Redirect("/errors/404")
 	}
 
 	return c.Render("pages/info/profile", fiber.Map{

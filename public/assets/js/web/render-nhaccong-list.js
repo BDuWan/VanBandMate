@@ -1,95 +1,5 @@
-
-// function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
-//     var $pagination = $(paginationSelector);
-//
-//     $pagination.empty();
-//     var numPages = Math.ceil(totalItems / itemsPerPage);
-//
-//     function renderPageItem(page) {
-//         return $('<div class="page-item"><a href="#" class="page-link"></a></div>')
-//             .find('a')
-//             .text(page)
-//             .end()
-//             .appendTo($pagination)
-//             .on('click', function(e) {
-//                 e.preventDefault();
-//                 renderNewsList(page, itemsPerPage, listSelector, paginationSelector);
-//                 setupPaginationControls(page);
-//             });
-//     }
-//
-//     function renderEllipsis() {
-//         $('<div class="page-item"><strong>...</strong></div>').appendTo($pagination);
-//     }
-//
-//     function setupPaginationControls(currentPage) {
-//         $pagination.find('a').removeClass('active');
-//         $pagination.empty();
-//
-//         renderPageItem(1);
-//
-//         if (currentPage > 3) {
-//             renderEllipsis();
-//         }
-//
-//         var start = Math.max(2, currentPage - 1);
-//         var end = Math.min(numPages - 1, currentPage + 1);
-//
-//         for (var i = start; i <= end; i++) {
-//             renderPageItem(i);
-//         }
-//
-//         if (currentPage < numPages - 2) {
-//             renderEllipsis();
-//         }
-//
-//         if (numPages > 1) {
-//             renderPageItem(numPages);
-//         }
-//
-//         $pagination.find('a').filter(function() {
-//             return $(this).text() == currentPage;
-//         }).addClass('active');
-//     }
-//
-//     // Hiển thị trang đầu tiên
-//     renderNewsList(1, itemsPerPage, listSelector, paginationSelector);
-//     setupPaginationControls(1);
-// }
-//
-// function renderNewsList(page, itemsPerPage, listSelector, paginationSelector) {
-//     currentPage = page
-//     $.ajax({
-//         url: '/news/api',
-//         type: 'GET',
-//         dataType: 'json',
-//         data: {
-//             page: page,
-//             itemsPerPage: itemsPerPage
-//         },
-//         success: function(response) {
-//             var $list = $(listSelector);
-//             var $pagination = $(paginationSelector);
-//             var data = response.data;
-//             var user_id = response.user_id;
-//             var totalItems = response.totalItems; // Tổng số lượng phần tử từ backend
-//
-//             // Xóa danh sách cũ
-//             $list.empty();
-//
-//             // Render dữ liệu danh sách
-//             $.each(data, function(index, item) {
-//                 var listItem = renderListItem(item, user_id)
-//                 $list.append(listItem);
-//             });
-//         },
-//         error: function(xhr, status, error) {
-//             console.error("Error fetching hiring news: ", error);
-//         }
-//     });
-// }
-
 var currentPage = 1
+var jsonDataFilter = {}
 function setupPaginationFilter(totalItems, itemsPerPage, listSelector, paginationSelector, jsonData) {
     var $pagination = $(paginationSelector);
 
@@ -150,6 +60,7 @@ function setupPaginationFilter(totalItems, itemsPerPage, listSelector, paginatio
 }
 
 function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, jsonData) {
+    jsonDataFilter = { ...jsonData }
     var extendedJsonData = { ...jsonData };
     extendedJsonData.page = page;
     $.ajax({
@@ -161,7 +72,7 @@ function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, 
             var $list = $(listSelector);
             var $pagination = $(paginationSelector);
             var data = response.data;
-            var user_id = response.user_id;
+            var hiringNewsId = response.hiringNewsId;
             var totalItems = response.totalItems; // Tổng số lượng phần tử từ backend
 
             // Xóa danh sách cũ
@@ -169,7 +80,7 @@ function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, 
 
             // Render dữ liệu danh sách
             $.each(data, function(index, item) {
-                var listItem = renderListItem(item, user_id)
+                var listItem = renderListItem(item, hiringNewsId)
                 $list.append(listItem);
             });
         },
@@ -179,9 +90,26 @@ function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, 
     });
 }
 
-function renderListItem(item, user_id) {
+function renderListItem(item, hiringNewsId) {
+    let backgroundColor = 'background-color: #FFFFFF;';
+    let statusMessage = null;
+    if (item.invitation_status === 0) {
+        backgroundColor = 'background-color: #FFCCFF;';
+        statusMessage = "Đã gửi lời mời"
+    } else if(item.invitation_status === 1){
+        backgroundColor = 'background-color: #99FF99;';
+        statusMessage = "Đã được chấp nhận"
+    }
+    let statusMessageHtml = statusMessage ? `<p class="list-group-item-text">${statusMessage}</p>` : '';
+
+    const inviteButtonHtml = item.invitation_status === 2 || item.invitation_status === 3 || item.invitation_status === 4
+        ? `<a href="#" class="dropdown-item invite-item" data-hiring-id="${hiringNewsId}" data-nhaccong-id="${item.user_id}">Gửi lời mời</a>`
+        : '';
+    const cancelInviteButtonHtml = item.invitation_status === 0
+        ? `<a href="#" class="dropdown-item cancel-invite-item" data-hiring-id="${hiringNewsId}" data-nhaccong-id="${item.user_id}">Thu hồi lời mời</a>`
+        : '';
     return `
-        <li class="list-group-item">
+        <li class="list-group-item" style="${backgroundColor}">
             <div class="list-group-item-figure">
                 <a href="/info/profile/${item.user_id}" class="user-avatar">
                     <div class="avatar">
@@ -202,8 +130,8 @@ function renderListItem(item, user_id) {
                             SDT: ${item.phone_number}
                         </p>
                     </div>
-                    <div class="col-12 col-lg-2 text-lg-right">                     
-   
+                    <div class="col-12 col-lg-2 text-lg-right">         
+                        <strong>${statusMessageHtml}</strong>              
                     </div>
                 </div>
             </div>
@@ -214,8 +142,8 @@ function renderListItem(item, user_id) {
                     </button>
                     <div class="dropdown-arrow"></div>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item view-detail" data-id="${item.hiring_news_id}">Xem chi tiết</a>
-                                  
+                        ${inviteButtonHtml}   
+                        ${cancelInviteButtonHtml}                                    
                     </div>
                 </div>
             </div>
@@ -223,16 +151,20 @@ function renderListItem(item, user_id) {
     `;
 }
 
-$(document).on('click', '.apply-item', function(e) {
+$(document).on('click', '.invite-item', function(e) {
     e.preventDefault();
-    let contractId = $(this).data('id');
+    let nhaccongId = $(this).data('nhaccong-id');
+    let hiringNewsId = parseInt($(this).data('hiring-id'),10);
 
     $.ajax({
-        url: '/news/apply',
+        url: '/hiring/invite',
         type: 'POST',
-        data: { id: contractId },
+        data: {
+            nhaccongId: nhaccongId,
+            hiringNewsId: hiringNewsId
+        },
         success: function(response) {
-            renderNewsList(currentPage, itemsPerPage,  '#list-news', '#pagination-news')
+            renderListFilter(currentPage, itemsPerPage,  '#list-nhaccong', '#pagination-nhaccong', jsonDataFilter)
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {
@@ -249,7 +181,7 @@ $(document).on('click', '.apply-item', function(e) {
     });
 });
 
-$(document).on('click', '.cancel-item', function(e) {
+$(document).on('click', '.cancel-invite-item', function(e) {
     e.preventDefault();
     let contractId = $(this).data('id');
 
@@ -258,7 +190,7 @@ $(document).on('click', '.cancel-item', function(e) {
         type: 'POST',
         data: { id: contractId },
         success: function(response) {
-            renderNewsList(currentPage, itemsPerPage,  '#list-news', '#pagination-news')
+            renderListFilter(currentPage, itemsPerPage,  '#list-nhaccong', '#pagination-nhaccong', jsonDataFilter)
             swal("", response.message, {
                 icon : response.icon,
                 buttons: {

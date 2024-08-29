@@ -137,7 +137,6 @@ type FormFilterNews struct {
 }
 
 type FormFind struct {
-	MaxNumber    int               `json:"maxNumber"`
 	Condition    int               `json:"condition"`
 	HiringNews   models.HiringNews `json:"hiringNews"`
 	Page         int               `json:"page"`

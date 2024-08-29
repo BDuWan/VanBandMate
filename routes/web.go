@@ -84,6 +84,7 @@ func RouteInit(app *fiber.App) {
 	hiring.Post("/api/find", controllers.APIPostHiringFind)
 	hiring.Post("/api/create", controllers.APIPostHiringCreate)
 	hiring.Post("/api/save-apply", controllers.APIPostSaveApply)
+	hiring.Post("/invite", controllers.PostHiringInvite)
 	hiring.Put("/api/edit/:id", controllers.APIPutHiringUpdate)
 
 	sendInvitation := app.Group("/send-invitation", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionSendInvitation)

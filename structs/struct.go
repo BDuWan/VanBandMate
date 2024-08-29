@@ -143,6 +143,14 @@ type FormFind struct {
 	ItemsPerPage int               `json:"items_per_page"`
 }
 
+type FormReceivedInvFind struct {
+	ReceiveDate  int `json:"receiveDate"`
+	Status       int `json:"status"`
+	Order        int `json:"order"`
+	Page         int `json:"page"`
+	ItemsPerPage int `json:"items_per_page"`
+}
+
 //	type SelectedItem struct {
 //		UserHiringNewsID int `json:"user_hiring_news_id"`
 //		NhacCongID       int `json:"nhaccong_id"`

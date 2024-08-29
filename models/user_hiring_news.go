@@ -12,3 +12,9 @@ type UserHiringNews struct {
 	ApplyAt          time.Time  `json:"apply_at"`
 	Date             time.Time  `json:"date"`
 }
+
+//Status
+//0: Đang ứng tuyển, chờ chấp nhận
+//1: Đã chấp nhận.
+//2: Đã từng ứng tuyển nhưng thu hồi (nhạc công chủ động)
+//3: Đã từng ứng tuyển nhưng bị hủy tự động (do cơ chế tạo hợp đồng)

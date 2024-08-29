@@ -1,0 +1,102 @@
+<div class="tab-pane">
+    <div class="row">
+        <div class="col-sm-4 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Thời gian nhận</label>
+                <div>
+                    <select id="receive-date" class="form-control" style="width: 100%">
+                        <option value="0" selected>Tất cả</option>
+                        <option value="1">Trong hôm nay</option>
+                        <option value="2">Trong tháng này</option>
+                        <option value="3">Trong năm nay</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Trạng thái</label>
+                <div>
+                    <select id="status" class="form-control" style="width: 100%">
+                        <option value="4" selected>Tất cả</option>
+                        <option value="0">Chưa trả lời</option>
+                        <option value="1">Đã chấp nhận</option>
+                        <option value="3">Đã từ chối</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 ml-auto mr-auto">
+            <div class="form-group">
+                <label>Sắp xếp theo</label>
+                <div>
+                    <select id="order" class="form-control" style="width: 100%">
+                        <option value="0" selected>Thời gian nhận</option>
+                        <option value="1">Giá tiền</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <button type="button" id="btn-filter" class="btn btn-primary d-sm-inline-block">Tìm kiếm</button>
+</div>
+
+<section class="card mt-4">
+    <ul class="list-group list-group-messages list-group-flush" id="list-invitation">
+    </ul>
+</section>
+
+<div class="pagination-list" id="pagination-invitation"></div>
+
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+<script src="/assets/js/web/render-received-inv-list.js"></script>
+<script src="/assets/js/web/format.js"></script>
+
+<script>
+    var itemsPerPage = 5;
+</script>
+
+<script>
+    function renderFilter(){
+        // Lấy giá trị từ các ô select
+        var receiveDate = parseInt($('#receive-date').val(), 10);
+        var status = parseInt($('#status').val(), 10);
+        var order = parseInt($('#order').val(), 10);
+
+        var jsonData = {
+            receiveDate: receiveDate,
+            status: status,
+            order: order,
+            items_per_page: itemsPerPage,
+        };
+        const extendedJsonData = {...jsonData};
+        extendedJsonData.page = 1;
+        // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
+        $.ajax({
+            url: '/received-inv/api/filter',
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(extendedJsonData),
+            success: function(response) {
+                if(response.message === "success"){
+                    var totalItems = response.totalItems;
+                    setupPaginationFilter(totalItems, itemsPerPage, '#list-invitation', '#pagination-invitation', jsonData);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi khi gửi yêu cầu lọc: ", error);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        renderFilter()
+        // Gán sự kiện click cho nút lọc
+        $('#btn-filter').on('click', function() {
+            renderFilter()
+        })
+    });
+</script>

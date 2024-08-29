@@ -99,6 +99,9 @@ function renderListItem(item, hiringNewsId) {
     } else if(item.invitation_status === 1){
         backgroundColor = 'background-color: #99FF99;';
         statusMessage = "Đã được chấp nhận"
+    } else if(item.invitation_status === 2){
+        backgroundColor = 'background-color: #FFFF99;';
+        statusMessage = "Bị từ chối"
     }
     let statusMessageHtml = statusMessage ? `<p class="list-group-item-text">${statusMessage}</p>` : '';
 
@@ -142,6 +145,7 @@ function renderListItem(item, hiringNewsId) {
                     </button>
                     <div class="dropdown-arrow"></div>
                     <div class="dropdown-menu dropdown-menu-right">
+                        <a href="/info/profile/${item.user_id}" class="dropdown-item view-detail">Xem trang cá nhân</a>
                         ${inviteButtonHtml}   
                         ${cancelInviteButtonHtml}                                    
                     </div>
@@ -176,19 +180,23 @@ $(document).on('click', '.invite-item', function(e) {
         },
         error: function(xhr, status, error) {
             // Xử lý lỗi
-            alert('Đã xảy ra lỗi khi gửi yêu cầu ứng tuyển.');
+            alert('Đã xảy ra lỗi khi gửi lời mời.');
         }
     });
 });
 
 $(document).on('click', '.cancel-invite-item', function(e) {
     e.preventDefault();
-    let contractId = $(this).data('id');
+    let nhaccongId = $(this).data('nhaccong-id');
+    let hiringNewsId = parseInt($(this).data('hiring-id'),10);
 
     $.ajax({
-        url: '/news/cancel-apply',
+        url: '/hiring/cancel-invite',
         type: 'POST',
-        data: { id: contractId },
+        data: {
+            nhaccongId: nhaccongId,
+            hiringNewsId: hiringNewsId
+        },
         success: function(response) {
             renderListFilter(currentPage, itemsPerPage,  '#list-nhaccong', '#pagination-nhaccong', jsonDataFilter)
             swal("", response.message, {
@@ -202,7 +210,7 @@ $(document).on('click', '.cancel-invite-item', function(e) {
         },
         error: function(xhr, status, error) {
             // Xử lý lỗi
-            alert('Đã xảy ra lỗi khi gửi yêu cầu ứng tuyển.');
+            alert('Đã xảy ra lỗi khi thu hồi lời mời.');
         }
     });
 });

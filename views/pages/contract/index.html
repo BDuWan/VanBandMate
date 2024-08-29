@@ -103,64 +103,69 @@
 <script>
     var itemsPerPage = 5;
 </script>
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $.ajax({-->
+<!--            url: '/contract/api',-->
+<!--            type: 'GET',-->
+<!--            dataType: 'json',-->
+<!--            data: {-->
+<!--                page: 1,-->
+<!--                itemsPerPage: itemsPerPage,-->
+<!--            },-->
+<!--            success: function(response) {-->
+<!--                var totalItems = response.totalItems;-->
+<!--                setupPagination(totalItems, itemsPerPage, '#list-contract', '#pagination-contract');-->
+<!--            },-->
+<!--            error: function(xhr, status, error) {-->
+<!--                console.error("Error fetching hiring news: ", error);-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
 <script>
-    $(document).ready(function() {
+    function getListFilter(){
+        // Lấy giá trị từ các ô select
+        var status = parseInt($('#status').val(), 10);
+        var year = parseInt($('#year').val(), 10);
+        var month = parseInt($('#month').val(), 10);
+        var timeCreate = parseInt($('#time-create').val(), 10);
+        var order = parseInt($('#order').val(), 10);
+
+        var jsonData = {
+            status: status,
+            year: year,
+            month: month,
+            time_create: timeCreate,
+            order: order,
+            items_per_page: itemsPerPage,
+        };
+        const extendedJsonData = {...jsonData};
+        extendedJsonData.page = 1;
+        // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
         $.ajax({
-            url: '/contract/api',
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                page: 1,
-                itemsPerPage: itemsPerPage,
-            },
+            url: '/contract/api/filter',
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(extendedJsonData),
             success: function(response) {
-                var totalItems = response.totalItems;
-                setupPagination(totalItems, itemsPerPage, '#list-contract', '#pagination-contract');
+                if(response.message === "success"){
+                    var totalItems = response.totalItems;
+                    setupPaginationFilter(totalItems, itemsPerPage, '#list-contract', '#pagination-contract', jsonData);
+                }
             },
             error: function(xhr, status, error) {
-                console.error("Error fetching hiring news: ", error);
+                console.error("Lỗi khi gửi yêu cầu lọc: ", error);
             }
         });
-    });
+    }
 </script>
-
 <script>
     $(document).ready(function() {
+        getListFilter()
         // Gán sự kiện click cho nút lọc
         $('#btn-filter').on('click', function() {
-            // Lấy giá trị từ các ô select
-            var status = parseInt($('#status').val(), 10);
-            var year = parseInt($('#year').val(), 10);
-            var month = parseInt($('#month').val(), 10);
-            var timeCreate = parseInt($('#time-create').val(), 10);
-            var order = parseInt($('#order').val(), 10);
-
-            var jsonData = {
-                status: status,
-                year: year,
-                month: month,
-                time_create: timeCreate,
-                order: order,
-                items_per_page: itemsPerPage,
-            };
-            const extendedJsonData = {...jsonData};
-            extendedJsonData.page = 1;
-            // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
-            $.ajax({
-                url: '/contract/api/filter',
-                method: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify(extendedJsonData),
-                success: function(response) {
-                    if(response.message === "success"){
-                        var totalItems = response.totalItems;
-                        setupPaginationFilter(totalItems, itemsPerPage, '#list-contract', '#pagination-contract', jsonData);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Lỗi khi gửi yêu cầu lọc: ", error);
-                }
-            });
+            getListFilter()
         });
     });
 </script>

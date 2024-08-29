@@ -335,6 +335,7 @@ $(document).on('click', '.show-item', function(event) {
             $('#showListApplyModal').modal('show');
             $('#showListApplyModal').on('hidden.bs.modal', function () {
                 $('#showListApplyModal #list-apply').empty();
+                $('#hiringEnoughCheckbox').prop('checked', false)
             });
         }
     });

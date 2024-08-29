@@ -61,57 +61,57 @@ func GetHiringPage(c *fiber.Ctx) error {
 	}, "layouts/main")
 }
 
-func APIGetHiring(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIGetHiring")
-	userLogin := GetSessionUser(c)
-	// Lấy số trang và số phần tử mỗi trang từ query params, với giá trị mặc định nếu không có
-	page, err := strconv.Atoi(c.Query("page", "1"))
-	if err != nil || page < 1 {
-		page = 1
-	}
-	limit, err := strconv.Atoi(c.Query("itemsPerPage", "1"))
-	if err != nil || limit < 1 {
-		limit = 5
-	}
-
-	offset := (page - 1) * limit
-
-	var hiringNews []models.HiringNews
-	var totalItems int64
-
-	DB := initializers.DB
-
-	// Lấy dữ liệu với phân trang
-	if err := DB.Model(&models.HiringNews{}).Joins("User").
-		Joins("Province").Joins("District").Joins("Ward").
-		Where("hiring_news.deleted = ?", false).
-		Where("User.deleted = ?", false).
-		Where("hiring_news.chuloadai_id", userLogin.UserID).
-		Order("created_at DESC").
-		Offset(offset).Limit(limit).Find(&hiringNews).Error; err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	// Tính tổng số phần tử
-	if err := DB.Model(&models.HiringNews{}).Joins("User").
-		Where("hiring_news.deleted = ?", false).
-		Where("User.deleted = ?", false).
-		Where("hiring_news.chuloadai_id", userLogin.UserID).
-		Count(&totalItems).Error; err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	return c.JSON(fiber.Map{
-		"data":       hiringNews,
-		"user_id":    userLogin.UserID,
-		"page":       page,
-		"totalItems": totalItems,
-	})
-}
+//func APIGetHiring(c *fiber.Ctx) error {
+//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIGetHiring")
+//	userLogin := GetSessionUser(c)
+//	// Lấy số trang và số phần tử mỗi trang từ query params, với giá trị mặc định nếu không có
+//	page, err := strconv.Atoi(c.Query("page", "1"))
+//	if err != nil || page < 1 {
+//		page = 1
+//	}
+//	limit, err := strconv.Atoi(c.Query("itemsPerPage", "1"))
+//	if err != nil || limit < 1 {
+//		limit = 5
+//	}
+//
+//	offset := (page - 1) * limit
+//
+//	var hiringNews []models.HiringNews
+//	var totalItems int64
+//
+//	DB := initializers.DB
+//
+//	// Lấy dữ liệu với phân trang
+//	if err := DB.Model(&models.HiringNews{}).Joins("User").
+//		Joins("Province").Joins("District").Joins("Ward").
+//		Where("hiring_news.deleted = ?", false).
+//		Where("User.deleted = ?", false).
+//		Where("hiring_news.chuloadai_id", userLogin.UserID).
+//		Order("created_at DESC").
+//		Offset(offset).Limit(limit).Find(&hiringNews).Error; err != nil {
+//		return c.Status(500).JSON(fiber.Map{
+//			"error": err.Error(),
+//		})
+//	}
+//
+//	// Tính tổng số phần tử
+//	if err := DB.Model(&models.HiringNews{}).Joins("User").
+//		Where("hiring_news.deleted = ?", false).
+//		Where("User.deleted = ?", false).
+//		Where("hiring_news.chuloadai_id", userLogin.UserID).
+//		Count(&totalItems).Error; err != nil {
+//		return c.Status(500).JSON(fiber.Map{
+//			"error": err.Error(),
+//		})
+//	}
+//
+//	return c.JSON(fiber.Map{
+//		"data":       hiringNews,
+//		"user_id":    userLogin.UserID,
+//		"page":       page,
+//		"totalItems": totalItems,
+//	})
+//}
 
 func APIPostHiringFilter(c *fiber.Ctx) error {
 	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostHiringFilter")
@@ -133,7 +133,9 @@ func APIPostHiringFilter(c *fiber.Ctx) error {
 	userLogin := GetSessionUser(c)
 	query := DB.Model(&models.HiringNews{}).
 		Joins("User").Joins("Province").Joins("District").Joins("Ward").
-		Where("hiring_news.deleted", false).Where("User.deleted", false)
+		Where("hiring_news.deleted", false).
+		Where("User.deleted", false).
+		Where("hiring_news.date > ?", time.Now())
 
 	if form.Employer == 1 {
 		query = query.Where("hiring_news.chuloadai_id", userLogin.UserID)
@@ -532,7 +534,7 @@ func ValidatorHiringNewsInput(hiringNewsForm structs.HiringNewsForm) string {
 		return "Định dạng thời gian không hợp lệ"
 	}
 
-	if time.Now().After(date) {
+	if !date.After(time.Now()) {
 		return "Không thể tạo tin tuyển dụng của ngày trong quá khứ"
 	}
 

@@ -1,95 +1,95 @@
 var currentPage = 1
 var jsonDataFilter = {}
-function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
-    var $pagination = $(paginationSelector);
+// function setupPagination(totalItems, itemsPerPage, listSelector, paginationSelector) {
+//     var $pagination = $(paginationSelector);
+//
+//     $pagination.empty();
+//     var numPages = Math.ceil(totalItems / itemsPerPage);
+//
+//     function renderPageItem(page) {
+//         return $('<div class="page-item"><a href="#" class="page-link"></a></div>')
+//             .find('a')
+//             .text(page)
+//             .end()
+//             .appendTo($pagination)
+//             .on('click', function(e) {
+//                 e.preventDefault();
+//                 renderHiringList(page, itemsPerPage, listSelector, paginationSelector);
+//                 setupPaginationControls(page);
+//             });
+//     }
+//
+//     function renderEllipsis() {
+//         $('<div class="page-item"><strong>...</strong></div>').appendTo($pagination);
+//     }
+//
+//     // renderPageItem(1);
+//     function setupPaginationControls(currentPage) {
+//         $pagination.find('a').removeClass('active');
+//         $pagination.empty();
+//
+//         renderPageItem(1);
+//
+//         if (currentPage > 3) {
+//             renderEllipsis();
+//         }
+//
+//         var start = Math.max(2, currentPage - 1);
+//         var end = Math.min(numPages - 1, currentPage + 1);
+//
+//         for (var i = start; i <= end; i++) {
+//             renderPageItem(i);
+//         }
+//
+//         if (currentPage < numPages - 2) {
+//             renderEllipsis();
+//         }
+//
+//         if (numPages > 1) {
+//             renderPageItem(numPages);
+//         }
+//
+//         $pagination.find('a').filter(function() {
+//             return $(this).text() == currentPage;
+//         }).addClass('active');
+//     }
+//
+//     // Hiển thị trang đầu tiên
+//     renderHiringList(1, itemsPerPage, listSelector, paginationSelector);
+//     setupPaginationControls(1);
+// }
 
-    $pagination.empty();
-    var numPages = Math.ceil(totalItems / itemsPerPage);
-
-    function renderPageItem(page) {
-        return $('<div class="page-item"><a href="#" class="page-link"></a></div>')
-            .find('a')
-            .text(page)
-            .end()
-            .appendTo($pagination)
-            .on('click', function(e) {
-                e.preventDefault();
-                renderHiringList(page, itemsPerPage, listSelector, paginationSelector);
-                setupPaginationControls(page);
-            });
-    }
-
-    function renderEllipsis() {
-        $('<div class="page-item"><strong>...</strong></div>').appendTo($pagination);
-    }
-
-    // renderPageItem(1);
-    function setupPaginationControls(currentPage) {
-        $pagination.find('a').removeClass('active');
-        $pagination.empty();
-
-        renderPageItem(1);
-
-        if (currentPage > 3) {
-            renderEllipsis();
-        }
-
-        var start = Math.max(2, currentPage - 1);
-        var end = Math.min(numPages - 1, currentPage + 1);
-
-        for (var i = start; i <= end; i++) {
-            renderPageItem(i);
-        }
-
-        if (currentPage < numPages - 2) {
-            renderEllipsis();
-        }
-
-        if (numPages > 1) {
-            renderPageItem(numPages);
-        }
-
-        $pagination.find('a').filter(function() {
-            return $(this).text() == currentPage;
-        }).addClass('active');
-    }
-
-    // Hiển thị trang đầu tiên
-    renderHiringList(1, itemsPerPage, listSelector, paginationSelector);
-    setupPaginationControls(1);
-}
-
-function renderHiringList(page, itemsPerPage, listSelector, paginationSelector) {
-    currentPage = page
-    $.ajax({
-        url: '/hiring/api',
-        type: 'GET',
-        dataType: 'json',
-        data: {
-            page: page,
-            itemsPerPage: itemsPerPage
-        },
-        success: function(response) {
-            var $list = $(listSelector);
-            var $pagination = $(paginationSelector);
-            var data = response.data;
-            var user_id = response.user_id;
-            var totalItems = response.totalItems; // Tổng số lượng phần tử từ backend
-
-            // Xóa danh sách cũ
-            $list.empty();
-
-            // Render dữ liệu danh sách
-            $.each(data, function(index, item) {
-                var listItem = renderListItem(item, user_id)
-                $list.append(listItem);
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error("Error fetching hiring news: ", error);
-        }
-    });
-}
+// function renderHiringList(page, itemsPerPage, listSelector, paginationSelector) {
+//     currentPage = page
+//     $.ajax({
+//         url: '/hiring/api',
+//         type: 'GET',
+//         dataType: 'json',
+//         data: {
+//             page: page,
+//             itemsPerPage: itemsPerPage
+//         },
+//         success: function(response) {
+//             var $list = $(listSelector);
+//             var $pagination = $(paginationSelector);
+//             var data = response.data;
+//             var user_id = response.user_id;
+//             var totalItems = response.totalItems; // Tổng số lượng phần tử từ backend
+//
+//             // Xóa danh sách cũ
+//             $list.empty();
+//
+//             // Render dữ liệu danh sách
+//             $.each(data, function(index, item) {
+//                 var listItem = renderListItem(item, user_id)
+//                 $list.append(listItem);
+//             });
+//         },
+//         error: function(xhr, status, error) {
+//             console.error("Error fetching hiring news: ", error);
+//         }
+//     });
+// }
 
 function setupPaginationFilter(totalItems, itemsPerPage, listSelector, paginationSelector, jsonData) {
     var $pagination = $(paginationSelector);
@@ -151,6 +151,7 @@ function setupPaginationFilter(totalItems, itemsPerPage, listSelector, paginatio
 }
 
 function renderListFilter(page, itemsPerPage, listSelector, paginationSelector, jsonData) {
+    currentPage = page
     jsonDataFilter = { ...jsonData }
     var extendedJsonData = { ...jsonData };
     extendedJsonData.page = page;

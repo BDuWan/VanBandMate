@@ -119,66 +119,71 @@
 <script>
     var itemsPerPage = 5;
 </script>
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $.ajax({-->
+<!--            url: '/hiring/api',-->
+<!--            type: 'GET',-->
+<!--            dataType: 'json',-->
+<!--            data: {-->
+<!--                page: 1,-->
+<!--                itemsPerPage: itemsPerPage,-->
+<!--            },-->
+<!--            success: function(response) {-->
+<!--                var totalItems = response.totalItems;-->
+<!--                setupPagination(totalItems, itemsPerPage, '#list-hiring', '#pagination-hiring');-->
+<!--            },-->
+<!--            error: function(xhr, status, error) {-->
+<!--                console.error("Error fetching hiring news: ", error);-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
 <script>
-    $(document).ready(function() {
+    function filterData(){
+        // Lấy giá trị từ các ô select
+        var employer = parseInt($('#employer').val(), 10);
+        var hiringEnough = parseInt($('#hiring-enough').val(), 10);
+        var year = parseInt($('#year').val(), 10);
+        var month = parseInt($('#month').val(), 10);
+        var timeCreate = parseInt($('#time-create').val(), 10);
+        var order = parseInt($('#order').val(), 10);
+
+        var jsonData = {
+            employer: employer,
+            hiring_enough: hiringEnough,
+            year: year,
+            month: month,
+            time_create: timeCreate,
+            order: order,
+            items_per_page: itemsPerPage,
+        };
+        const extendedJsonData = {...jsonData};
+        extendedJsonData.page = 1;
+        // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
         $.ajax({
-            url: '/hiring/api',
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                page: 1,
-                itemsPerPage: itemsPerPage,
-            },
+            url: '/hiring/api/filter',
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(extendedJsonData),
             success: function(response) {
-                var totalItems = response.totalItems;
-                setupPagination(totalItems, itemsPerPage, '#list-hiring', '#pagination-hiring');
+                if(response.message === "success"){
+                    var totalItems = response.totalItems;
+                    setupPaginationFilter(totalItems, itemsPerPage, '#list-hiring', '#pagination-hiring', jsonData);
+                }
             },
             error: function(xhr, status, error) {
-                console.error("Error fetching hiring news: ", error);
+                console.error("Lỗi khi gửi yêu cầu lọc: ", error);
             }
         });
-    });
+    }
 </script>
-
 <script>
     $(document).ready(function() {
+        filterData()
         // Gán sự kiện click cho nút lọc
         $('#btn-filter').on('click', function() {
-            // Lấy giá trị từ các ô select
-            var employer = parseInt($('#employer').val(), 10);
-            var hiringEnough = parseInt($('#hiring-enough').val(), 10);
-            var year = parseInt($('#year').val(), 10);
-            var month = parseInt($('#month').val(), 10);
-            var timeCreate = parseInt($('#time-create').val(), 10);
-            var order = parseInt($('#order').val(), 10);
-
-            var jsonData = {
-                employer: employer,
-                hiring_enough: hiringEnough,
-                year: year,
-                month: month,
-                time_create: timeCreate,
-                order: order,
-                items_per_page: itemsPerPage,
-            };
-            const extendedJsonData = {...jsonData};
-            extendedJsonData.page = 1;
-            // setupPaginationFilter(totalItems, itemsPerPage, '#list-group', '#pagination', JSON.stringify(jsonData));
-            $.ajax({
-                url: '/hiring/api/filter',
-                method: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify(extendedJsonData),
-                success: function(response) {
-                    if(response.message === "success"){
-                        var totalItems = response.totalItems;
-                        setupPaginationFilter(totalItems, itemsPerPage, '#list-hiring', '#pagination-hiring', jsonData);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Lỗi khi gửi yêu cầu lọc: ", error);
-                }
-            });
+            filterData()
         });
     });
 </script>

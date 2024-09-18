@@ -1,0 +1,393 @@
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex align-items-center">
+                <h4 class="card-title">Danh sách tài khoản</h4>
+                <button id="addUserModalBtn" class="btn btn-primary btn-round ml-auto">
+                    <i class="fa fa-plus"></i>
+                    Thêm tài khoản
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-4 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Vai trò</label>
+                        <div>
+                            <select id="role" class="form-control select2" style="width: 100%">
+                                <option value="0" selected>Tất cả</option>
+                                {{range .Roles}}
+                                    <option value="{{.RoleID}}">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Tỉnh/Thành phố</label>
+                        <select id="province" class="form-control select2" style="width: 100%">
+                            <option value="0" selected>Tất cả</option>
+                            {{range .Provinces}}
+                                <option value="{{.Code}}">{{.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-4 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label></label>
+                        <div class="d-flex justify-content-center">
+                            <button type="button" id="btn-filter" class="btn btn-primary d-sm-inline-block">Lọc theo điều kiện</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div>
+                <table id="table-user" class="display table table-hover table-striped table-bordered table-responsive" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Email</th>
+                        <th>Tên</th>
+                        <th>Địa chỉ</th>
+                        <th>Vai trò</th>
+                        <th style="width: 10%">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+{{ template "pages/management/mng-user/modal-add" . }}
+{{ template "pages/management/mng-user/modal-edit" . }}
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+
+<script>
+    let table_user;
+    function filterData(){
+        if (!$.fn.DataTable.isDataTable('#table-user')) {
+            // Lấy giá trị từ các ô select
+            var role = parseInt($('#role').val(), 10);
+            var province = $('#province').val();
+
+            var jsonFilterUser = {
+                role_id: role,
+                province_code: province,
+            };
+            table_user = $('#table-user').DataTable({
+                responsive: true,
+                autoWidth: false,
+                ajax: {
+                    url: '/mng-user/api/filter',
+                    method: 'POST',
+                    contentType: "application/json",
+                    data: function (d) {
+                        return JSON.stringify(jsonFilterUser);
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        table_user.clear().rows.add(response.data).draw();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.log('Error:', error);
+                    }
+                },
+                columns: [
+                    {
+                        "data": null,
+                        "searchable": false,
+                        "orderable": false,
+                        "render": function (data, type, full, meta) {
+                            return table_user.rows().count() > 0 ?
+                                meta.row + meta.settings._iDisplayStart + 1 : 0;
+                        }
+                    },
+                    {data: 'email'},
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.last_name} ${row.first_name}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.ward.full_name}, ${row.district.full_name}, ${row.province.full_name}`;
+                        }
+                    },
+                    {data: 'role.name'},
+                    {
+                        data: 'user_id',
+                        "searchable": false,
+                        "orderable": false,
+                        render: function (data, type, full, row) {
+                            if (type === 'display') {
+                                return `
+                                <div class="form-button-action">
+                                    <a type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-info btn-detail"
+                                            href="/info/profile/${data}" data-original-title="Detail">
+                                        <i class="fa fa-info"></i>
+                                    </a>
+                                    <a type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg btn-edit"
+                                            href="/mng-user/edit-user/${data}" data-original-title="Edit">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-danger btn-remove" data-user-id="${data}" data-original-title="Remove">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
+
+                            }
+                            return data;
+                        }
+                    }
+                ],
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    api.column(0, {
+                        order: 'applied'
+                    }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }
+            });
+        }else {
+            var role = parseInt($('#role').val(), 10);
+            var province = $('#province').val();
+
+            var jsonFilterUser = {
+                role_id: role,
+                province_code: province,
+            };
+            table_user.clear().destroy();
+            table_user = $('#table-user').DataTable({
+                responsive: true,
+                autoWidth: false,
+                ajax: {
+                    url: '/mng-user/api/filter',
+                    method: 'POST',
+                    contentType: "application/json",
+                    data: function (d) {
+                        return JSON.stringify(jsonFilterUser);
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        table_user.clear().rows.add(response.data).draw();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.log('Error:', error);
+                    }
+                },
+                columns: [
+                    {
+                        "data": null,
+                        "searchable": false,
+                        "orderable": false,
+                        "render": function (data, type, full, meta) {
+                            return table_user.rows().count() > 0 ?
+                                meta.row + meta.settings._iDisplayStart + 1 : 0;
+                        }
+                    },
+                    {data: 'email'},
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.last_name} ${row.first_name}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.ward.full_name}, ${row.district.full_name}, ${row.province.full_name}`;
+                        }
+                    },
+                    {data: 'role.name'},
+                    {
+                        data: 'user_id',
+                        "searchable": false,
+                        "orderable": false,
+                        render: function (data, type, full, row) {
+                            if (type === 'display') {
+                                return `
+                                <div class="form-button-action">
+                                    <a type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-info btn-detail"
+                                            href="/info/profile/${data}" data-original-title="Detail">
+                                        <i class="fa fa-info"></i>
+                                    </a>
+                                    <a type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg btn-edit"
+                                            href="/mng-user/edit-user/${data}" data-original-title="Edit">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-danger btn-remove" data-user-id="${data}" data-original-title="Remove">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
+                                }
+                            return data;
+                        }
+                    }
+                ],
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    api.column(0, {
+                        order: 'applied'
+                    }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        filterData();
+        $('#btn-filter').on('click', function() {
+            filterData()
+        });
+    });
+</script>
+<script>
+    //Xử lý mở modal
+    $(document).ready(function() {
+        $('#addUserModalBtn').on('click', function() {
+            $('html').removeClass('topbar_open');
+            $('#addUserModal').modal('show');
+        });
+        // $('#addUserModal').on('shown.bs.modal', function () {
+        //     $('#role').select2({
+        //         dropdownParent: $('#addUserModal'),
+        //         theme: "bootstrap",
+        //     });
+        // });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Sự kiện khi nhấn nút "Thêm"
+        $('#addUserButton').on('click', function() {
+            const role = $('#role').val();
+            const email = $('#email').val();
+            const firstName = $('#firstName').val();
+            const lastName = $('#lastName').val();
+            const password = $('#password').val();
+
+            // Tạo đối tượng chứa dữ liệu vai trò
+            const userForm = {
+                role: role,
+                email: email,
+                first_name: firstName,
+                last_name: lastName,
+                password: password
+            };
+
+            $.ajax({
+                url: '/mng-user/api/create',
+                type: 'POST',
+                data: userForm,
+                success: function(response) {
+                    if(response === "success"){
+                        swal("", "Tạo tài khoản thành công", {
+                            icon : "success",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-success'
+                                }
+                            },
+                        }).then(() => {
+                            filterData()
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Đã xảy ra lỗi khi thêm tài khoản.');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.btn-remove', function () {
+            var userId = $(this).data('user-id');
+            $.ajax({
+                url: '/mng-user/api/delete/'+userId,
+                type: 'DELETE',
+                success: function(response) {
+                    if(response === "success"){
+                        swal({
+                            title: 'Bạn có chắc chắn muốn xóa?',
+                            text: "",
+                            type: 'warning',
+                            buttons:{
+                                confirm: {
+                                    text : 'Xóa',
+                                    className : 'btn btn-success'
+                                },
+                                cancel: {
+                                    visible: true,
+                                    className: 'btn btn-danger'
+                                }
+                            }
+                        }).then((Delete) => {
+                            if (Delete) {
+                                swal({
+                                    title: 'Deleted!',
+                                    text: 'Bạn đã xóa tài khoản thành công',
+                                    type: 'success',
+                                    buttons : {
+                                        confirm: {
+                                            className : 'btn btn-success'
+                                        }
+                                    }
+                                }).then(() => {
+                                    filterData()
+                                });
+                            } else {
+                                swal.close();
+                            }
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Đã xảy ra lỗi khi xóa tài khoản.');
+                }
+            });
+        });
+    });
+</script>

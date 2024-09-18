@@ -37,7 +37,7 @@ func CheckVerify(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func CheckPermissionMngAccount(c *fiber.Ctx) error {
+func CheckPermissionMngUser(c *fiber.Ctx) error {
 	if !controllers.CheckPermission("ql_tai_khoan", c) {
 		return c.Redirect("/errors/403")
 	}

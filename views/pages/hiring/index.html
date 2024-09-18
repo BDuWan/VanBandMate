@@ -1,9 +1,4 @@
 <div class="page-inner">
-    <!-- Modal -->
-    {{ template "pages/hiring/modal-create" . }}
-    {{ template "pages/hiring/modal-edit" . }}
-    {{ template "pages/hiring/modal-detail" . }}
-    {{ template "pages/hiring/modal-show-list-apply" . }}
     <div class="d-flex justify-content-end">
         <button id="openCreateModalBtn" type="button" class="btn btn-success d-sm-inline-block">
             <i class="fa fa-plus mr-2"></i> Tạo tin tuyển dụng
@@ -112,6 +107,12 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+{{ template "pages/hiring/modal-create" . }}
+{{ template "pages/hiring/modal-edit" . }}
+{{ template "pages/hiring/modal-detail" . }}
+{{ template "pages/hiring/modal-show-list-apply" . }}
+
 <script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
 <script src="/assets/js/web/render-hiring-list.js"></script>
 <script src="/assets/js/web/select-location.js"></script>

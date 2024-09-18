@@ -1,0 +1,255 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="form-group form-group-default">
+                    <label>Họ và tên đệm</label>
+                    <input type="text" class="form-control" name="lastname" placeholder="Họ và tên đệm" value="{{.UserEdit.LastName}}">
+                </div>
+                <div class="form-group form-group-default">
+                    <label>Tên</label>
+                    <input type="text" class="form-control" name="firstname" placeholder="Tên" value="{{.UserEdit.FirstName}}">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group form-group-default">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="Email này cũng chính là email đăng nhập của bạn" value="{{.UserEdit.Email}}">
+                </div>
+                <div class="form-group form-group-default">
+                    <label>Link Facebook</label>
+                    <input type="text" class="form-control" name="link_facebook" placeholder="Link Facebook" value="{{.UserEdit.LinkFacebook}}">
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="form-group form-group-default">
+                    <label>Ngày sinh</label>
+                    <input type="text" class="form-control" id="datepicker" name="datepicker" placeholder="Birth Date" value="{{.UserEdit.DateOfBirth | FormatDate}}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group form-group-default">
+                    <label>Giới tính</label>
+                    <select id="gender" class="form-control" style="width: 100%">
+                        <option value="0" {{if eq .UserEdit.Gender 0}}selected{{end}}>Chưa chọn</option>
+                        <option value="1" {{if eq .UserEdit.Gender 1}}selected{{end}}>Nam</option>
+                        <option value="2" {{if eq .UserEdit.Gender 2}}selected{{end}}>Nữ</option>
+                        <option value="3" {{if eq .UserEdit.Gender 3}}selected{{end}}>Khác</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group form-group-default">
+                    <label>Số điện thoại</label>
+                    <input type="text" class="form-control" value="{{.UserEdit.PhoneNumber}}" name="phone_number" placeholder="Số điện thoại">
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="form-group form-group-default">
+                    <label>Tỉnh/Thành phố</label>
+                    <div class="select2-input">
+                        <select id="province" class="form-control select2" style="width: 100%">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group form-group-default">
+                    <label>Quận/Huyện</label>
+                    <div class="select2-input">
+                        <select id="district" class="form-control select2" style="width: 100%">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group form-group-default">
+                    <label>Xã/Phường/Thị trấn</label>
+                    <div class="select2-input">
+                        <select id="ward" class="form-control select2" style="width: 100%">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 mb-1">
+            <div class="col-md-8">
+                <div class="form-group form-group-default">
+                    <label>Địa chỉ chi tiết</label>
+                    <input type="text" class="form-control" value="{{.User.AddressDetail}}" name="address" placeholder="Ví dụ: số nhà, thôn, xóm,...">
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-group-default">
+                            <label>Vai trò</label>
+                            <div class="select2-input">
+                                <select id="role" class="form-control select2" style="width: 100%">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-group-default">
+                            <label>Trạng thái</label>
+                            <div class="select2-input">
+                                <select id="verify" class="form-control select2" style="width: 100%">
+                                    <option value="1" {{ if .UserEdit.Verify }}selected{{ end }}>Đã xác thực</option>
+                                    <option value="0" {{ if not .UserEdit.Verify }}selected{{ end }}>Chưa xác thực</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                <div class="form-group text-center">
+                    <label>Ảnh đại diện:</label>
+                    <div class="input-file input-file-image">
+                        <img class="img-upload-preview img-circle" width="120" height="120" src="/assets/img/avatar/{{.UserEdit.Image}}" alt="preview">
+                        <input type="file" class="form-control form-control-file" id="image" name="uploadImg" accept="image/*">
+                        <label for="image" class=" label-input-file btn btn-primary">Tải ảnh lên</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-3 mb-3">
+            <button id="btn_save" class="btn btn-success">Lưu</button>
+            <button id="btn_reset" class="btn btn-danger">Khôi phục</button>
+        </div>
+    </div>
+</div>
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+<script src="/assets/js/web/select-location.js"></script>
+<script>
+    $(document).ready(function (){
+        // xử lí chọn địa chỉ
+        var provinces = {{ .provinces}};
+        var districts = {{ .districts}};
+        var wards = {{ .wards}};
+        var roles = {{ .roles}}
+
+        const $select_province = $('#province');
+        const $select_district = $('#district');
+        const $select_ward = $('#ward');
+        const $select_role = $('#role');
+
+        const userProvinceCode = {{.UserEdit.ProvinceCode}};
+        const userDistrictCode = {{.UserEdit.DistrictCode}};
+        const userWardCode = {{.UserEdit.WardCode}};
+        const userRoleID = {{.UserEdit.RoleID}};
+
+        $select_role.empty();
+
+        roles.forEach(function(role) {
+            var isSelected = role.role_id === userRoleID;
+
+            var option = new Option(role.name, role.role_id, isSelected, isSelected);
+
+            $select_role.append(option);
+        });
+
+        initLocationSelect2(provinces, districts, wards, userProvinceCode, userDistrictCode, userWardCode, $select_province, $select_district, $select_ward);
+    })
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#btn_save').on('click', function(e) {
+            eventSaveClick(e);
+        });
+
+        function eventSaveClick(e){
+            e.preventDefault();
+            var formData = {};
+            // Mã hóa ảnh sang base64
+            var file = $('input[name="uploadImg"]')[0].files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    formData.user_id = {{.UserEdit.UserID}};
+                    formData.last_name = $('input[name="lastname"]').val();
+                    formData.first_name = $('input[name="firstname"]').val();
+                    formData.phone_number = $('input[name="phone_number"]').val();
+                    formData.link_facebook = $('input[name="link_facebook"]').val();
+                    formData.date_of_birth = $('input[id="datepicker"]').val();
+                    formData.gender = $('#gender').val();
+                    formData.email = $('input[name="email"]').val();
+                    formData.province_code = $('#province').val();
+                    formData.district_code = $('#district').val();
+                    formData.ward_code = $('#ward').val();
+                    formData.address_detail = $('textarea[name="address"]').val();
+                    formData.role_id = $('#role').val();
+                    formData.verify = $('#verify').val();
+                    formData.image = reader.result;
+                    sendFormData(formData);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                formData.user_id = {{.UserEdit.UserID}};
+                formData.last_name = $('input[name="lastname"]').val();
+                formData.first_name = $('input[name="firstname"]').val();
+                formData.phone_number = $('input[name="phone_number"]').val();
+                formData.link_facebook = $('input[name="link_facebook"]').val();
+                formData.date_of_birth = $('input[id="datepicker"]').val();
+                formData.gender = $('#gender').val();
+                formData.email = $('input[name="email"]').val();
+                formData.province_code = $('#province').val();
+                formData.district_code = $('#district').val();
+                formData.ward_code = $('#ward').val();
+                formData.address_detail = $('input[name="address"]').val();
+                formData.role_id = $('#role').val();
+                formData.verify = $('#verify').val();
+                formData.image = "";
+                sendFormData(formData);
+            }
+        }
+
+        function sendFormData(formData) {
+            $.ajax({
+                url: '/mng-user/api/edit',
+                type: 'PUT',
+                data: formData,
+                success: function(response) {
+                    if(response === "Success"){
+                        swal("", "Cập nhật thông tin thành công", {
+                            icon : "success",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-success'
+                                }
+                            },
+                        }).then((value) => {
+                            if (value) {
+                                location.reload();
+                            }
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Registration failed: ' + error);
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#btn_reset').click(function() {
+            location.reload();
+        });
+    });
+</script>

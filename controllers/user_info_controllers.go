@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"
 	"lms/initializers"
@@ -127,7 +126,6 @@ func PutUserInfo(c *fiber.Ctx) error {
 		account.DateOfBirth = date
 		account.UpdatedAt = time.Now()
 		account.UpdatedBy = userLogin.UserID
-		fmt.Println(account.Verify)
 
 		imageName := "avatar" + strconv.Itoa(account.UserID) + ".jpg"
 

@@ -8,7 +8,6 @@ type Role struct {
 	RoleID     int       `json:"role_id" gorm:"primaryKey;autoIncrement"`
 	Name       string    `json:"name" gorm:"size:100"`
 	Describe   string    `json:"describe"`
-	NumberUser int       `json:"number_user"`
 	Deleted    bool      `json:"deleted"`
 	DeletedBy  int       `json:"deleted_by"`
 	UpdatedBy  int       `json:"updated_by"`
@@ -16,4 +15,5 @@ type Role struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 	DeletedAt  time.Time `json:"deleted_at"`
+	NumberUser int       `json:"number_user" gorm:"-"`
 }

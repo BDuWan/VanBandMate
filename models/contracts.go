@@ -35,3 +35,4 @@ type Contract struct {
 //0: đã hoàn thành
 //1: chưa hoàn thành
 //2: có yêu cầu hủy
+//3: đã hủy

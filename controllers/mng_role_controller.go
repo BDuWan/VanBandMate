@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"lms/initializers"
 	"lms/models"
 	"lms/structs"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"
-	"gorm.io/gorm"
 )
 
 func GetRolePage(c *fiber.Ctx) error {
@@ -39,8 +37,30 @@ func APIGetRole(c *fiber.Ctx) error {
 	var roles []models.Role
 	DB := initializers.DB
 
-	if err := DB.Where("deleted", false).Find(&roles).Error; err != nil {
+	if err := DB.Where("deleted = ?", false).Find(&roles).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+	}
+
+	var roleUserCounts []struct {
+		RoleID     int
+		NumberUser int
+	}
+	DB.Table("users").
+		Where("deleted = ?", false).
+		Select("role_id, COUNT(*) as number_user").
+		Group("role_id").Scan(&roleUserCounts)
+
+	roleCountMap := make(map[int]int)
+	for _, item := range roleUserCounts {
+		roleCountMap[item.RoleID] = item.NumberUser
+	}
+
+	for i := range roles {
+		if numberUser, ok := roleCountMap[roles[i].RoleID]; ok {
+			roles[i].NumberUser = numberUser
+		} else {
+			roles[i].NumberUser = 0
+		}
 	}
 
 	return c.JSON(fiber.Map{
@@ -62,10 +82,12 @@ func APIGetRoleID(c *fiber.Ctx) error {
 	if err := DB.Where("role_id", roleId).Find(&rolePermissions).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 	}
+
 	var permissions []int
 	for _, rp := range rolePermissions {
 		permissions = append(permissions, rp.PermissionID)
 	}
+
 	roleData := fiber.Map{
 		"name":        role.Name,
 		"describe":    role.Describe,
@@ -240,171 +262,171 @@ func APIDeleteRoleID(c *fiber.Ctx) error {
 	return c.JSON("success")
 }
 
-func APIPostCreateRole1(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostCreateRole")
-	//var role models.Role
-	//DB := initializers.DB
-	var roleForm structs.SignUpForm
-	if err := c.BodyParser(&roleForm); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Format User Fail")
-	}
-	return c.JSON("Success")
-}
-
-func GetAccCreateRole(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetAccCreateRole")
-	var permissions []models.Permission
-
-	if err := initializers.DB.Find(&permissions).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Not found permissions in create role:  " + err.Error())
-	}
-
-	return c.Render("pages/accounts/roles/create", fiber.Map{
-		"Permissions": permissions,
-		"Ctx":         c,
-	}, "layouts/main")
-}
-
-func APIPostAccRoles(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostAccRoles")
-	var roles []models.Role
-	var query *gorm.DB
-	var req structs.ReqBody
-	DB := initializers.DB
-
-	query = DB.Where("deleted", false)
-
-	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Cannot parse JSON",
-		})
-	}
-
-	var totalRecords int64
-	var filteredRecords int64
-
-	var sortColumn string
-	var sortDir string
-
-	sortDir = req.Order[0].Dir
-	query.Find(&roles).Count(&totalRecords)
-
-	switch req.Order[0].Column {
-	case 1:
-		{
-			sortColumn = "roles.name"
-		}
-	default:
-		{
-			sortColumn = "roles.name"
-			sortDir = "asc"
-		}
-	}
-	orderBy := fmt.Sprintf("%s %s", sortColumn, sortDir)
-	query = query.Order(orderBy)
-
-	if req.Search.Value != "" {
-		search := "%" + req.Search.Value + "%"
-		query = query.Where("roles.name LIKE ? ", search)
-	}
-
-	query.Find(&roles).Count(&filteredRecords)
-
-	query = query.Offset(req.Start).Limit(req.Length)
-
-	if err := query.Find(&roles).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-	}
-
-	return c.JSON(fiber.Map{
-		"draw":            req.Draw,
-		"recordsTotal":    totalRecords,
-		"recordsFiltered": filteredRecords,
-		"data":            roles,
-	})
-}
-
-func DeleteAccRoleID(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: DeleteAccRoleID")
-	var role models.Role
-	var rolePer models.RolePermission
-	//var user models.User1
-	userLogin := GetSessionUser(c)
-	DB := initializers.DB
-	roleId := c.Params("id")
-
-	idRole, err := strconv.Atoi(roleId)
-	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-
-	}
-	if idRole < 5 {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Role > 5")
-
-		return c.JSON("Can not delete this role.")
-	}
-
-	if err := DB.First(&role, roleId).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Not found role ID: " + err.Error())
-		return c.JSON("Can not delete this role.")
-	}
-
-	role.Deleted = true
-	role.DeletedBy = userLogin.UserID
-	role.DeletedAt = time.Now()
-
-	if err := DB.Model(&role).Updates(&role).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not update role:  " + err.Error())
-		return c.JSON("Can not delete this role.")
-	}
-
-	if err := DB.Model(&models.RolePermission{}).Where(
-		"role_id = ?", roleId).Updates(&rolePer).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not delete rol in role permission" + err.Error())
-		return c.JSON("Can not delete this role.")
-	}
-
-	//user.RoleID = 5
-	if err := DB.Model(&models.User1{}).Where("role_id", roleId).Updates(map[string]interface{}{"role_id": gorm.Expr("type_user_id")}).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not update user when update role:  " + err.Error())
-		return c.JSON("Can not update user when delete this role.")
-	}
-
-	return c.JSON("Success")
-}
-
-func GetAccRoleID(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetAccRoleID")
-	var role models.Role
-	var perMe []models.RolePermission
-	var permissions []models.Permission
-
-	DB := initializers.DB
-	roleId := c.Params("id")
-
-	err := DB.Where("deleted", false).First(&role, roleId).Error
-	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-
-		return c.RedirectBack("")
-	}
-
-	if err := DB.Select("permission_id").Where("role_id = ? and deleted = ?", roleId, false).Find(&perMe).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-
-		return c.RedirectBack("")
-	}
-
-	if err := DB.Find(&permissions).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-
-		return c.RedirectBack("")
-	}
-
-	return c.Render("pages/accounts/roles/edit", fiber.Map{
-		"Role":        role,
-		"PerMe":       perMe,
-		"Permissions": permissions,
-		"Ctx":         c,
-	}, "layouts/main")
-}
+//func APIPostCreateRole1(c *fiber.Ctx) error {
+//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostCreateRole")
+//	//var role models.Role
+//	//DB := initializers.DB
+//	var roleForm structs.SignUpForm
+//	if err := c.BodyParser(&roleForm); err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Format User Fail")
+//	}
+//	return c.JSON("Success")
+//}
+//
+//func GetAccCreateRole(c *fiber.Ctx) error {
+//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetAccCreateRole")
+//	var permissions []models.Permission
+//
+//	if err := initializers.DB.Find(&permissions).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Not found permissions in create role:  " + err.Error())
+//	}
+//
+//	return c.Render("pages/accounts/roles/create", fiber.Map{
+//		"Permissions": permissions,
+//		"Ctx":         c,
+//	}, "layouts/main")
+//}
+//
+//func APIPostAccRoles(c *fiber.Ctx) error {
+//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIPostAccRoles")
+//	var roles []models.Role
+//	var query *gorm.DB
+//	var req structs.ReqBody
+//	DB := initializers.DB
+//
+//	query = DB.Where("deleted", false)
+//
+//	if err := c.BodyParser(&req); err != nil {
+//		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+//			"error": "Cannot parse JSON",
+//		})
+//	}
+//
+//	var totalRecords int64
+//	var filteredRecords int64
+//
+//	var sortColumn string
+//	var sortDir string
+//
+//	sortDir = req.Order[0].Dir
+//	query.Find(&roles).Count(&totalRecords)
+//
+//	switch req.Order[0].Column {
+//	case 1:
+//		{
+//			sortColumn = "roles.name"
+//		}
+//	default:
+//		{
+//			sortColumn = "roles.name"
+//			sortDir = "asc"
+//		}
+//	}
+//	orderBy := fmt.Sprintf("%s %s", sortColumn, sortDir)
+//	query = query.Order(orderBy)
+//
+//	if req.Search.Value != "" {
+//		search := "%" + req.Search.Value + "%"
+//		query = query.Where("roles.name LIKE ? ", search)
+//	}
+//
+//	query.Find(&roles).Count(&filteredRecords)
+//
+//	query = query.Offset(req.Start).Limit(req.Length)
+//
+//	if err := query.Find(&roles).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+//	}
+//
+//	return c.JSON(fiber.Map{
+//		"draw":            req.Draw,
+//		"recordsTotal":    totalRecords,
+//		"recordsFiltered": filteredRecords,
+//		"data":            roles,
+//	})
+//}
+//
+//func DeleteAccRoleID(c *fiber.Ctx) error {
+//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: DeleteAccRoleID")
+//	var role models.Role
+//	var rolePer models.RolePermission
+//	//var user models.User1
+//	userLogin := GetSessionUser(c)
+//	DB := initializers.DB
+//	roleId := c.Params("id")
+//
+//	idRole, err := strconv.Atoi(roleId)
+//	if err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+//
+//	}
+//	if idRole < 5 {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Role > 5")
+//
+//		return c.JSON("Can not delete this role.")
+//	}
+//
+//	if err := DB.First(&role, roleId).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Not found role ID: " + err.Error())
+//		return c.JSON("Can not delete this role.")
+//	}
+//
+//	role.Deleted = true
+//	role.DeletedBy = userLogin.UserID
+//	role.DeletedAt = time.Now()
+//
+//	if err := DB.Model(&role).Updates(&role).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not update role:  " + err.Error())
+//		return c.JSON("Can not delete this role.")
+//	}
+//
+//	if err := DB.Model(&models.RolePermission{}).Where(
+//		"role_id = ?", roleId).Updates(&rolePer).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not delete rol in role permission" + err.Error())
+//		return c.JSON("Can not delete this role.")
+//	}
+//
+//	//user.RoleID = 5
+//	if err := DB.Model(&models.User1{}).Where("role_id", roleId).Updates(map[string]interface{}{"role_id": gorm.Expr("type_user_id")}).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Can not update user when update role:  " + err.Error())
+//		return c.JSON("Can not update user when delete this role.")
+//	}
+//
+//	return c.JSON("Success")
+//}
+//
+//func GetAccRoleID(c *fiber.Ctx) error {
+//	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: GetAccRoleID")
+//	var role models.Role
+//	var perMe []models.RolePermission
+//	var permissions []models.Permission
+//
+//	DB := initializers.DB
+//	roleId := c.Params("id")
+//
+//	err := DB.Where("deleted", false).First(&role, roleId).Error
+//	if err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+//
+//		return c.RedirectBack("")
+//	}
+//
+//	if err := DB.Select("permission_id").Where("role_id = ? and deleted = ?", roleId, false).Find(&perMe).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+//
+//		return c.RedirectBack("")
+//	}
+//
+//	if err := DB.Find(&permissions).Error; err != nil {
+//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+//
+//		return c.RedirectBack("")
+//	}
+//
+//	return c.Render("pages/accounts/roles/edit", fiber.Map{
+//		"Role":        role,
+//		"PerMe":       perMe,
+//		"Permissions": permissions,
+//		"Ctx":         c,
+//	}, "layouts/main")
+//}

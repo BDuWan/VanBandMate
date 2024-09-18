@@ -83,9 +83,9 @@ func PostLogin(c *fiber.Ctx) error {
 		return c.JSON("Email không tồn tại")
 	}
 
-	if !user.State {
-		return c.JSON("Tài khoản chưa được admin chấp thuận. Vui lòng đợi")
-	}
+	//if !user.State {
+	//	return c.JSON("Tài khoản chưa được admin chấp thuận. Vui lòng đợi")
+	//}
 
 	if !utils.CheckPasswordHash(form.Password, user.Password) {
 		return c.JSON("Sai mật khẩu")

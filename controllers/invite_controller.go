@@ -81,9 +81,19 @@ func APIPostHiringFind(c *fiber.Ctx) error {
 
 	userLogin := GetSessionUser(c)
 	query := DB.Model(&models.User{}).
-		Joins("Province").Joins("District").Joins("Ward").
-		Where("users.deleted", false).
-		Where("users.get_invitation", true)
+		Joins("JOIN provinces ON users.province_code = provinces.code").
+		Joins("JOIN districts ON users.district_code = districts.code").
+		Joins("JOIN wards ON users.ward_code = wards.code").
+		Joins("JOIN roles ON users.role_id = roles.role_id").
+		Joins("JOIN role_permissions ON roles.role_id = role_permissions.role_id").
+		Where("users.deleted = ?", false).
+		Where("role_permissions.permission_id = ?", 10)
+
+	//query := DB.Model(&models.User{}).
+	//	Joins("Province").Joins("District").Joins("Ward").
+	//	Joins("Role").Joins("Role__RolePermission").
+	//	Where("users.deleted", false).
+	//	Where("RolePermission.permission_id", 10)
 
 	if len(nhaccongIds) > 0 {
 		query = query.Where("users.user_id NOT IN ?", nhaccongIds)
@@ -360,7 +370,6 @@ func PostReceivedInvAccept(c *fiber.Ctx) error {
 	type Request struct {
 		ID uint `json:"id"`
 	}
-
 	var req Request
 
 	// Parse dữ liệu JSON từ request body

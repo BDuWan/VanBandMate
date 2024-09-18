@@ -142,6 +142,7 @@ func APIPostContractFilter(c *fiber.Ctx) error {
 	query := DB.Model(&models.Contract{}).
 		Joins("Province").Joins("District").Joins("Ward").
 		Joins("ChuLoaDai").Joins("NhacCong").
+		Where("contracts.chuloadai_id = ? OR contracts.nhaccong_id = ?", userLogin.UserID, userLogin.UserID).
 		Where("contracts.deleted = ?", false).
 		Where("ChuLoaDai.deleted = ?", false).
 		Where("NhacCong.deleted = ?", false)
@@ -314,7 +315,10 @@ func PostContractConfirmDelete(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := DB.Model(&contract).Update("deleted", 1).Error; err != nil {
+	if err := DB.Model(&contract).Updates(map[string]interface{}{
+		"deleted": 1,
+		"status":  3,
+	}).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
 		return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
 	}

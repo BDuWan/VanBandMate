@@ -108,9 +108,11 @@ function renderListItem(item, hiringNewsId) {
     const inviteButtonHtml = item.invitation_status === 2 || item.invitation_status === 3 || item.invitation_status === 4
         ? `<a href="#" class="dropdown-item invite-item" data-hiring-id="${hiringNewsId}" data-nhaccong-id="${item.user_id}">Gửi lời mời</a>`
         : '';
+
     const cancelInviteButtonHtml = item.invitation_status === 0
         ? `<a href="#" class="dropdown-item cancel-invite-item" data-hiring-id="${hiringNewsId}" data-nhaccong-id="${item.user_id}">Thu hồi lời mời</a>`
         : '';
+
     return `
         <li class="list-group-item" style="${backgroundColor}">
             <div class="list-group-item-figure">
@@ -124,8 +126,7 @@ function renderListItem(item, hiringNewsId) {
                 <div class="row">
                     <div class="col-12 col-lg-10">
                         <strong class="list-group-item-text break-word">${item.last_name} ${item.first_name}</strong>
-                        <br>
-                      
+                        <br>                     
                         <p class="list-group-item-text break-word">
                             ${item.ward.full_name}, ${item.district.full_name}, ${item.province.name}
                         </p>

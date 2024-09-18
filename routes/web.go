@@ -44,8 +44,13 @@ func RouteInit(app *fiber.App) {
 	info.Put("/userinfo", controllers.PutUserInfo)
 	info.Post("/verify-email", controllers.PostVerifyEmail)
 
-	mngAccount := app.Group("/mng-account", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMngAccount)
-	mngAccount.Get("", controllers.GetRolePage)
+	mngUser := app.Group("/mng-user", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMngUser)
+	mngUser.Get("", controllers.GetMngUserPage)
+	mngUser.Get("/edit-user/:id", controllers.GetEditUserPage)
+	mngUser.Post("/api/filter", controllers.APIPostUserFilter)
+	mngUser.Post("/api/create", controllers.APIPostCreateUser)
+	mngUser.Put("/api/edit", controllers.APIPutEditUser)
+	mngUser.Delete("/api/delete/:id", controllers.APIDeleteUserID)
 
 	mngRole := app.Group("/mng-role", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMngRole)
 	mngRole.Get("", controllers.GetRolePage)
@@ -56,10 +61,12 @@ func RouteInit(app *fiber.App) {
 	mngRole.Delete("/api/delete/:id", controllers.APIDeleteRoleID)
 
 	mngContract := app.Group("/mng-contract", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMngContract)
-	mngContract.Get("", controllers.GetRolePage)
+	mngContract.Get("", controllers.GetMngContractPage)
+	mngContract.Post("/api/filter", controllers.APIPostMngContractFilter)
+	mngContract.Get("/api/detail/:id", controllers.APIGetMngContractDetailID)
 
-	mngHiringNews := app.Group("/mng-hiring-news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMngHiringNews)
-	mngHiringNews.Get("", controllers.GetRolePage)
+	//mngHiringNews := app.Group("/mng-hiring-news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMngHiringNews)
+	//mngHiringNews.Get("", controllers.GetRolePage)
 
 	mngDashboard := app.Group("/dashboard", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionDashboard)
 	mngDashboard.Get("", controllers.GetRolePage)
@@ -88,7 +95,7 @@ func RouteInit(app *fiber.App) {
 	hiring.Post("/cancel-invite", controllers.PostHiringCancelInvite)
 	hiring.Put("/api/edit/:id", controllers.APIPutHiringUpdate)
 
-	sentInvitation := app.Group("/sent-invitation", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionSendInvitation)
+	sentInvitation := app.Group("/sent-invitation", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionHiring)
 	sentInvitation.Get("", controllers.GetUserInfo)
 
 	news := app.Group("/news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionNews)

@@ -1,0 +1,498 @@
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex align-items-center">
+                <h4 class="card-title">Danh sách hợp đồng</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <div>
+                            <select id="status" class="form-control select2" style="width: 100%">
+                                <option value="4" selected>Tất cả</option>
+                                <option value="0">Đã hoàn thành</option>
+                                <option value="1">Chưa hoàn thành</option>
+                                <option value="2">Đang yêu cầu hủy</option>
+                                <option value="3">Đã hủy</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Tỉnh/Thành phố</label>
+                        <select id="province" class="form-control select2" style="width: 100%">
+                            <option value="0" selected>Tất cả</option>
+                            {{range .Provinces}}
+                                <option value="{{.Code}}">{{.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Năm</label>
+                        <select id="year" class="form-control select2" style="width: 100%">
+                            <option value="0" selected>Tất cả</option>
+                            {{range .Years}}
+                            <option value="{{.}}">{{.}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Tháng</label>
+                        <select id="month" class="form-control select2" style="width: 100%">
+                            <option value="0">Tất cả</option>
+                            <option value="1">Tháng 1</option>
+                            <option value="2">Tháng 2</option>
+                            <option value="3">Tháng 3</option>
+                            <option value="4">Tháng 4</option>
+                            <option value="5">Tháng 5</option>
+                            <option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option>
+                            <option value="8">Tháng 8</option>
+                            <option value="9">Tháng 9</option>
+                            <option value="10">Tháng 10</option>
+                            <option value="11">Tháng 11</option>
+                            <option value="12">Tháng 12</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" id="btn-filter" class="btn btn-primary d-sm-inline-block">Lọc theo điều kiện</button>
+            </div>
+            <br>
+            <div>
+                <table id="table-contract" class="display table table-hover table-striped table-bordered table-responsive" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Chủ loa đài</th>
+                        <th>Nhạc công</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày đám cưới</th>
+                        <th>Giá tiền</th>
+                        <th>Trạng thái</th>
+                        <th style="width: 10%">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+{{ template "pages/management/mng-contract/modal-edit" . }}
+{{ template "pages/management/mng-contract/modal-detail" . }}
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+<script src="/assets/js/web/format.js"></script>
+<script>
+    let table_contract;
+    function filterData(){
+        if (!$.fn.DataTable.isDataTable('#table-contract')) {
+            // Lấy giá trị từ các ô select
+            var status = parseInt($('#status').val(), 10);
+            var province = $('#province').val();
+            var year = parseInt($('#year').val(), 10);
+            var month = parseInt($('#month').val(), 10);
+            var jsonFilterContract = {
+                status: status,
+                province_code: province,
+                year: year,
+                month:month,
+            };
+            table_contract = $('#table-contract').DataTable({
+                responsive: true,
+                autoWidth: false,
+                ajax: {
+                    url: '/mng-contract/api/filter',
+                    method: 'POST',
+                    contentType: "application/json",
+                    data: function (d) {
+                        return JSON.stringify(jsonFilterContract);
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        table_contract.clear().rows.add(response.data).draw();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.log('Error:', error);
+                    }
+                },
+                columns: [
+                    {
+                        "data": null,
+                        "searchable": false,
+                        "orderable": false,
+                        "render": function (data, type, full, meta) {
+                            return table_contract.rows().count() > 0 ?
+                                meta.row + meta.settings._iDisplayStart + 1 : 0;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.ChuLoaDai.last_name} ${row.ChuLoaDai.first_name}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.NhacCong.last_name} ${row.NhacCong.first_name}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.ward.full_name}, ${row.district.full_name}, ${row.province.full_name}`;
+                        }
+                    },
+                    {
+                        data: 'date',
+                        render: function (data, type, row) {
+                            return formatDate(data);
+                        }
+                    },
+                    {
+                        data: 'price',
+                        render: function (data, type, row) {
+                            return formatPrice(data);
+                        }
+                    },
+                    {
+                        data: 'status',
+                        render: function (data, type, row) {
+                            if(data === 0){
+                                return `Đã hoàn thành`
+                            }
+                            if(data === 1){
+                                return `Chưa hoàn thành`
+                            }
+                            if(data === 2){
+                                return `Đang yêu cầu hủy`
+                            }
+                            if(data === 3){
+                                return `Đã hủy`
+                            }
+                        }
+                    },
+                    {
+                        data: 'contract_id',
+                        "searchable": false,
+                        "orderable": false,
+                        render: function (data, type, row) {
+                            console.log(row)
+                            if (row.status === 3) {
+                                return `
+                                <div class="form-button-action">
+                                    <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                        <i class="fa fa-info"></i>
+                                    </button>
+
+                                    <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-lg btn-restore" data-contract-id="${data}" data-original-title="Restore">
+                                        <i class="fa fa-recycle"></i>
+                                    </button>
+                                </div>`;
+
+                            } else {
+                                return `
+                                <div class="form-button-action">
+                                    <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                        <i class="fa fa-info"></i>
+                                    </button>
+                                </div>`;
+                            }
+                            return data;
+                        }
+                    }
+                ],
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    api.column(0, {
+                        order: 'applied'
+                    }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }
+            });
+        }else {
+            // Lấy giá trị từ các ô select
+            var status = parseInt($('#status').val(), 10);
+            var province = $('#province').val();
+            var year = parseInt($('#year').val(), 10);
+            var month = parseInt($('#month').val(), 10);
+            var jsonFilterContract = {
+                status: status,
+                province_code: province,
+                year: year,
+                month:month,
+            };
+            table_contract.clear().destroy();
+            table_contract = $('#table-contract').DataTable({
+                responsive: true,
+                autoWidth: false,
+                ajax: {
+                    url: '/mng-contract/api/filter',
+                    method: 'POST',
+                    contentType: "application/json",
+                    data: function (d) {
+                        return JSON.stringify(jsonFilterContract);
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        table_contract.clear().rows.add(response.data).draw();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.log('Error:', error);
+                    }
+                },
+                columns: [
+                    {
+                        "data": null,
+                        "searchable": false,
+                        "orderable": false,
+                        "render": function (data, type, full, meta) {
+                            return table_contract.rows().count() > 0 ?
+                                meta.row + meta.settings._iDisplayStart + 1 : 0;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.ChuLoaDai.last_name} ${row.ChuLoaDai.first_name}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.NhacCong.last_name} ${row.NhacCong.first_name}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.ward.full_name}, ${row.district.full_name}, ${row.province.full_name}`;
+                        }
+                    },
+                    {
+                        data: 'date',
+                        render: function (data, type, row) {
+                            return formatDate(data);
+                        }
+                    },
+                    {
+                        data: 'price',
+                        render: function (data, type, row) {
+                            return formatPrice(data);
+                        }
+                    },
+                    {
+                        data: 'status',
+                        render: function (data, type, row) {
+                            if(data === 0){
+                                return `Đã hoàn thành`
+                            }
+                            if(data === 1){
+                                return `Chưa hoàn thành`
+                            }
+                            if(data === 2){
+                                return `Đang yêu cầu hủy`
+                            }
+                            if(data === 3){
+                                return `Đã hủy`
+                            }
+                        }
+                    },
+                    {
+                        data: 'contract_id',
+                        "searchable": false,
+                        "orderable": false,
+                        render: function (data, type, row) {
+                            console.log(row)
+                            if (row.status === 3) {
+                                return `
+                                <div class="form-button-action">
+                                    <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                        <i class="fa fa-info"></i>
+                                    </button>
+
+                                    <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-lg btn-restore" data-contract-id="${data}" data-original-title="Restore">
+                                        <i class="fa fa-recycle"></i>
+                                    </button>
+                                </div>`;
+
+                            } else {
+                                return `
+                                <div class="form-button-action">
+                                    <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                        <i class="fa fa-info"></i>
+                                    </button>
+                                </div>`;
+                            }
+                            return data;
+                        }
+                    }
+                ],
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    api.column(0, {
+                        order: 'applied'
+                    }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        filterData();
+        $('#btn-filter').on('click', function() {
+            filterData()
+        });
+    });
+</script>
+<script>
+    //Xử lý mở modal
+    $(document).ready(function() {
+        $('#addUserModalBtn').on('click', function() {
+            $('html').removeClass('topbar_open');
+            $('#addUserModal').modal('show');
+        });
+        // $('#addUserModal').on('shown.bs.modal', function () {
+        //     $('#role').select2({
+        //         dropdownParent: $('#addUserModal'),
+        //         theme: "bootstrap",
+        //     });
+        // });
+    });
+</script>
+
+<script>
+    $(document).on('click', '.view-detail', function(event) {
+        event.preventDefault();
+        var contractId = $(this).data('contract-id');
+        $('#detailContractModal').modal('show');
+        $.ajax({
+            url: '/mng-contract/api/detail/'+contractId,
+            method: 'GET',
+            success: function(response) {
+                if(response.message !== "success"){
+                    swal("", response.message, {
+                        icon : "error",
+                        buttons: {
+                            confirm: {
+                                className : 'btn btn-danger'
+                            }
+                        },
+                    });
+                    return false;
+                }
+                var contract = response.data;
+                var formattedCreatedAt = moment(contract.created_at, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY HH:mm:ss");
+                var formattedDate = moment(contract.date, "YYYY-MM-DD").format("DD/MM/YYYY");
+                var formattedPrice = formatPrice(contract.price);
+
+                // Gán giá trị vào các trường trong modal
+                // $('#detailContractModal #name').text(hiringNews.User.last_name + " " + hiringNews.User.first_name);
+                // $('#detailContractModal #role').text(hiringNews.User.last_name);
+
+                $('#detailContractModal #detail-name-chuloadai').text(contract.ChuLoaDai.last_name + " " + contract.ChuLoaDai.first_name);
+                $('#detailContractModal #detail-phone-chuloadai').text("SDT: " + contract.ChuLoaDai.phone_number);
+                $('#detailContractModal #detail-email-chuloadai').text("Email: " + contract.ChuLoaDai.email);
+
+                $('#detailContractModal #detail-name-nhaccong').text(contract.NhacCong.last_name + " " + contract.NhacCong.first_name);
+                $('#detailContractModal #detail-phone-nhaccong').text("SDT: " + contract.NhacCong.phone_number);
+                $('#detailContractModal #detail-email-nhaccong').text("Email: " + contract.NhacCong.email);
+
+                $('#detailContractModal #detail-create-at').text(formattedCreatedAt);
+                $('#detailContractModal #detail-date').text(formattedDate);
+                $('#detailContractModal #detail-price').text(formattedPrice);
+
+                $('#detailContractModal #detail-address').text(
+                    contract.address_detail + ", " + contract.ward.full_name + ", " + contract.district.full_name + ", " + contract.province.name
+                );
+
+                $('html').removeClass('topbar_open');
+                $('#detailContractModal').modal('show');
+
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.btn-restore', function () {
+            var contractId = $(this).data('contract-id');
+            $.ajax({
+                url: '/mng-contract/api/restore/'+contractId,
+                type: 'PUT',
+                success: function(response) {
+                    if(response === "success"){
+                        swal({
+                            title: 'Bạn có chắc chắn muốn khôi phục?',
+                            text: "",
+                            type: 'warning',
+                            buttons:{
+                                confirm: {
+                                    text : 'Khôi phục',
+                                    className : 'btn btn-success'
+                                },
+                                cancel: {
+                                    visible: true,
+                                    className: 'btn btn-danger'
+                                }
+                            }
+                        }).then((Delete) => {
+                            if (Delete) {
+                                swal({
+                                    title: 'Deleted!',
+                                    text: 'Bạn đã khôi phục hợp đồng thành công',
+                                    type: 'success',
+                                    buttons : {
+                                        confirm: {
+                                            className : 'btn btn-success'
+                                        }
+                                    }
+                                }).then(() => {
+                                    filterData()
+                                });
+                            } else {
+                                swal.close();
+                            }
+                        });
+                    }else {
+                        swal("", response, {
+                            icon : "error",
+                            buttons: {
+                                confirm: {
+                                    className : 'btn btn-danger'
+                                }
+                            },
+                        });
+                    }
+                },
+                error: function(error) {
+                    alert('Đã xảy ra lỗi khi khôi phục hợp đồng.');
+                }
+            });
+        });
+    });
+</script>

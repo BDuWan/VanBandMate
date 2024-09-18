@@ -10,9 +10,6 @@
             </div>
         </div>
         <div class="card-body">
-            <!-- Modal -->
-            {{ template "pages/management/mng-role/modal-add" . }}
-            {{ template "pages/management/mng-role/modal-edit" . }}
             <div>
                 <table id="table-role" class="display table table-hover table-striped table-bordered table-responsive">
                     <thead>
@@ -21,7 +18,7 @@
                         <th>Tên vai trò</th>
                         <th>Mô tả</th>
                         <th>Số lượng tài khoản</th>
-                        <th style="width: 10%">Thao tác</th>
+                        <th style="width: 5%">Thao tác</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -31,10 +28,16 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+{{ template "pages/management/mng-role/modal-add" . }}
+{{ template "pages/management/mng-role/modal-edit" . }}
+
 <script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
 <script>
     $(document).ready(function () {
         const table_role = $('#table-role').DataTable({
+            // processing: true,
+            // serverSide: true,
             ajax: {
                 url: '/mng-role/api',
                 type: 'GET',
@@ -42,7 +45,6 @@
                 "data": function (d) {
                     return JSON.stringify(d);
                 }
-
             },
             columns: [
                 {
@@ -62,38 +64,24 @@
                     "searchable": false,
                     "orderable": false,
                     render: function (data, type, full, row) {
-                        if (type === 'display') {
-                            if (data === 1 || data === 2 || data === 3) {
-                                return `
-                                <div class="form-button-action text-center">
-                                    <button type="button" data-toggle="tooltip" title=""
-                                            class="btn btn-link btn-primary btn-info btn-detail" data-role-id="${data}" data-original-title="Detail">
-                                        <i class="fa fa-info"></i>
-                                    </button>
-                                </div>`;
-                            } else {
-                                return `
-                                <div class="form-button-action">
-                                    <button type="button" data-toggle="tooltip" title=""
-                                            class="btn btn-link btn-primary btn-info btn-detail" data-role-id="${data}" data-original-title="Detail">
-                                        <i class="fa fa-info"></i>
-                                    </button>
-                                    <button type="button" data-toggle="tooltip" title=""
-                                            class="btn btn-link btn-primary btn-lg btn-edit" data-role-id="${data}" data-original-title="Edit">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <button type="button" data-toggle="tooltip" title=""
-                                            class="btn btn-link btn-danger btn-remove" data-role-id="${data}" data-original-title="Remove">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                </div>`;
-                            }
+                        if (type === 'display' && data !== 1 && data !== 2 && data !== 3) {
+                            return `
+                            <div class="form-button-action">
+                                <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-lg btn-edit" data-role-id="${data}" data-original-title="Edit">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-danger btn-remove" data-role-id="${data}" data-original-title="Remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>`;
+                        }else {
+                            return ``
                         }
                         return data;
                     }
                 }
-
-
             ],
             "drawCallback": function (settings) {
                 var api = this.api();
@@ -104,8 +92,6 @@
                 });
             }
         });
-
-
     });
 </script>
 

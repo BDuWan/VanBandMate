@@ -181,6 +181,7 @@ func PostSignup(c *fiber.Ctx) error {
 		account.State = true
 		account.Verify = false
 		account.Deleted = false
+		account.TimeExpiredOtp = time.Now()
 		account.CreatedAt = time.Now()
 		account.DeletedAt = time.Now()
 		account.UpdatedAt = time.Now()

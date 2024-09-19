@@ -116,8 +116,10 @@ func APIPostCreateUser(c *fiber.Ctx) error {
 	user.FirstName = userForm.FirstName
 	user.LastName = userForm.LastName
 	user.Password = utils.HashingPassword(userForm.Password)
+	user.DateOfBirth = time.Now()
 	user.RoleID = userForm.RoleID
 	user.Verify = true
+	user.TimeExpiredOtp = time.Now()
 	user.Deleted = false
 	user.CreatedBy = userLogin.UserID
 	user.DeletedAt = time.Now()

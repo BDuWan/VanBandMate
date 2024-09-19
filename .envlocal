@@ -1,0 +1,12 @@
+PORT=80
+USER_DB = root
+PASSWORD =
+DATABASE = vanbandmate
+MIGRATE_DB = false
+GEN_DATA_DB = false
+HOST = http://127.0.0.1
+HOST_WEB = http
+PEM = cert.pem
+KEY = SSL_Key.key
+KEY_TOKEN = 300902
+OFFSET_TIME = -7h

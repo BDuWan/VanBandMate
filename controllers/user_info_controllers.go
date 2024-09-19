@@ -155,14 +155,14 @@ func ValidatorUpdateInfoInput(user structs.UpdateInfoForm) string {
 	if strings.TrimSpace(user.FirstName) == "" {
 		return "Tên không được để trống"
 	}
-	regexName := "[0-9!@#$%^&*()_+?:;,./={}~]"
+	regexName := "[!@#$%^&*()_+?:;,./={}~]"
 	regexN := regexp.MustCompile(regexName)
 	if regexN.MatchString(user.FirstName) {
-		return "Họ và tên đệm không được có số hoặc kí tự đặc biệt"
+		return "Tên không được có kí tự đặc biệt"
 	}
 
 	if regexN.MatchString(user.LastName) {
-		return "Tên không được có số hoặc kí tự đặc biệt"
+		return "Họ và tên đệm không được có kí tự đặc biệt"
 	}
 
 	//sdt

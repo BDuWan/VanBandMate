@@ -274,56 +274,61 @@
     $(document).ready(function() {
         $(document).on('click', '.btn-remove', function () {
             var roleId = $(this).data('role-id');
-            $.ajax({
-                url: '/mng-role/api/delete/'+roleId,
-                type: 'DELETE',
-                success: function(response) {
-                    if(response === "success"){
-                        swal({
-                            title: 'Bạn có chắc chắn muốn xóa?',
-                            text: "",
-                            type: 'warning',
-                            buttons:{
-                                confirm: {
-                                    text : 'Xóa',
-                                    className : 'btn btn-success'
-                                },
-                                cancel: {
-                                    visible: true,
-                                    className: 'btn btn-danger'
-                                }
-                            }
-                        }).then((Delete) => {
-                            if (Delete) {
+
+            // Hiển thị hộp thoại cảnh báo trước khi xóa
+            swal({
+                title: 'Bạn có chắc chắn muốn xóa?',
+                text: "",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Xóa',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Delete) => {
+                if (Delete) {
+                    // Nếu người dùng đồng ý, thực hiện gọi AJAX để xóa vai trò
+                    $.ajax({
+                        url: '/mng-role/api/delete/' + roleId,
+                        type: 'DELETE',
+                        success: function(response) {
+                            if (response === "success") {
                                 swal({
                                     title: 'Deleted!',
                                     text: 'Bạn đã xóa vai trò thành công',
                                     type: 'success',
-                                    buttons : {
+                                    buttons: {
                                         confirm: {
-                                            className : 'btn btn-success'
+                                            className: 'btn btn-success'
                                         }
                                     }
                                 });
+                                $('#table-role').DataTable().ajax.reload();
                             } else {
-                                swal.close();
+                                swal("", response, {
+                                    icon: "error",
+                                    buttons: {
+                                        confirm: {
+                                            className: 'btn btn-danger'
+                                        }
+                                    }
+                                });
                             }
-                        });
-                    }else {
-                        swal("", response, {
-                            icon : "error",
-                            buttons: {
-                                confirm: {
-                                    className : 'btn btn-danger'
-                                }
-                            },
-                        });
-                    }
-                },
-                error: function(error) {
-                    alert('Đã xảy ra lỗi khi xóa vai trò.');
+                        },
+                        error: function(error) {
+                            alert('Đã xảy ra lỗi khi xóa vai trò.');
+                        }
+                    });
+                } else {
+                    swal.close();
                 }
             });
         });
+
     });
 </script>

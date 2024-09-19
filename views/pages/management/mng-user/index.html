@@ -336,58 +336,61 @@
     $(document).ready(function() {
         $(document).on('click', '.btn-remove', function () {
             var userId = $(this).data('user-id');
-            $.ajax({
-                url: '/mng-user/api/delete/'+userId,
-                type: 'DELETE',
-                success: function(response) {
-                    if(response === "success"){
-                        swal({
-                            title: 'Bạn có chắc chắn muốn xóa?',
-                            text: "",
-                            type: 'warning',
-                            buttons:{
-                                confirm: {
-                                    text : 'Xóa',
-                                    className : 'btn btn-success'
-                                },
-                                cancel: {
-                                    visible: true,
-                                    className: 'btn btn-danger'
-                                }
-                            }
-                        }).then((Delete) => {
-                            if (Delete) {
+            // Hiển thị cảnh báo xác nhận trước khi xóa
+            swal({
+                title: 'Bạn có chắc chắn muốn xóa?',
+                text: "",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Xóa',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Delete) => {
+                if (Delete) {
+                    // Nếu người dùng đồng ý, thực hiện gọi AJAX để xóa
+                    $.ajax({
+                        url: '/mng-user/api/delete/' + userId,
+                        type: 'DELETE',
+                        success: function(response) {
+                            if(response === "success"){
                                 swal({
                                     title: 'Deleted!',
                                     text: 'Bạn đã xóa tài khoản thành công',
                                     type: 'success',
-                                    buttons : {
+                                    buttons: {
                                         confirm: {
-                                            className : 'btn btn-success'
+                                            className: 'btn btn-success'
                                         }
                                     }
                                 }).then(() => {
-                                    filterData()
+                                    filterData();  // Gọi hàm filterData sau khi xóa thành công
                                 });
                             } else {
-                                swal.close();
+                                swal("", response, {
+                                    icon: "error",
+                                    buttons: {
+                                        confirm: {
+                                            className: 'btn btn-danger'
+                                        }
+                                    }
+                                });
                             }
-                        });
-                    }else {
-                        swal("", response, {
-                            icon : "error",
-                            buttons: {
-                                confirm: {
-                                    className : 'btn btn-danger'
-                                }
-                            },
-                        });
-                    }
-                },
-                error: function(error) {
-                    alert('Đã xảy ra lỗi khi xóa tài khoản.');
+                        },
+                        error: function(error) {
+                            alert('Đã xảy ra lỗi khi xóa tài khoản.');
+                        }
+                    });
+                } else {
+                    swal.close();
                 }
             });
         });
+
     });
 </script>

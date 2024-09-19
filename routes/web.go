@@ -64,6 +64,8 @@ func RouteInit(app *fiber.App) {
 	mngContract.Get("", controllers.GetMngContractPage)
 	mngContract.Post("/api/filter", controllers.APIPostMngContractFilter)
 	mngContract.Get("/api/detail/:id", controllers.APIGetMngContractDetailID)
+	mngContract.Put("/api/restore/:id", controllers.APIPutMngContractRestoreID)
+	mngContract.Delete("/api/delete/:id", controllers.APIPutMngContractDeleteID)
 
 	//mngHiringNews := app.Group("/mng-hiring-news", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMngHiringNews)
 	//mngHiringNews.Get("", controllers.GetRolePage)

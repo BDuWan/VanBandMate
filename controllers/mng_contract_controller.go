@@ -3,8 +3,6 @@ package controllers
 import (
 	"lms/initializers"
 	"lms/models"
-	"lms/structs"
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -124,147 +122,109 @@ func APIGetMngContractDetailID(c *fiber.Ctx) error {
 	})
 }
 
-func GetEditContractPage(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Get UserInfo")
+func APIPutMngContractRestoreID(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "APIPutMngContractRestoreID")
+
+	contractID := c.Params("id")
 	DB := initializers.DB
-	var roles []models.Role
-	var provinces []models.Province
-	var districts []models.District
-	var wards []models.Ward
-	userLogin := GetSessionUser(c)
-	user := new(models.User)
-	userId := c.Params("id")
-	if err := DB.Model(&models.User{}).Joins("Role").Joins(
-		"Province").Joins("District").Joins("Ward").Where(
-		"user_id", userId).First(user).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: Cannot get user")
-	}
-	sess, _ := SessAuth.Get(c)
-	permissions := sess.Get("rolePermission")
 
-	if err := DB.Where("deleted = ?", false).Find(&roles).Error; err != nil {
+	var contract models.Contract
+	var numberDupContract int64
+
+	if err := DB.Model(&models.Contract{}).
+		Where("contract_id = ?", contractID).
+		First(&contract).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Đã xảy ra lỗi")
 	}
 
-	if err := DB.Find(&provinces).Error; err != nil {
+	if err := DB.Model(&models.Contract{}).
+		Where("nhaccong_id = ?", contract.NhaccongID).
+		Where("DATE(date) = ?", contract.Date.Format("2006-01-02")).
+		Where("deleted = ?", false).
+		Count(&numberDupContract).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return c.Redirect("/errors/404")
-	}
-	if err := DB.Find(&districts).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return c.Redirect("/errors/404")
-	}
-	if err := DB.Find(&wards).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-		return c.Redirect("/errors/404")
+		return c.JSON("Đã xảy ra lỗi")
 	}
 
-	return c.Render("pages/management/mng-user/edit-user", fiber.Map{
-		"This":        1,
-		"Permissions": permissions,
-		"User":        userLogin,
-		"UserEdit":    user,
-		"roles":       roles,
-		"provinces":   provinces,
-		"districts":   districts,
-		"wards":       wards,
-		"Ctx":         c,
-	}, "layouts/main")
+	if numberDupContract > 0 {
+		return c.JSON("Nhạc công đã có hợp đồng khác trong ngày này")
+	}
+	if contract.Date.After(time.Now()) {
+		if err := DB.Model(&contract).Updates(map[string]interface{}{
+			"deleted": 0,
+			"status":  1,
+		}).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
+		}
+	} else {
+		if err := DB.Model(&contract).Updates(map[string]interface{}{
+			"deleted": 0,
+			"status":  0,
+		}).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
+		}
+	}
+
+	if err := DB.Model(&models.UserHiringNews{}).
+		Where("DATE(date) = ?", contract.Date.Format("2006-01-02")).
+		Where("nhaccong_id", contract.NhaccongID).
+		Where("status = ?", 0).
+		Select("status").
+		Updates(&models.UserHiringNews{Status: 3}).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Đã xảy ra lỗi")
+	}
+
+	// Trả về phản hồi thành công
+	return c.JSON("success")
 }
 
-func APIPutEditContract(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "APIPutEditUser")
-	var updateInfoForm structs.AdminUpdateInfoForm
-	var account models.User
-	userLogin := GetSessionUser(c)
+func APIPutMngContractDeleteID(c *fiber.Ctx) error {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "APIPutMngContractDeleteID")
+
+	contractID := c.Params("id")
 	DB := initializers.DB
-	if err := c.BodyParser(&updateInfoForm); err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Format User Fail")
-	}
-	validator := ValidatorAdminUpdateInfoInput(updateInfoForm)
-	if validator != "ok" {
-		return c.JSON(validator)
-	}
-	layout := "02/01/2006"
-	date, err := time.Parse(layout, updateInfoForm.DateOfBirth)
-	if err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: error parsing date of birth")
-	}
 
-	if err := DB.Where("user_id", updateInfoForm.UserID).First(&account).Error; err == nil {
-		if account.Email != updateInfoForm.Email {
-			if err := DB.Where("email", updateInfoForm.Email).First(&models.User{}).Error; err == nil {
-				return c.JSON("Email đã được sử dụng, vui lòng chọn 1 email khác")
-			}
-			account.Verify = false
-		}
-		account.Gender = updateInfoForm.Gender
-		account.FirstName = updateInfoForm.FirstName
-		account.LastName = updateInfoForm.LastName
-		account.Email = updateInfoForm.Email
-		account.PhoneNumber = updateInfoForm.PhoneNumber
-		account.LinkFacebook = updateInfoForm.LinkFacebook
-		account.ProvinceCode = updateInfoForm.ProvinceCode
-		account.DistrictCode = updateInfoForm.DistrictCode
-		account.WardCode = updateInfoForm.WardCode
-		account.AddressDetail = updateInfoForm.AddressDetail
-		account.RoleID = updateInfoForm.RoleID
-		account.Verify = updateInfoForm.Verify
-		account.DateOfBirth = date
-		account.UpdatedAt = time.Now()
-		account.UpdatedBy = userLogin.UserID
+	var contract models.Contract
 
-		imageName := "avatar" + strconv.Itoa(account.UserID) + ".jpg"
-
-		if updateInfoForm.Image != "" {
-			path := "public/assets/img/avatar/"
-			saveImageResult := SaveImage(updateInfoForm.Image, path, imageName)
-			if saveImageResult != "ok" {
-				return c.JSON(saveImageResult)
-			}
-			account.Image = imageName
-		}
-		if err := DB.Save(&account).Error; err != nil {
-			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + "Can not create account")
-			return c.JSON("Không thể cập nhật thông tin")
-		}
-
-		return c.JSON("Success")
-	}
-	return c.JSON("Đã xảy ra lỗi khi lấy thông tin người dùng")
-}
-
-func APIDeleteContract(c *fiber.Ctx) error {
-	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: APIDeleteUserID")
-	var user models.User
-	userLogin := GetSessionUser(c)
-	DB := initializers.DB
-	userId := c.Params("id")
-
-	idUser, err := strconv.Atoi(userId)
-	if err != nil {
+	if err := DB.Model(&models.Contract{}).
+		Where("contract_id = ?", contractID).
+		First(&contract).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
-
-	}
-	if idUser == 1 {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: User=1")
-
-		return c.JSON("Tài khoản này không thể xóa")
+		return c.JSON("Đã xảy ra lỗi")
 	}
 
-	if err := DB.Where("user_id", userId).Where("deleted", false).First(&user).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]:" + err.Error())
-		return c.JSON("Không tìm thấy tài khoản")
+	if contract.Date.After(time.Now()) {
+		if err := DB.Model(&contract).Updates(map[string]interface{}{
+			"deleted": 1,
+			"status":  3,
+		}).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
+		}
+	} else {
+		if err := DB.Model(&contract).Updates(map[string]interface{}{
+			"deleted": 1,
+			"status":  3,
+		}).Error; err != nil {
+			outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+			return c.JSON("Đã xảy ra lỗi trong quá trình cập nhật dữ liệu")
+		}
 	}
 
-	user.Deleted = true
-	user.DeletedBy = userLogin.UserID
-	user.DeletedAt = time.Now()
-
-	if err := DB.Model(&user).Updates(&user).Error; err != nil {
-		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]:" + err.Error())
-		return c.JSON("Can not delete this role.")
+	if err := DB.Model(&models.UserHiringNews{}).
+		Where("DATE(date) = ?", contract.Date.Format("2006-01-02")).
+		Where("nhaccong_id", contract.NhaccongID).
+		Where("status = ?", 3).
+		Select("status").
+		Updates(&models.UserHiringNews{Status: 0}).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON("Đã xảy ra lỗi")
 	}
 
+	// Trả về phản hồi thành công
 	return c.JSON("success")
 }

@@ -189,22 +189,9 @@
                         "searchable": false,
                         "orderable": false,
                         render: function (data, type, row) {
-                            console.log(row)
-                            if (row.status === 3) {
-                                return `
-                                <div class="form-button-action">
-                                    <button type="button" data-toggle="tooltip" title=""
-                                        class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
-                                        <i class="fa fa-info"></i>
-                                    </button>
-
-                                    <button type="button" data-toggle="tooltip" title=""
-                                        class="btn btn-link btn-primary btn-lg btn-restore" data-contract-id="${data}" data-original-title="Restore">
-                                        <i class="fa fa-recycle"></i>
-                                    </button>
-                                </div>`;
-
-                            } else {
+                            var contractDate = new Date(row.date);
+                            var currentDate = new Date(); // Lấy ngày hiện tại
+                            if(contractDate < currentDate){
                                 return `
                                 <div class="form-button-action">
                                     <button type="button" data-toggle="tooltip" title=""
@@ -212,8 +199,36 @@
                                         <i class="fa fa-info"></i>
                                     </button>
                                 </div>`;
+                            }else {
+                                if (row.status === 3) {
+                                    return `
+                                    <div class="form-button-action">
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                            <i class="fa fa-info"></i>
+                                        </button>
+
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg btn-restore" data-contract-id="${data}" data-original-title="Restore">
+                                            <i class="fa fa-recycle"></i>
+                                        </button>
+                                    </div>`;
+
+                                } else {
+                                    return `
+                                    <div class="form-button-action">
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                            <i class="fa fa-info"></i>
+                                        </button>
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-danger btn-lg btn-delete" data-contract-id="${data}" data-original-title="Remove">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
-                            return data;
+
                         }
                     }
                 ],
@@ -319,22 +334,9 @@
                         "searchable": false,
                         "orderable": false,
                         render: function (data, type, row) {
-                            console.log(row)
-                            if (row.status === 3) {
-                                return `
-                                <div class="form-button-action">
-                                    <button type="button" data-toggle="tooltip" title=""
-                                        class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
-                                        <i class="fa fa-info"></i>
-                                    </button>
-
-                                    <button type="button" data-toggle="tooltip" title=""
-                                        class="btn btn-link btn-primary btn-lg btn-restore" data-contract-id="${data}" data-original-title="Restore">
-                                        <i class="fa fa-recycle"></i>
-                                    </button>
-                                </div>`;
-
-                            } else {
+                            var contractDate = new Date(row.date);
+                            var currentDate = new Date(); // Lấy ngày hiện tại
+                            if(contractDate < currentDate){
                                 return `
                                 <div class="form-button-action">
                                     <button type="button" data-toggle="tooltip" title=""
@@ -342,8 +344,36 @@
                                         <i class="fa fa-info"></i>
                                     </button>
                                 </div>`;
+                            }else {
+                                if (row.status === 3) {
+                                    return `
+                                    <div class="form-button-action">
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                            <i class="fa fa-info"></i>
+                                        </button>
+
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg btn-restore" data-contract-id="${data}" data-original-title="Restore">
+                                            <i class="fa fa-recycle"></i>
+                                        </button>
+                                    </div>`;
+
+                                } else {
+                                    return `
+                                    <div class="form-button-action">
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-primary btn-lg view-detail" data-contract-id="${data}" data-original-title="Detail">
+                                            <i class="fa fa-info"></i>
+                                        </button>
+                                        <button type="button" data-toggle="tooltip" title=""
+                                            class="btn btn-link btn-danger btn-lg btn-delete" data-contract-id="${data}" data-original-title="Remove">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
-                            return data;
+
                         }
                     }
                 ],
@@ -441,58 +471,130 @@
     $(document).ready(function() {
         $(document).on('click', '.btn-restore', function () {
             var contractId = $(this).data('contract-id');
-            $.ajax({
-                url: '/mng-contract/api/restore/'+contractId,
-                type: 'PUT',
-                success: function(response) {
-                    if(response === "success"){
-                        swal({
-                            title: 'Bạn có chắc chắn muốn khôi phục?',
-                            text: "",
-                            type: 'warning',
-                            buttons:{
-                                confirm: {
-                                    text : 'Khôi phục',
-                                    className : 'btn btn-success'
-                                },
-                                cancel: {
-                                    visible: true,
-                                    className: 'btn btn-danger'
-                                }
-                            }
-                        }).then((Delete) => {
-                            if (Delete) {
+
+            // Hiển thị hộp thoại cảnh báo trước khi thực hiện khôi phục
+            swal({
+                title: 'Bạn có chắc chắn muốn khôi phục?',
+                text: "",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Khôi phục',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Value) => {
+                if (Value) {
+                    // Nếu người dùng xác nhận, thực hiện AJAX để khôi phục hợp đồng
+                    $.ajax({
+                        url: '/mng-contract/api/restore/' + contractId,
+                        type: 'PUT',
+                        success: function(response) {
+                            if (response === "success") {
                                 swal({
-                                    title: 'Deleted!',
+                                    title: 'Thành công!',
                                     text: 'Bạn đã khôi phục hợp đồng thành công',
                                     type: 'success',
-                                    buttons : {
+                                    buttons: {
                                         confirm: {
-                                            className : 'btn btn-success'
+                                            className: 'btn btn-success'
                                         }
                                     }
                                 }).then(() => {
-                                    filterData()
+                                    filterData();  // Gọi hàm filterData để cập nhật danh sách hợp đồng
                                 });
+
+                                // Reload lại bảng dữ liệu sau khi khôi phục thành công
+                                $('#table-contract').DataTable().ajax.reload();
                             } else {
-                                swal.close();
+                                swal("", response, {
+                                    icon: "error",
+                                    buttons: {
+                                        confirm: {
+                                            className: 'btn btn-danger'
+                                        }
+                                    }
+                                });
                             }
-                        });
-                    }else {
-                        swal("", response, {
-                            icon : "error",
-                            buttons: {
-                                confirm: {
-                                    className : 'btn btn-danger'
-                                }
-                            },
-                        });
-                    }
-                },
-                error: function(error) {
-                    alert('Đã xảy ra lỗi khi khôi phục hợp đồng.');
+                        },
+                        error: function(error) {
+                            alert('Đã xảy ra lỗi khi khôi phục hợp đồng.');
+                        }
+                    });
+                } else {
+                    swal.close();  // Đóng swal nếu người dùng hủy
                 }
             });
         });
+
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.btn-delete', function () {
+            var contractId = $(this).data('contract-id');
+
+            // Hiển thị hộp thoại cảnh báo trước khi thực hiện khôi phục
+            swal({
+                title: 'Bạn có chắc chắn muốn hủy hợp đồng?',
+                text: "",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Đồng ý',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Value) => {
+                if (Value) {
+                    $.ajax({
+                        url: '/mng-contract/api/delete/' + contractId,
+                        type: 'DELETE',
+                        success: function(response) {
+                            if (response === "success") {
+                                swal({
+                                    title: 'Thành công!',
+                                    text: 'Bạn đã hủy hợp đồng thành công',
+                                    type: 'success',
+                                    buttons: {
+                                        confirm: {
+                                            className: 'btn btn-success'
+                                        }
+                                    }
+                                }).then(() => {
+                                    filterData();  // Gọi hàm filterData để cập nhật danh sách hợp đồng
+                                });
+
+                                $('#table-contract').DataTable().ajax.reload();
+                            } else {
+                                swal("", response, {
+                                    icon: "error",
+                                    buttons: {
+                                        confirm: {
+                                            className: 'btn btn-danger'
+                                        }
+                                    }
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            alert('Đã xảy ra lỗi khi hủy hợp đồng.');
+                        }
+                    });
+                } else {
+                    swal.close();  // Đóng swal nếu người dùng hủy
+                }
+            });
+        });
+
     });
 </script>

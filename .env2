@@ -1,10 +1,10 @@
 PORT=80
-USER_DB = root
-PASSWORD =
-DATABASE = vanbandmate
+USER_DB = bcc4a505bef207
+PASSWORD = 5ce944da
+DATABASE = heroku_189241695875580
 MIGRATE_DB = false
 GEN_DATA_DB = false
-HOST = http://127.0.0.1
+HOST = us-cluster-east-01.k8s.cleardb.net:3306
 HOST_WEB = http
 PEM = cert.pem
 KEY = SSL_Key.key

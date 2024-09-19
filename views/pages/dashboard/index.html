@@ -1,0 +1,230 @@
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex align-items-center">
+                <h4 class="card-title">Danh sách tài khoản</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Năm</label>
+                        <select id="year" class="form-control select2" style="width: 100%">
+                            <option value="0" selected>Tất cả</option>
+                            {{range .Years}}
+                            <option value="{{.}}">{{.}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6 ml-auto mr-auto">
+                    <div class="form-group">
+                        <label>Tháng</label>
+                        <select id="month" class="form-control select2" style="width: 100%">
+                            <option value="0">Tất cả</option>
+                            <option value="1">Tháng 1</option>
+                            <option value="2">Tháng 2</option>
+                            <option value="3">Tháng 3</option>
+                            <option value="4">Tháng 4</option>
+                            <option value="5">Tháng 5</option>
+                            <option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option>
+                            <option value="8">Tháng 8</option>
+                            <option value="9">Tháng 9</option>
+                            <option value="10">Tháng 10</option>
+                            <option value="11">Tháng 11</option>
+                            <option value="12">Tháng 12</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" id="btn-stat" class="btn btn-primary d-sm-inline-block">Thống kê</button>
+            </div>
+            <br>
+
+            <div>
+                <table id="table-stat" class="display table table-hover table-striped table-bordered table-responsive-lg" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Tên</th>
+                        <th>Vai trò</th>
+                        <th>Số hợp đồng</th>
+                        <th>Tổng tiền</th>
+                        <th style="width: 10%">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
+
+<script>
+    let table_stat;
+    function filterData(){
+        if (!$.fn.DataTable.isDataTable('#table-stat')) {
+            // Lấy giá trị từ các ô select
+            var year = parseInt($('#year').val(), 10);
+            var month = parseInt($('#month').val(), 10);
+
+            var jsonFilter = {
+                year: year,
+                month: month,
+            };
+            table_stat = $('#table-stat').DataTable({
+                responsive: true,
+                autoWidth: false,
+                ajax: {
+                    url: '/dashboard/api/filter',
+                    method: 'POST',
+                    contentType: "application/json",
+                    data: function (d) {
+                        return JSON.stringify(jsonFilter);
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        table_stat.clear().rows.add(response.data).draw();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.log('Error:', error);
+                    }
+                },
+                columns: [
+                    {
+                        "data": null,
+                        "searchable": false,
+                        "orderable": false,
+                        "render": function (data, type, full, meta) {
+                            return table_stat.rows().count() > 0 ?
+                                meta.row + meta.settings._iDisplayStart + 1 : 0;
+                        }
+                    },
+                    {data: 'email'},
+                    {data: 'phone_number'},
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.last_name} ${row.first_name}`;
+                        }
+                    },
+                    {data: 'role.name'},
+                    {data: 'count_contract'},
+                    {data: 'sum_price'},
+                    {
+                        data: 'user_id',
+                        "searchable": false,
+                        "orderable": false,
+                        render: function (data, type) {
+                            return `
+                            <div class="form-button-action">
+                                <a type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-info btn-detail"
+                                        href="/info/profile/${data}" data-original-title="Detail">
+                                    <i class="fa fa-info"></i>
+                                </a>
+                            </div>`;
+                        }
+                    }
+                ],
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    api.column(0, {
+                        order: 'applied'
+                    }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }
+            });
+        }else {
+            var year = parseInt($('#year').val(), 10);
+            var month = parseInt($('#month').val(), 10);
+
+            var jsonFilter = {
+                year: year,
+                month: month,
+            };
+            table_stat.clear().destroy();
+            table_stat = $('#table-stat').DataTable({
+                responsive: true,
+                autoWidth: false,
+                ajax: {
+                    url: '/dashboard/api/filter',
+                    method: 'POST',
+                    contentType: "application/json",
+                    data: function (d) {
+                        return JSON.stringify(jsonFilter);
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        table_stat.clear().rows.add(response.data).draw();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.log('Error:', error);
+                    }
+                },
+                columns: [
+                    {
+                        "data": null,
+                        "searchable": false,
+                        "orderable": false,
+                        "render": function (data, type, full, meta) {
+                            return table_stat.rows().count() > 0 ?
+                                meta.row + meta.settings._iDisplayStart + 1 : 0;
+                        }
+                    },
+                    {data: 'email'},
+                    {data: 'phone_number'},
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `${row.last_name} ${row.first_name}`;
+                        }
+                    },
+                    {data: 'role.name'},
+                    {data: 'count_contract'},
+                    {data: 'sum_price'},
+                    {
+                        data: 'user_id',
+                        "searchable": false,
+                        "orderable": false,
+                        render: function (data, type, full, row) {
+                            return `
+                            <div class="form-button-action">
+                                <a type="button" data-toggle="tooltip" title=""
+                                        class="btn btn-link btn-primary btn-info btn-detail"
+                                        href="/info/profile/${data}" data-original-title="Detail">
+                                    <i class="fa fa-info"></i>
+                                </a>
+                            </div>`;
+                        }
+                    }
+                ],
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    api.column(0, {
+                        order: 'applied'
+                    }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        filterData();
+        $('#btn-stat').on('click', function() {
+            filterData()
+        });
+    });
+</script>

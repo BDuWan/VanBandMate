@@ -186,10 +186,17 @@ function renderListItem(item, user_id) {
     var formatedDate = formatDate(item.date);
     var formatedPrice = formatPrice(item.price);
     var formatedRelativeDate = formatRelativeDate(item.created_at);
-    const backgroundColor = item.hiring_enough == 0 ? 'background-color: #FFFFFF;' : 'background-color: #99FFFF;';
+    let backgroundColor = 'background-color: #FFFFFF';
     let enoughMessageHtml = ''
+    let newApplyMessageHtml = ''
+
+    if(item.have_new_apply == 1){
+        newApplyMessageHtml = `<p class="list-group-item-text">Có người ứng tuyển mới</p>`
+        backgroundColor = 'background-color: #e9ff6d;'
+    }
     if(item.hiring_enough == 1){
         enoughMessageHtml = `<p class="list-group-item-text">Đã tuyển đủ</p>`
+        backgroundColor = 'background-color: #99FFFF;'
     }
     const deleteButtonHtml = user_id === item.chuloadai_id
         ? `<a href="#" class="dropdown-item delete-item" data-id="${item.hiring_news_id}">Xóa</a>`
@@ -229,6 +236,7 @@ function renderListItem(item, user_id) {
                     <div class="col-12 col-lg-2 text-lg-right">
                         <p class="list-group-item-text">Thời gian tạo: ${formatedRelativeDate} </p>
                         <strong>${enoughMessageHtml}</strong>
+                        <strong>${newApplyMessageHtml}</strong>
                     </div>
                 </div>
             </div>

@@ -47,7 +47,7 @@
             <br>
 
             <div>
-                <table id="table-user" class="display table table-hover table-striped table-bordered table-responsive" style="width: 100%">
+                <table id="table-user" class="display table table-hover table-striped table-bordered table-responsive-lg" style="width: 100%">
                     <thead>
                     <tr>
                         <th>STT</th>
@@ -128,7 +128,7 @@
                         data: 'user_id',
                         "searchable": false,
                         "orderable": false,
-                        render: function (data, type, full, row) {
+                        render: function (data, type) {
                             if (type === 'display') {
                                 return `
                                 <div class="form-button-action">

@@ -19,6 +19,7 @@ type HiringNews struct {
 	Describe        string           `json:"describe"`
 	Price           int              `json:"price"`
 	HiringEnough    bool             `json:"hiring_enough"`
+	HaveNewApply    bool             `json:"have_new_apply"`
 	Deleted         bool             `json:"deleted"`
 	DeletedBy       int              `json:"deleted_by"`
 	UpdatedBy       int              `json:"updated_by"`

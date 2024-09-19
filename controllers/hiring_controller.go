@@ -363,6 +363,16 @@ func APIGetHiringListApply(c *fiber.Ctx) error {
 		})
 	}
 
+	hiringNews.HaveNewApply = false
+
+	if err := DB.Save(&hiringNews).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"icon":    "error",
+			"message": "Đã xảy ra lỗi khi cập nhật trạng thái",
+		})
+	}
+
 	if hiringNews.ChuloadaiID != userLogin.UserID {
 		return c.JSON(fiber.Map{
 			"message": "Bạn chỉ được xem danh sách ứng tuyển của tin mà bạn tạo",

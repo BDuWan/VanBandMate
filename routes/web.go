@@ -71,7 +71,8 @@ func RouteInit(app *fiber.App) {
 	//mngHiringNews.Get("", controllers.GetRolePage)
 
 	mngDashboard := app.Group("/dashboard", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionDashboard)
-	mngDashboard.Get("", controllers.GetRolePage)
+	mngDashboard.Get("", controllers.GetDashBoardPage)
+	mngDashboard.Post("/api/filter", controllers.APIPostDashboardFilter)
 
 	contract := app.Group("/contract", IsAuthenticated, CheckSession, CheckVerify, CheckPermissionMyContract)
 	contract.Get("", controllers.GetMyContractPage)

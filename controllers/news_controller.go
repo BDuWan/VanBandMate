@@ -357,6 +357,14 @@ func PostNewsApply(c *fiber.Ctx) error {
 		})
 	}
 
+	if err := DB.Model(&hiringNews).Update("HaveNewApply", true).Error; err != nil {
+		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())
+		return c.JSON(fiber.Map{
+			"icon":    "error",
+			"message": "Đã xảy ra lỗi khi cập nhật trạng thái",
+		})
+	}
+
 	if err := DB.Where("hiring_news_id", hiringNewsID).Where("nhaccong_id", userLogin.UserID).
 		Find(&userHiringNewsList).Error; err != nil {
 		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: " + err.Error())

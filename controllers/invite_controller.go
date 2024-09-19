@@ -322,6 +322,24 @@ func APIPostReceivedInvFilter(c *fiber.Ctx) error {
 		Where("HiringNews__User.deleted", false).
 		Where("status IN ?", []int{0, 1, 3})
 
+	if form.ReceiveDate == 1 {
+		query = query.Where("DATE(invitations.invite_at) = CURDATE()")
+	} else if form.ReceiveDate == 2 {
+		query = query.Where("MONTH(invitations.invite_at) = MONTH(CURDATE()) AND YEAR(invitations.invite_at) = YEAR(CURDATE())")
+	} else if form.ReceiveDate == 3 {
+		query = query.Where("YEAR(invitations.invite_at) = YEAR(CURDATE())")
+	}
+
+	if form.Status != 4 {
+		query = query.Where("invitations.status = ?", form.Status)
+	}
+
+	if form.Order == 0 {
+		query = query.Order("invitations.invite_at DESC")
+	} else if form.Order == 1 {
+		query = query.Order("HiringNews.price DESC")
+	}
+
 	var totalItems int64
 	countQuery := query.Session(&gorm.Session{})
 	if err := countQuery.Count(&totalItems).Error; err != nil {

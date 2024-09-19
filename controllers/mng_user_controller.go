@@ -119,6 +119,7 @@ func APIPostCreateUser(c *fiber.Ctx) error {
 	user.DateOfBirth = time.Now()
 	user.RoleID = userForm.RoleID
 	user.Verify = true
+	user.Image = "default.jpg"
 	user.TimeExpiredOtp = time.Now()
 	user.Deleted = false
 	user.CreatedBy = userLogin.UserID

@@ -67,7 +67,6 @@
 </div>
 <!-- Modal -->
 {{ template "pages/management/mng-user/modal-add" . }}
-{{ template "pages/management/mng-user/modal-edit" . }}
 <script src="/assets/azzara/js/core/jquery.3.2.1.min.js"></script>
 
 <script>
@@ -282,7 +281,7 @@
     $(document).ready(function() {
         // Sự kiện khi nhấn nút "Thêm"
         $('#addUserButton').on('click', function() {
-            const role = $('#role').val();
+            const role = $('#role-create').val();
             const email = $('#email').val();
             const firstName = $('#firstName').val();
             const lastName = $('#lastName').val();

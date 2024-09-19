@@ -464,6 +464,7 @@ func APIPostSaveApply(c *fiber.Ctx) error {
 				Deleted:       false,
 				CreatedBy:     userLogin.UserID,
 				CreatedAt:     time.Now(),
+				DeletedAt:     time.Now(),
 			}
 			contracts = append(contracts, contract)
 		}

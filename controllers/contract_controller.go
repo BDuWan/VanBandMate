@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"
 	"gorm.io/gorm"
+	"log"
 	"time"
 	"vanbandmate/initializers"
 	"vanbandmate/models"
@@ -355,4 +356,20 @@ func PostContractConfirmDelete(c *fiber.Ctx) error {
 		"icon":    "success",
 		"message": "Hợp đồng đã được hủy thành công",
 	})
+}
+
+func CheckContracts() {
+	outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [VBM]: CheckContracts")
+	// Lấy thời gian hiện tại
+	now := time.Now()
+
+	// Sử dụng GORM để cập nhật các contracts có ngày nhỏ hơn thời gian hiện tại và status không phải là 0
+	result := initializers.DB.Model(&models.Contract{}).
+		Where("date < ? AND status = 1", now).
+		Update("status", 0)
+
+	if result.Error != nil {
+		log.Println("Error updating contracts:", result.Error)
+		return
+	}
 }

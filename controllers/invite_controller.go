@@ -450,6 +450,7 @@ func PostReceivedInvAccept(c *fiber.Ctx) error {
 		Deleted:       false,
 		CreatedBy:     userLogin.UserID,
 		CreatedAt:     time.Now(),
+		DeletedAt:     time.Now(),
 	}
 
 	if err := DB.Create(&contract).Error; err != nil {

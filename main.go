@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/template/html/v2"
 	"log"
 	"os"
+	"time"
 	"vanbandmate/controllers"
 	"vanbandmate/initializers"
 	"vanbandmate/routes"
@@ -65,6 +66,19 @@ var (
 //
 //}
 
+func startDailyTask() {
+	go func() {
+		ticker := time.NewTicker(24 * time.Hour)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				controllers.CheckContracts()
+			}
+		}
+	}()
+}
+
 func startWeb() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDatabase()
@@ -109,6 +123,7 @@ func startWeb() {
 }
 
 func main() {
+	startDailyTask()
 	startWeb()
 }
 

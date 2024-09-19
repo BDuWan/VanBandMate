@@ -102,7 +102,7 @@ func startWeb() {
 	// Lắng nghe trên cổng được cung cấp bởi Heroku
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" // Cổng mặc định khi chạy cục bộ
+		port = "8000" // Cổng mặc định khi chạy cục bộ
 	}
 
 	app.Listen(":" + port)

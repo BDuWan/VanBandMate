@@ -6,10 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"
 	"gopkg.in/gomail.v2"
-	"lms/initializers"
-	"lms/models"
 	"os"
 	"time"
+	"vanbandmate/initializers"
+	"vanbandmate/models"
 )
 
 var key = []byte(os.Getenv("KEY_TOKEN"))

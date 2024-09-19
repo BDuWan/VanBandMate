@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"lms/initializers"
-	"lms/models"
 	"time"
+	"vanbandmate/initializers"
+	"vanbandmate/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"

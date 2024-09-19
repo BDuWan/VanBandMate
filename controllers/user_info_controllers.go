@@ -3,14 +3,14 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"
-	"lms/initializers"
-	"lms/models"
-	"lms/structs"
-	"lms/utils"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"vanbandmate/initializers"
+	"vanbandmate/models"
+	"vanbandmate/structs"
+	"vanbandmate/utils"
 )
 
 func GetProfile(c *fiber.Ctx) error {

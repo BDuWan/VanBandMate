@@ -2,14 +2,14 @@ package controllers
 
 import (
 	"github.com/zetamatta/go-outputdebug"
-	"lms/initializers"
-	"lms/models"
-	"lms/structs"
-	"lms/utils"
 	"math/rand"
 	"regexp"
 	"strings"
 	"time"
+	"vanbandmate/initializers"
+	"vanbandmate/models"
+	"vanbandmate/structs"
+	"vanbandmate/utils"
 
 	"github.com/gofiber/fiber/v2"
 )

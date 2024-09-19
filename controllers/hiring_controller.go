@@ -4,12 +4,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"
 	"gorm.io/gorm"
-	"lms/initializers"
-	"lms/models"
-	"lms/structs"
 	"strconv"
 	"strings"
 	"time"
+	"vanbandmate/initializers"
+	"vanbandmate/models"
+	"vanbandmate/structs"
 )
 
 func GetHiringPage(c *fiber.Ctx) error {

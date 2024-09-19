@@ -1,4 +1,4 @@
-module lms
+module vanbandmate
 
 go 1.20
 

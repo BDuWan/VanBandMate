@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"lms/initializers"
-	"lms/models"
-	"lms/structs"
 	"strconv"
 	"strings"
 	"time"
+	"vanbandmate/initializers"
+	"vanbandmate/models"
+	"vanbandmate/structs"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/zetamatta/go-outputdebug"

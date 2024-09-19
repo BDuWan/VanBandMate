@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"fmt"
-	"lms/models"
 	"math"
 	"strconv"
 	"strings"
 	"time"
+	"vanbandmate/models"
 
 	"github.com/gofiber/fiber/v2"
 )

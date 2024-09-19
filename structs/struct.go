@@ -1,6 +1,6 @@
 package structs
 
-import "lms/models"
+import "vanbandmate/models"
 
 type User struct {
 	FirstName              string `json:"first_name"`

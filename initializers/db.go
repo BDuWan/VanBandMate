@@ -5,10 +5,10 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"lms/models"
-	"lms/utils"
 	"os"
 	"time"
+	"vanbandmate/models"
+	"vanbandmate/utils"
 )
 
 var DB *gorm.DB

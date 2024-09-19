@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"lms/controllers"
+	"vanbandmate/controllers"
 )
 
 func CheckAuthentication(c *fiber.Ctx) bool {

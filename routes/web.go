@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"lms/controllers"
+	"vanbandmate/controllers"
 
 	"github.com/gofiber/fiber/v2"
 )

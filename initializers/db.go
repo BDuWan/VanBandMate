@@ -13,9 +13,24 @@ import (
 
 var DB *gorm.DB
 
+//func ConnectToDatabase() {
+//	var err error
+//	dsn := os.Getenv("USER_DB") + ":" + os.Getenv("PASSWORD") + `@tcp(127.0.0.1:3306)/` + os.Getenv("DATABASE") + `?charset=utf8mb4&parseTime=True&loc=Local`
+//
+//	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+//		//Logger: logger.Default.LogMode(logger.Info),
+//		Logger: logger.Default.LogMode(logger.Silent),
+//	})
+//
+//	if err != nil {
+//		outputdebug.String("[LMS]: " + err.Error())
+//
+//	}
+//}
+
 func ConnectToDatabase() {
 	var err error
-	dsn := os.Getenv("USER_DB") + ":" + os.Getenv("PASSWORD") + `@tcp(127.0.0.1:3306)/` + os.Getenv("DATABASE") + `?charset=utf8mb4&parseTime=True&loc=Local`
+	dsn := os.Getenv("USER_DB") + ":" + os.Getenv("PASSWORD") + `@tcp(us-cluster-east-01.k8s.cleardb.net:3306)/` + os.Getenv("DATABASE") + `?charset=utf8mb4&parseTime=True&loc=Local`
 
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		//Logger: logger.Default.LogMode(logger.Info),

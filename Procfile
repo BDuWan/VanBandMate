@@ -1,1 +1,1 @@
-web: vanbandmate
+web: main

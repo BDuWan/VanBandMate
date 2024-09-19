@@ -19,23 +19,53 @@ var (
 	svcDsc  = "Web service VanBandMate"
 )
 
-//func changeCurrentDirectory() {
+//func startWeb() {
+//	//changeCurrentDirectory()
+//	initializers.LoadEnvVariables()
+//	initializers.ConnectToDatabase()
 //
-//	exeFile, err2 := exePath()
-//	if err2 != nil {
-//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err2.Error())
+//	if os.Getenv("MIGRATE_DB") == "true" {
+//		initializers.MigrateDB()
 //	}
-//
-//	newDir := filepath.Dir(exeFile)
-//
-//	if err := os.Chdir(newDir); err != nil {
-//		outputdebug.String(time.Now().Format("02-01-2006 15:04:05") + " [LMS]: " + err.Error())
+//	if os.Getenv("GEN_DATA_DB") == "true" {
+//		initializers.GenData()
 //	}
+//	engine := html.New("./views", ".html")
+//	engine.AddFuncMap(fiber.Map{
+//		//"GetCodeUser":           controllers.GetCodeUser,
+//		"IsChecked":         controllers.IsChecked,
+//		"IsVerify":          controllers.IsVerify,
+//		"GetUserID":         controllers.GetUserID,
+//		"FormatDate":        controllers.FormatDate,
+//		"FormatTime":        controllers.FormatTime,
+//		"FormatTimeComment": controllers.FormatTimeComment,
+//		"FormatPrice":       controllers.FormatPrice,
+//		"IsTimeAfterNow":    controllers.IsTimeAfterNow,
+//		"IsSelected":        controllers.IsSelected,
+//		"CheckPermission":   controllers.CheckPermission,
+//	})
+//	app := fiber.New(fiber.Config{
+//		Views:             engine,
+//		PassLocalsToViews: true,
+//		BodyLimit:         1024 * 1024 * 100,
+//	})
+//
+//	app.Static("/", "./public")
+//	routes.RouteInit(app)
+//
+//	//go func() {
+//	if os.Getenv("HOST_WEB") == "https" {
+//		app.ListenTLS(":"+os.Getenv("PORT"), os.Getenv("PEM"), os.Getenv("KEY"))
+//
+//	} else {
+//		app.Listen(":" + os.Getenv("PORT"))
+//
+//	}
+//	//}()
 //
 //}
 
 func startWeb() {
-	//changeCurrentDirectory()
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDatabase()
 
@@ -45,9 +75,9 @@ func startWeb() {
 	if os.Getenv("GEN_DATA_DB") == "true" {
 		initializers.GenData()
 	}
+
 	engine := html.New("./views", ".html")
 	engine.AddFuncMap(fiber.Map{
-		//"GetCodeUser":           controllers.GetCodeUser,
 		"IsChecked":         controllers.IsChecked,
 		"IsVerify":          controllers.IsVerify,
 		"GetUserID":         controllers.GetUserID,
@@ -59,6 +89,7 @@ func startWeb() {
 		"IsSelected":        controllers.IsSelected,
 		"CheckPermission":   controllers.CheckPermission,
 	})
+
 	app := fiber.New(fiber.Config{
 		Views:             engine,
 		PassLocalsToViews: true,
@@ -68,16 +99,13 @@ func startWeb() {
 	app.Static("/", "./public")
 	routes.RouteInit(app)
 
-	//go func() {
-	if os.Getenv("HOST_WEB") == "https" {
-		app.ListenTLS(":"+os.Getenv("PORT"), os.Getenv("PEM"), os.Getenv("KEY"))
-
-	} else {
-		app.Listen(":" + os.Getenv("PORT"))
-
+	// Lắng nghe trên cổng được cung cấp bởi Heroku
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Cổng mặc định khi chạy cục bộ
 	}
-	//}()
 
+	app.Listen(":" + port)
 }
 
 func main() {

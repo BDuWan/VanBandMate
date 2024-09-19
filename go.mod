@@ -1,6 +1,7 @@
 module vanbandmate
 
 go 1.20
+// +heroku install ./main.go
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.2
